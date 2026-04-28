@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProfitKey Work Order Record Viewer &middot; Phase A &mdash; Overton Chicago Gear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS (shared with M1_erd_review.html) ── */
+:root {
+  --bg:          #f4f6f8;
+  --surface:     #ffffff;
+  --surface-2:   #fafbfc;
+  --border:      #dde3ea;
+  --border-soft: #eef2f6;
+  --text-1:      #1e2a38;
+  --text-2:      #64748b;
+  --text-3:      #94a3b8;
+  --ocg-dark:    #313131;
+  --ocg-blue:    #1890d7;
+  --ocg-teal:    #899fac;
+  --th-master:   #313131;
+  --th-trans:    #1890d7;
+  --th-lookup:   #4a6278;
+  --th-finance:  #2d5a4f;
+  --th-config:   #3d4f62;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  color: var(--text-1);
+  min-height: 100vh;
+}
+
+a { color: var(--ocg-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--ocg-dark);
+  color: #fff;
+  padding: 22px 40px 18px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 3px solid var(--ocg-blue);
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.header-logo svg { width: 34px; height: 34px; fill: var(--ocg-blue); flex-shrink: 0; }
+.logo-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: #c8d6e0; line-height: 1.15; }
+.logo-wordmark span { display: block; font-size: 9.5px; font-weight: 400; color: rgba(255,255,255,.38); letter-spacing: .4px; text-transform: none; margin-top: 2px; }
+.header-titles { flex: 1; padding-left: 4px; }
+.header-titles h1 { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+.header-titles p { font-size: 12px; color: var(--ocg-teal); margin-top: 3px; font-weight: 400; }
+.header-badges { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .3px; white-space: nowrap;
+}
+.badge-blue  { background: rgba(24,144,215,.14); color: #56b4e8; border: 1px solid rgba(24,144,215,.28); }
+.badge-teal  { background: rgba(137,159,172,.14); color: #adc4d3; border: 1px solid rgba(137,159,172,.28); }
+.badge-amber { background: rgba(180,120,0,.20);  color: #f5c842; border: 1px solid rgba(180,120,0,.30); }
+.badge-green { background: rgba(45,90,79,.28);   color: #6ec8b4; border: 1px solid rgba(45,90,79,.48); }
+
+/* ── CONTENT WRAP ── */
+.content { max-width: 1280px; margin: 0 auto; padding: 20px 32px 52px; }
+
+/* ── BREADCRUMB ── */
+.crumbs {
+  font-size: 12px; color: var(--text-2);
+  margin-bottom: 18px; display: flex; gap: 6px; align-items: center;
+  flex-wrap: wrap;
+}
+.crumbs a { color: var(--text-2); }
+.crumbs a:hover { color: var(--ocg-blue); }
+.crumbs .sep { color: var(--text-3); }
+.crumbs .here { color: var(--text-1); font-weight: 600; }
+
+/* ── INTRO STRIP ── */
+.intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ocg-blue);
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.intro h2 { font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: .2px; }
+.intro p { font-size: 12.5px; color: var(--text-2); line-height: 1.65; }
+.intro p + p { margin-top: 6px; }
+.intro .mono { font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 11.5px; color: var(--text-1); background: var(--border-soft); padding: 1px 6px; border-radius: 3px; }
+
+/* ── OVERVIEW ROW: relationship tree + legend ── */
+.overview {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.panel-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+.tree {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 12px;
+  color: var(--text-1);
+  line-height: 1.75;
+  white-space: pre;
+  background: var(--surface-2);
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+  overflow-x: auto;
+}
+.tree b { color: var(--ocg-blue); font-weight: 700; }
+.tree i { color: var(--text-2); font-style: italic; }
+
+.leg-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-1); margin-bottom: 8px; }
+.leg-row:last-child { margin-bottom: 0; }
+.leg-row .pill {
+  font-size: 10.5px; font-weight: 700; padding: 2px 8px;
+  border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+  min-width: 22px; text-align: center;
+}
+.pill-real { background: rgba(45,90,79,.12); color: #1f5f51; border: 1px solid rgba(45,90,79,.3); }
+.pill-repr { background: rgba(180,120,0,.12); color: #8a5a00; border: 1px solid rgba(180,120,0,.3); }
+.leg-row .muted { color: var(--text-2); font-size: 11.5px; }
+
+.cluster-key { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.cluster-chip { font-size: 10.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: .2px; color: #fff; }
+.cc-intake   { background: var(--ocg-blue); }
+.cc-header   { background: var(--th-lookup); }
+.cc-costs    { background: var(--th-finance); }
+.cc-hours    { background: var(--th-config); }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-size: 15px; font-weight: 700;
+  color: var(--text-1);
+  margin: 8px 0 14px;
+  letter-spacing: .2px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.section-title .sub {
+  font-size: 11.5px; font-weight: 400;
+  color: var(--text-2); font-style: italic;
+}
+
+/* ── STEP RAIL ── */
+.rail { display: flex; flex-direction: column; gap: 0; }
+
+.step {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--ocg-blue);
+  border-radius: 10px;
+  padding: 18px 22px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  margin-bottom: 12px;
+}
+.step.intake   { border-left-color: var(--ocg-blue); }
+.step.header   { border-left-color: var(--th-lookup); }
+.step.costs    { border-left-color: var(--th-finance); }
+.step.hours    { border-left-color: var(--th-config); }
+
+/* Connector between step cards */
+.connector {
+  display: block;
+  width: 2px; height: 18px;
+  background: linear-gradient(to bottom, rgba(24,144,215,.4), rgba(24,144,215,.1));
+  margin: -6px auto 6px 44px;
+  position: relative;
+}
+.connector::after {
+  content: ""; position: absolute;
+  left: -3px; bottom: -4px;
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid rgba(24,144,215,.55);
+}
+
+.step-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.step-num {
+  font-size: 32px; font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  min-width: 48px;
+}
+.step.intake .step-num { color: rgba(24,144,215,.22); }
+.step.header .step-num { color: rgba(74,98,120,.22); }
+.step.costs  .step-num { color: rgba(45,90,79,.25); }
+.step.hours  .step-num { color: rgba(61,79,98,.22); }
+
+.step-title-wrap { flex: 1; min-width: 0; }
+.step-title {
+  font-size: 16px; font-weight: 700;
+  color: var(--text-1); letter-spacing: .1px;
+  margin-bottom: 3px;
+}
+.step-desc {
+  font-size: 12.5px; color: var(--text-2);
+  line-height: 1.6;
+}
+.step-cluster {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: 4px 10px; border-radius: 20px;
+  color: #fff; flex-shrink: 0;
+  align-self: flex-start;
+}
+.step.intake .step-cluster { background: var(--ocg-blue); }
+.step.header .step-cluster { background: var(--th-lookup); }
+.step.costs  .step-cluster { background: var(--th-finance); }
+.step.hours  .step-cluster { background: var(--th-config); }
+
+.step-body {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 16px;
+}
+@media (max-width: 820px) {
+  .step-body { grid-template-columns: 1fr; }
+  .overview  { grid-template-columns: 1fr; }
+}
+
+/* Left col: tables + anchor */
+.meta-block { display: flex; flex-direction: column; gap: 12px; }
+.meta-row {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+}
+.meta-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+  min-width: 88px;
+}
+.tbl-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+.tbl-chip .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  display: inline-block;
+}
+.dot-wom  { background: var(--th-master); }
+.dot-jhs  { background: var(--th-config); }
+.dot-lt   { background: var(--th-trans); }
+.dot-emp  { background: var(--th-lookup); }
+.tbl-chip .op {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+  color: var(--text-2); letter-spacing: .3px;
+}
+
+.anchor {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: var(--text-1);
+  line-height: 1.55;
+}
+.anchor-head {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+.anchor-lbl {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+}
+.prov {
+  font-size: 9.5px; font-weight: 700;
+  padding: 1.5px 6px; border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.prov-real { background: rgba(45,90,79,.12);  color: #1f5f51; border: 1px solid rgba(45,90,79,.3); }
+.prov-repr { background: rgba(180,120,0,.12); color: #8a5a00; border: 1px solid rgba(180,120,0,.3); }
+.anchor code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--text-1);
+}
+.anchor ul { list-style: none; padding: 0; margin: 4px 0 0; }
+.anchor li { margin: 2px 0; }
+
+/* Right col: wireframe mock */
+.mock {
+  background: repeating-linear-gradient(
+    135deg,
+    #f6f8fb,
+    #f6f8fb 10px,
+    #f1f4f8 10px,
+    #f1f4f8 20px
+  );
+  border: 1.5px dashed #c6d0db;
+  border-radius: 8px;
+  padding: 14px 14px 14px;
+  min-height: 160px;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative;
+}
+.mock::before {
+  content: "WIREFRAME"; position: absolute;
+  top: 8px; right: 10px;
+  font-size: 8.5px; font-weight: 700; letter-spacing: 1.2px;
+  color: var(--text-3); font-family: 'JetBrains Mono', monospace;
+}
+.mock-title {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.mock-field {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; align-items: center; gap: 8px;
+  min-height: 26px;
+}
+.mock-field .lbl {
+  font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text-3);
+  min-width: 92px;
+}
+.mock-field .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text-1);
+}
+.mock-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.mock-row .mock-field { flex: 1; min-width: 0; }
+.mock-pill {
+  font-size: 9.5px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: #fff; border: 1px solid var(--border);
+  color: var(--text-2); letter-spacing: .3px;
+}
+.mock-pill.good  { color: #1f5f51; border-color: rgba(45,90,79,.35); background: rgba(45,90,79,.06); }
+.mock-pill.warn  { color: #8a5a00; border-color: rgba(180,120,0,.35); background: rgba(180,120,0,.06); }
+
+.mock-table {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-1);
+  overflow: hidden;
+}
+.mock-table .mt-head {
+  background: var(--surface-2);
+  padding: 5px 10px;
+  font-weight: 700; font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text-2);
+  display: grid; gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.mock-table .mt-row {
+  padding: 5px 10px;
+  display: grid; gap: 8px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-2);
+}
+.mock-table .mt-row:last-child { border-bottom: none; }
+.mock-table .mt-row.total {
+  background: var(--surface-2);
+  color: var(--text-1);
+  font-weight: 700;
+  border-top: 1px solid var(--border);
+}
+
+/* ── PHASE B BANNER ── */
+.phase-b {
+  background: linear-gradient(90deg, rgba(24,144,215,.08), rgba(24,144,215,.02));
+  border: 1px solid rgba(24,144,215,.28);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin: 28px 0;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.phase-b .pb-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--ocg-blue);
+  background: rgba(24,144,215,.14);
+  padding: 4px 10px; border-radius: 20px;
+  border: 1px solid rgba(24,144,215,.3);
+}
+.phase-b .pb-title {
+  font-size: 13.5px; font-weight: 700;
+  color: var(--text-1); flex: 1; min-width: 0;
+}
+.phase-b .pb-title span { color: var(--text-2); font-weight: 400; font-size: 12px; margin-left: 8px; }
+.phase-b .pb-cta {
+  font-size: 12px; font-weight: 600;
+  color: var(--ocg-blue);
+  white-space: nowrap;
+}
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 8px;
+}
+
+/* ── PRINT ── */
+@media print {
+  .page-header { padding: 14px 24px; }
+  .step { break-inside: avoid; }
+  .connector { display: none; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+    <div class="logo-wordmark">
+      Overton Chicago Gear
+      <span>Precision Gear Manufacturer &middot; Est. 1888</span>
+    </div>
+  </div>
+  <div class="header-titles">
+    <h1>ProfitKey Work Order Record Viewer</h1>
+    <p>Phase A &middot; Historical work-order browser &mdash; reading the full record for a prior ProfitKey shop order</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">Phase A</span>
+    <span class="badge badge-teal">10 Views</span>
+    <span class="badge badge-amber">Wireframe</span>
+    <span class="badge badge-green">SO 0271926 Example</span>
+    <span class="badge badge-teal">Read-only</span>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="content">
+
+  <!-- Breadcrumb -->
+  <nav class="crumbs">
+    <a href="ocg_index.html">Index</a>
+    <span class="sep">&rsaquo;</span>
+    <a href="profitkey_erd2.html">ProfitKey</a>
+    <span class="sep">&rsaquo;</span>
+    <span class="here">Work Order Record Viewer (Phase A)</span>
+  </nav>
+
+  <!-- Intro -->
+  <section class="intro">
+    <h2>Why this view exists</h2>
+    <p>
+      The existing <a href="profitkey_erd2.html">ProfitKey &middot; Work Order &amp; Labor ERD</a> shows the <em>shape</em> of ProfitKey's production data &mdash; the four tables (<span class="mono">WORK_ORDER_MASTER</span>, <span class="mono">JOB_HOURS_SUMMARY</span>, <span class="mono">LABOR_TICKETS</span>, <span class="mono">EMPLOYEE_MASTER</span>) and how they connect. This page shows the <em>contents</em>: ten read-only views into one historical shop order, so a quoter or cost analyst can see everything the record holds without opening ProfitKey itself.
+    </p>
+    <p>
+      Every view is anchored to <span class="mono">Shop Order 0271926</span> &mdash; a closed work order for part <span class="mono">P&amp;H1J262CUS</span> (&ldquo;INT GEAR, 2ND RED RING 87T&rdquo;, revision 21), released 3/2/2024 with a due date of 4/15/2024. Numeric values come verbatim from the Work Order Performance Detail Report for this order (User ID <span class="mono">AALI</span>, PKI date 5/17/2024).
+    </p>
+    <p style="margin-top:8px;">
+      <strong>This viewer is read-only.</strong> No records are created, duplicated, or edited &mdash; it surfaces what is already in ProfitKey for easier review. <strong>Phase A</strong> (this page) is the full-record view for one shop order. <strong>Phase B</strong> (coming) is the search/lookup experience across ProfitKey's work-order history.
+    </p>
+  </section>
+
+  <!-- Overview: relationship tree + legend -->
+  <div class="overview">
+    <div class="panel">
+      <div class="panel-title">Relationship map &middot; ProfitKey tables</div>
+<pre class="tree"><b>WORK_ORDER_MASTER</b> (PK: order_no)
+ &#9500;&#9472;&#9472; <b>JOB_HOURS_SUMMARY</b>     <i>1 order &rarr; many hour roll-ups</i>   key: order_no
+ &#9492;&#9472;&#9472; <b>LABOR_TICKETS</b>         <i>1 order &rarr; many clock-in events</i>  key: order_no
+       &#9492;&#9472;&#9472; <b>EMPLOYEE_MASTER</b>  <i>1 employee &rarr; many tickets</i>     key: employee_id</pre>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Legend &middot; data sources &amp; view clusters</div>
+      <div class="leg-row">
+        <span class="pill pill-real">&#10003;</span>
+        <span><strong>Report-verified</strong> <span class="muted">&mdash; values taken verbatim from the Work Order Performance Detail Report for SO 0271926</span></span>
+      </div>
+      <div class="leg-row" style="margin-bottom: 14px;">
+        <span class="pill pill-repr">&#9888;</span>
+        <span><strong>Representative</strong> <span class="muted">&mdash; structure confirmed from the ProfitKey ERD; individual row values illustrative (labor ticket drill-down)</span></span>
+      </div>
+      <div class="leg-row" style="display:block;">
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-2);margin-bottom:6px;">View clusters</div>
+        <div class="cluster-key">
+          <span class="cluster-chip cc-intake">Intake 1&ndash;2</span>
+          <span class="cluster-chip cc-header">Header 3&ndash;5</span>
+          <span class="cluster-chip cc-costs">Costs 6&ndash;8</span>
+          <span class="cluster-chip cc-hours">Hours 9&ndash;10</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section title for the rail -->
+  <div class="section-title">
+    Shop Order 0271926 &middot; Full Record <span class="sub">&mdash; 10 read-only views into the historical work-order data</span>
+  </div>
+
+  <!-- ── STEP RAIL ── -->
+  <div class="rail">
+
+    <!-- VIEW 1 · Inbound context -->
+    <div class="step intake">
+      <div class="step-head">
+        <div class="step-num">01</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Inbound work order context</div>
+          <div class="step-desc">What kicked off this shop order: the item being built, drawing &amp; revision, and the sales reference it was released against. Read-only summary of the originating context.</div>
+        </div>
+        <div class="step-cluster">Intake</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-wom"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 shows</span><span class="prov prov-real">&#10003; Report</span></div>
+            Item <code>P&amp;H1J262CUS</code> &middot; &ldquo;INT GEAR, 2ND RED RING 87T&rdquo;<br>
+            Drawing <code>07/15/2022</code> &middot; Rev <code>21</code><br>
+            Sales ref <code>J 0060978 010</code> &middot; Sales/Unit <code>$13,175.00</code>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Work Order Context (read-only)</div>
+          <div class="mock-field"><span class="lbl">Item ID</span><span class="val">P&amp;H1J262CUS</span></div>
+          <div class="mock-field"><span class="lbl">Description</span><span class="val">INT GEAR, 2ND RED RING 87T</span></div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Drawing</span><span class="val">07/15/2022</span></div>
+            <div class="mock-field"><span class="lbl">Rev</span><span class="val">21</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Sales ref</span><span class="val">J 0060978 010</span></div>
+            <div class="mock-field"><span class="lbl">Unit price</span><span class="val">$13,175.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 2 · Related WOs -->
+    <div class="step intake">
+      <div class="step-head">
+        <div class="step-num">02</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Related work orders in ProfitKey history</div>
+          <div class="step-desc">Other ProfitKey shop orders for this same item, drawing, or customer. Lets a quoter jump sideways to prior runs of the same gear without leaving the viewer. Click any row to open that order's record.</div>
+        </div>
+        <div class="step-cluster">Intake</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-wom"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 in context</span><span class="prov prov-real">&#10003; Report</span></div>
+            Item <code>P&amp;H1J262CUS</code> &middot; Rev <code>21</code>. Prior runs of this same item in ProfitKey are listed here so actual hours and costs can be compared side-by-side without re-keying anything.
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Related Work Orders (read-only)</div>
+          <div class="mock-field"><span class="lbl">Filter by</span><span class="val">item:P&amp;H1J262CUS  rev:21</span></div>
+          <div class="mock-row">
+            <span class="mock-pill">Item</span>
+            <span class="mock-pill">Revision</span>
+            <span class="mock-pill">Date range</span>
+            <span class="mock-pill">Status</span>
+          </div>
+          <div class="mock-table" style="margin-top:4px;">
+            <div class="mt-head" style="grid-template-columns: 80px 1fr 70px 60px 60px;"><span>Order #</span><span>Description</span><span>Rel. date</span><span>Qty</span><span>Status</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 70px 60px 60px;"><span>0271926</span><span>INT GEAR, 2ND RED RING 87T</span><span>3/2/2024</span><span>4</span><span>this</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 70px 60px 60px;"><span>_______</span><span>___________________________</span><span>________</span><span>__</span><span>___</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 70px 60px 60px;"><span>_______</span><span>___________________________</span><span>________</span><span>__</span><span>___</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 3 · WO Header -->
+    <div class="step header">
+      <div class="step-head">
+        <div class="step-num">03</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Work order header</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">WORK_ORDER_MASTER</span> row for this shop order: order number, status, and the audit metadata (user who ran the report, PKI date). This is the parent record everything else hangs off.</div>
+        </div>
+        <div class="step-cluster">Header</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-wom"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 header</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li><code>order_no = 0271926</code></li>
+              <li><code>status = Closed</code></li>
+              <li>Report parameters: Operation Detail, Material Detail, Labor Ticket Costs</li>
+              <li>User <code>AALI</code> &middot; PKI date <code>5/17/2024</code></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Work Order Header (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Order #</span><span class="val">0271926</span></div>
+            <div class="mock-field"><span class="lbl">Status</span><span class="val">Closed</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">User ID</span><span class="val">AALI</span></div>
+            <div class="mock-field"><span class="lbl">PKI date</span><span class="val">5/17/2024</span></div>
+          </div>
+          <div class="mock-field"><span class="lbl">Report type</span><span class="val">Detail Report</span></div>
+          <div class="mock-row">
+            <span class="mock-pill">Operation Detail</span>
+            <span class="mock-pill">Material Detail</span>
+            <span class="mock-pill">Labor Ticket Costs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 4 · Schedule & Quantity -->
+    <div class="step header">
+      <div class="step-head">
+        <div class="step-num">04</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Schedule &amp; quantity</div>
+          <div class="step-desc">Release/due dates and the quantity lifecycle as stored on the work order: how many units were planned, received, deviated, and finalized. Shows the schedule and count snapshot at the time the report was run.</div>
+        </div>
+        <div class="step-cluster">Header</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-wom"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 schedule</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li>Released <code>3/2/2024</code> &middot; Due <code>4/15/2024</code></li>
+              <li>Quantity <code>4.000000</code></li>
+              <li>Qty Received <code>4.000000</code> &middot; Qty Deviated <code>0.000000</code> (<code>0.00%</code> dev)</li>
+              <li>Final Quantity <code>0.000000</code> (<code>0.00%</code> final)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Schedule &amp; Quantity (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Rel. date</span><span class="val">3/2/2024</span></div>
+            <div class="mock-field"><span class="lbl">Due date</span><span class="val">4/15/2024</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Quantity</span><span class="val">4.000000</span></div>
+            <div class="mock-field"><span class="lbl">Received</span><span class="val">4.000000</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Deviated</span><span class="val">0.000000</span></div>
+            <div class="mock-field"><span class="lbl">% Dev</span><span class="val">0.00</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Final qty</span><span class="val">0.000000</span></div>
+            <div class="mock-field"><span class="lbl">% Final</span><span class="val">0.00</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 5 · Performance snapshot -->
+    <div class="step header">
+      <div class="step-head">
+        <div class="step-num">05</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Performance snapshot</div>
+          <div class="step-desc">The headline performance summary ProfitKey prints at the top of every Work Order Performance report: cost variance (under/over), schedule variance (days early/late), and in-process estimate vs. actual.</div>
+        </div>
+        <div class="step-cluster">Header</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-wom"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 performance</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li>Cost: <code>21% Under</code> &middot; $<code>6,590.43</code> saved vs. lot estimate</li>
+              <li>Production Days: <code>On Time</code> (0)</li>
+              <li>Calendar Days: <code>On Time</code> (0)</li>
+              <li>In-Process Estimate <code>0.000000</code> &middot; In-Process Actual <code>0.000000</code></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Performance Snapshot (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Cost</span><span class="val">21% Under</span></div>
+            <div class="mock-field"><span class="lbl">$ Delta</span><span class="val">$6,590.43</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Prod. days</span><span class="val">On Time (0)</span></div>
+            <div class="mock-field"><span class="lbl">Cal. days</span><span class="val">On Time (0)</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">In-proc est.</span><span class="val">0.000000</span></div>
+            <div class="mock-field"><span class="lbl">In-proc act.</span><span class="val">0.000000</span></div>
+          </div>
+          <div class="mock-row">
+            <span class="mock-pill good">&#10003; On Time &middot; Under Cost</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 6 · Cost estimates (baseline) -->
+    <div class="step costs">
+      <div class="step-head">
+        <div class="step-num">06</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Cost baseline &mdash; estimates</div>
+          <div class="step-desc">The planned cost structure on this work order: <em>Job Estimate</em> (original cost when the order was released) and <em>Lot Estimate</em> (standard cost for this run quantity). Used as the yardstick every actual dollar is measured against.</div>
+        </div>
+        <div class="step-cluster">Costs</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-wom"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 estimates</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li>Labor: Job <code>$6,402.06</code> &middot; Lot <code>$5,460.52</code></li>
+              <li>Burden: Job <code>$30,677.38</code> &middot; Lot <code>$25,512.64</code></li>
+              <li>Setup: Job <code>$650.21</code> &middot; Lot <code>$404.45</code></li>
+              <li>Materials / By-Products / Fixtures / Tools / Onetime / Outside Services: all <code>$0.00</code></li>
+              <li><strong>Total:</strong> Job <code>$37,729.65</code> &middot; Lot <code>$31,377.61</code></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Cost Estimates (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 1fr 90px 90px;"><span>Category</span><span>Job Est.</span><span>Lot Est.</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px;"><span>Materials</span><span>0.00</span><span>0.00</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px;"><span>By-Products</span><span>0.00</span><span>0.00</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px;"><span>Fixtures</span><span>0.00</span><span>0.00</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px;"><span>Tools</span><span>0.00</span><span>0.00</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px;"><span>Labor</span><span>6,402.06</span><span>5,460.52</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px;"><span>Burden</span><span>30,677.38</span><span>25,512.64</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px;"><span>Setup</span><span>650.21</span><span>404.45</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px;"><span>Outside Svcs</span><span>0.00</span><span>0.00</span></div>
+            <div class="mt-row total" style="grid-template-columns: 1fr 90px 90px;"><span>Total Cost</span><span>37,729.65</span><span>31,377.61</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 7 · Cost actuals -->
+    <div class="step costs">
+      <div class="step-head">
+        <div class="step-num">07</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Cost actuals &mdash; to-date &amp; projected</div>
+          <div class="step-desc">The realized cost picture: <em>To Date</em> (what has actually hit the job), <em>Remaining</em> (what's still expected), and <em>Projected</em> (sum of to-date + remaining). Because this order is Closed, Remaining is zero and Projected equals To Date.</div>
+        </div>
+        <div class="step-cluster">Costs</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-wom"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 actuals</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li>Labor: To-Date <code>$4,415.54</code> &middot; Projected <code>$4,415.54</code></li>
+              <li>Burden: To-Date <code>$20,154.02</code> &middot; Projected <code>$20,154.02</code></li>
+              <li>Setup: To-Date <code>$217.62</code> &middot; Projected <code>$217.62</code></li>
+              <li>Remaining on every line: <code>$0.00</code> (order is Closed)</li>
+              <li><strong>Total:</strong> To-Date <code>$24,787.18</code> &middot; Projected <code>$24,787.18</code></li>
+              <li>Cost/Unit: <code>$6,196.80</code> (To-Date &amp; Projected)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Cost Actuals (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 1fr 80px 80px 80px;"><span>Category</span><span>To Date</span><span>Remaining</span><span>Projected</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px;"><span>Labor</span><span>4,415.54</span><span>0.00</span><span>4,415.54</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px;"><span>Burden</span><span>20,154.02</span><span>0.00</span><span>20,154.02</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px;"><span>Setup</span><span>217.62</span><span>0.00</span><span>217.62</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px;"><span>All others</span><span>0.00</span><span>0.00</span><span>0.00</span></div>
+            <div class="mt-row total" style="grid-template-columns: 1fr 80px 80px 80px;"><span>Total Cost</span><span>24,787.18</span><span>0.00</span><span>24,787.18</span></div>
+            <div class="mt-row total" style="grid-template-columns: 1fr 80px 80px 80px;"><span>Cost/Unit</span><span>6,196.80</span><span>0.00</span><span>6,196.80</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 8 · Margin & Sales -->
+    <div class="step costs">
+      <div class="step-head">
+        <div class="step-num">08</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Margin &amp; sales</div>
+          <div class="step-desc">Unit price, margin per unit, and margin percent at the Lot Estimate baseline versus the To-Date actuals. Shows how the real production cost landed against the price that was sold.</div>
+        </div>
+        <div class="step-cluster">Costs</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-wom"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 margin</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li>Sales/Unit: <code>$13,175.00</code> (ref <code>J 0060978 010</code>)</li>
+              <li>Margin/Unit: Lot <code>$5,330.60</code> &middot; To-Date <code>$6,978.20</code></li>
+              <li>Margin/Cost %: Lot <code>40.45%</code> &middot; To-Date <code>52.96%</code></li>
+              <li>Actuals beat the lot estimate by <code>$1,647.60</code>/unit &middot; <code>+12.51</code> pts of margin</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Margin &amp; Sales (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 1fr 90px 90px 90px;"><span>Metric</span><span>Lot Est.</span><span>To Date</span><span>Projected</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px 90px;"><span>Sales/Unit</span><span>13,175.00</span><span>13,175.00</span><span>13,175.00</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 90px 90px 90px;"><span>Cost/Unit</span><span>7,844.40</span><span>6,196.80</span><span>6,196.80</span></div>
+            <div class="mt-row total" style="grid-template-columns: 1fr 90px 90px 90px;"><span>Margin/Unit</span><span>5,330.60</span><span>6,978.20</span><span>6,978.20</span></div>
+            <div class="mt-row total" style="grid-template-columns: 1fr 90px 90px 90px;"><span>Margin %</span><span>40.45</span><span>52.96</span><span>52.96</span></div>
+          </div>
+          <span class="mock-pill good" style="align-self:flex-start;">&#10003; Ran better than plan &middot; +12.51 pts margin</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 9 · Hours summary -->
+    <div class="step hours">
+      <div class="step-head">
+        <div class="step-num">09</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Hours summary</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">JOB_HOURS_SUMMARY</span> roll-ups for this order: run hours, setup hours, and totals &mdash; compared against the lot estimate. This is the aggregated view that a quoter uses to validate routing hours against real production.</div>
+        </div>
+        <div class="step-cluster">Hours</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-jhs"></span>JOB_HOURS_SUMMARY <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 hours</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li>Run: Lot Est. <code>254.87</code> hrs &middot; To-Date <code>203.93</code> hrs</li>
+              <li>Setup: Lot Est. <code>18.50</code> hrs &middot; To-Date <code>10.23</code> hrs</li>
+              <li><strong>Total:</strong> Lot Est. <code>273.37</code> hrs &middot; To-Date <code>214.16</code> hrs</li>
+              <li>Delta: <code>&minus;59.21</code> hrs (<code>&minus;21.7%</code>) vs. lot estimate</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Hours Summary (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 1fr 80px 80px 80px 80px;"><span>Type</span><span>Lot Est.</span><span>To Date</span><span>Remaining</span><span>Projected</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px 80px;"><span>Run Hours</span><span>254.87</span><span>203.93</span><span>0.00</span><span>203.93</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px 80px;"><span>Setup Hours</span><span>18.50</span><span>10.23</span><span>0.00</span><span>10.23</span></div>
+            <div class="mt-row total" style="grid-template-columns: 1fr 80px 80px 80px 80px;"><span>Total Hours</span><span>273.37</span><span>214.16</span><span>0.00</span><span>214.16</span></div>
+          </div>
+          <span class="mock-pill good" style="align-self:flex-start;">&minus;59.21 hrs vs. plan (&minus;21.7%)</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 10 · Labor ticket drill-down -->
+    <div class="step hours">
+      <div class="step-head">
+        <div class="step-num">10</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Labor ticket drill-down</div>
+          <div class="step-desc">The grain-level <span style="font-family:'JetBrains Mono',monospace;">LABOR_TICKETS</span> that roll up into the totals above &mdash; every clock-in and clock-out, joined with <span style="font-family:'JetBrains Mono',monospace;">EMPLOYEE_MASTER</span> for names. Lets a reader see exactly who worked what, where, and for how long.</div>
+        </div>
+        <div class="step-cluster">Hours</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-lt"></span>LABOR_TICKETS <span class="op">read</span></span>
+            <span class="tbl-chip"><span class="dot dot-emp"></span>EMPLOYEE_MASTER <span class="op">join</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 tickets</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            Sums to the report totals: <code>203.93</code> run hrs + <code>10.23</code> setup hrs = <code>214.16</code> total. Individual ticket values below are illustrative; the shape mirrors what the ERD confirms exists in <code>LABOR_TICKETS</code>.
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Labor Tickets (read-only)</div>
+          <div class="mock-row">
+            <span class="mock-pill">Filter: employee</span>
+            <span class="mock-pill">Work center</span>
+            <span class="mock-pill">Op seq</span>
+            <span class="mock-pill">Date range</span>
+          </div>
+          <div class="mock-table" style="margin-top:4px;">
+            <div class="mt-head" style="grid-template-columns: 70px 1fr 70px 55px 70px 50px 50px;"><span>Ticket</span><span>Employee</span><span>WC</span><span>Op</span><span>Date</span><span>Hrs</span><span>Type</span></div>
+            <div class="mt-row"  style="grid-template-columns: 70px 1fr 70px 55px 70px 50px 50px;"><span>____</span><span>____________________</span><span>______</span><span>___</span><span>________</span><span>_____</span><span>Setup</span></div>
+            <div class="mt-row"  style="grid-template-columns: 70px 1fr 70px 55px 70px 50px 50px;"><span>____</span><span>____________________</span><span>______</span><span>___</span><span>________</span><span>_____</span><span>Run</span></div>
+            <div class="mt-row"  style="grid-template-columns: 70px 1fr 70px 55px 70px 50px 50px;"><span>____</span><span>____________________</span><span>______</span><span>___</span><span>________</span><span>_____</span><span>Run</span></div>
+            <div class="mt-row"  style="grid-template-columns: 70px 1fr 70px 55px 70px 50px 50px;"><span>____</span><span>____________________</span><span>______</span><span>___</span><span>________</span><span>_____</span><span>Run</span></div>
+            <div class="mt-row total" style="grid-template-columns: 70px 1fr 70px 55px 70px 50px 50px;"><span>Total</span><span>across all tickets</span><span>&mdash;</span><span>&mdash;</span><span>&mdash;</span><span>214.16</span><span>&mdash;</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /rail -->
+
+  <!-- Phase B preview banner -->
+  <div class="phase-b">
+    <span class="pb-label">Coming next &middot; Phase B</span>
+    <div class="pb-title">
+      Team-wide lookup across ProfitKey's work-order history
+      <span>search by item, customer, work center, date range &mdash; open any historical shop order in this same read-only viewer.</span>
+    </div>
+    <span class="pb-cta">Wireframe pending &rarr;</span>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Source: ProfitKey ERP &middot; Work Order Performance Detail Report &middot; SO 0271926 worked example</span>
+    <span><a href="ocg_index.html">&larr; Back to Index</a> &middot; <a href="profitkey_erd2.html">ProfitKey ERD</a> &middot; <a href="m1_quoter_workflow.html">M1 Viewer</a></span>
+  </div>
+
+</div><!-- /content -->
+
+</body>
+</html>

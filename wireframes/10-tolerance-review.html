@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tolerance Review · Overton Intake · Wireframes</title>
+<link rel="stylesheet" href="_shared/wireframe.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="brand-title">Overton Wireframes</span>
+      <span class="brand-sub">Foundation · Intake · Phases 1–2</span>
+    </div>
+
+    <div class="rail-section">Overview</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="index.html"><span class="rail-num">◇</span>Sitemap</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · User</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="1-login.html"><span class="rail-num">01</span>Login</a></li>
+      <li class="rail-item"><a href="2-search.html"><span class="rail-num">02</span>Search</a></li>
+      <li class="rail-item"><a href="3-unified-record.html"><span class="rail-num">03</span>Unified Record</a></li>
+      <li class="rail-item"><a href="4-m1-detail.html"><span class="rail-num">04</span>M1 Quote Detail</a></li>
+      <li class="rail-item"><a href="5-pk-detail.html"><span class="rail-num">05</span>ProfitKey WO Detail</a></li>
+      <li class="rail-item"><a href="6-reconcile.html"><span class="rail-num">06</span>Reconciliation</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · Admin</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="7-pipeline-health.html"><span class="rail-num">07</span>Pipeline Health</a></li>
+      <li class="rail-item"><a href="8-mapping-reference.html"><span class="rail-num">08</span>Mapping Reference</a></li>
+    </ul>
+
+    <div class="rail-section">Intake</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="9-intake.html"><span class="rail-num">09</span>Quote Intake</a></li>
+      <li class="rail-item current"><a href="10-tolerance-review.html"><span class="rail-num">10</span>Tolerance Review</a></li>
+    </ul>
+
+    <div class="rail-foot">
+      <a href="../ocg_index.html">↩ OCG Review hub</a>
+      <span>v0.1 · 2026-04-16</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="crumb">
+      <span>Wireframes</span>
+      <span class="sep">/</span>
+      <span>Phase 2 · Intake</span>
+      <span class="sep">/</span>
+      <a href="9-intake.html">Quote Intake · LHMS0808</a>
+      <span class="sep">/</span>
+      <span class="here">Tolerance Review</span>
+    </div>
+
+    <div class="screen-head">
+      <div>
+        <h1 class="screen-title">Tolerance Review</h1>
+        <p class="screen-sub">Estimator sign-off on AI-flagged precision specs. Each flag must be approved as extracted, overridden with an estimator value, or sent back to AI with a note before the draft can hand off to M1.</p>
+      </div>
+      <div class="screen-meta">
+        Screen 10 of 10<br>
+        Overton Intake · Phase 2<br>
+        3 flags · 0 resolved
+      </div>
+    </div>
+
+    <div class="intro-strip">
+      <span class="wf-tag warn dot">3 flags found</span>
+      <span><strong>Parent intake:</strong> <a href="9-intake.html"><code class="mono">LHMS0808</code></a> · Quote <code class="mono">40951-14 · Rev-1</code> · L &amp; H Industrial · Est. Ansaar Ali</span>
+      <div class="spacer"></div>
+      <span class="wf-tag dashed">M1 handoff blocked</span>
+    </div>
+
+    <!-- ═══ Cluster A — Flags summary ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>A · Flags summary</h2>
+        <span class="aside">thresholds per <code class="mono">intake.tolerance_rules</code></span>
+      </div>
+
+      <div class="grid-3">
+        <div class="wf-stat">
+          <span class="wf-label">Flagged specs</span>
+          <div class="value">3<span class="unit">open</span></div>
+          <div class="delta">2 High · 1 Medium · 0 resolved</div>
+        </div>
+        <div class="wf-stat">
+          <span class="wf-label">Missing source</span>
+          <div class="value">1<span class="unit">field</span></div>
+          <div class="delta">induction case depth · not present on drawing B0007221</div>
+        </div>
+        <div class="wf-stat accent">
+          <span class="wf-label">Need estimator confirm</span>
+          <div class="value">2<span class="unit">fields</span></div>
+          <div class="delta">AGMA class cross-ref · backlash vs. runout tolerance</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Cluster B — Flagged specs ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>B · Flagged specs</h2>
+        <span class="aside">3 cards · resolve each before M1 handoff</span>
+      </div>
+
+      <div class="stack" style="gap:18px;">
+
+        <!-- Flag 1 — Induction case depth (HIGH · missing source) -->
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Flag 1 · Induction case depth</span>
+            <span class="row" style="gap:6px;">
+              <span class="wf-tag warn dot">High</span>
+              <span class="wf-tag dashed">missing source</span>
+              <span class="muted mono">confidence 0.12</span>
+            </span>
+          </div>
+
+          <div class="grid-2" style="gap:20px; align-items:stretch;">
+            <!-- Drawing region thumb -->
+            <div>
+              <span class="wf-label">Drawing reference</span>
+              <div class="wf-image" style="height:180px;">
+                <span class="region-chip" style="top:14px; left:14px;">DR table · heat treat</span>
+                <span class="wf-image-label">B0007221 · p.2 · no case-depth note</span>
+              </div>
+              <div class="muted mono" style="font-size:11px; margin-top:8px;">AI scanned 4 regions; no case-depth spec detected in any heat-treat table.</div>
+            </div>
+
+            <!-- Extracted / expected / note -->
+            <div>
+              <div class="wf-kv">
+                <span class="k">Extracted value</span>
+                <span class="v muted">— not present on drawing</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Expected (per class)</span>
+                <span class="v mono">0.040″ – 0.080″ effective (AGMA 2004-C08 typical)</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Tolerance class</span>
+                <span class="v">Dimensional · heat-treat</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Why flagged</span>
+                <span class="v">Induction hardening requires an explicit case-depth spec. Without it, downstream labor &amp; quality estimate are unreliable.</span>
+              </div>
+
+              <span class="wf-label" style="margin-top:14px;">Estimator note</span>
+              <div class="wf-block dashed" style="min-height:72px; padding:10px 12px; font-family:var(--mono); font-size:12px; color:var(--text-3);">
+                Pending — request case-depth from L &amp; H before pricing firm.
+              </div>
+
+              <div class="row" style="margin-top:12px; gap:8px; flex-wrap:wrap;">
+                <span class="wf-tag dashed">approve as extracted</span>
+                <span class="wf-tag dashed">override with value</span>
+                <span class="wf-tag dashed">send back to AI</span>
+                <div class="spacer"></div>
+                <span class="muted mono" style="font-size:11px;">sign-off · pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flag 2 — AGMA quality class (HIGH · estimator confirm) -->
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Flag 2 · AGMA quality class</span>
+            <span class="row" style="gap:6px;">
+              <span class="wf-tag warn dot">High</span>
+              <span class="wf-tag">estimator confirm</span>
+              <span class="muted mono">confidence 0.34</span>
+            </span>
+          </div>
+
+          <div class="grid-2" style="gap:20px; align-items:stretch;">
+            <div>
+              <span class="wf-label">Drawing reference</span>
+              <div class="wf-image" style="height:180px;">
+                <span class="region-chip" style="top:14px; left:14px;">DR table · tolerances</span>
+                <span class="region-chip" style="bottom:14px; right:14px;">DR · title-block</span>
+                <span class="wf-image-label">B0007221 · p.4 · AGMA class not stated</span>
+              </div>
+              <div class="muted mono" style="font-size:11px; margin-top:8px;">AI could not confirm AGMA quality class from drawing, title block, or notes.</div>
+            </div>
+
+            <div>
+              <div class="wf-kv">
+                <span class="k">Extracted value</span>
+                <span class="v muted">— not stated on drawing</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Inferred (per tolerances)</span>
+                <span class="v mono">AGMA 10 (based on 0.015″–0.023″ backlash · 0.003″ runout)</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Tolerance class</span>
+                <span class="v">Gear quality · geometric</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Why flagged</span>
+                <span class="v">Inferred class sets downstream operations (finish turn vs. grind). Drive-class confirmation from estimator is mandatory before M1 handoff.</span>
+              </div>
+
+              <span class="wf-label" style="margin-top:14px;">Estimator note</span>
+              <div class="wf-block dashed" style="min-height:72px; padding:10px 12px; font-family:var(--mono); font-size:12px; color:var(--text-3);">
+                AGMA 10 consistent with historical L &amp; H parts — confirm with Codi and lock.
+              </div>
+
+              <div class="row" style="margin-top:12px; gap:8px; flex-wrap:wrap;">
+                <span class="wf-tag dashed">approve as extracted</span>
+                <span class="wf-tag dashed">override with value</span>
+                <span class="wf-tag dashed">send back to AI</span>
+                <div class="spacer"></div>
+                <span class="muted mono" style="font-size:11px;">sign-off · pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flag 3 — Backlash with mate / runout (MED · estimator confirm) -->
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Flag 3 · Backlash 0.015″–0.023″ · runout 0.003″</span>
+            <span class="row" style="gap:6px;">
+              <span class="wf-tag warn">Medium</span>
+              <span class="wf-tag">estimator confirm</span>
+              <span class="muted mono">confidence 0.74</span>
+            </span>
+          </div>
+
+          <div class="grid-2" style="gap:20px; align-items:stretch;">
+            <div>
+              <span class="wf-label">Drawing reference</span>
+              <div class="wf-image" style="height:180px;">
+                <span class="region-chip" style="top:14px; left:14px;">DR table · tolerances</span>
+                <span class="wf-image-label">B0007221 · p.4 · tolerance table</span>
+              </div>
+              <div class="muted mono" style="font-size:11px; margin-top:8px;">Values extracted cleanly from tolerance table; flag is on cross-reference between backlash and runout specs post-grind.</div>
+            </div>
+
+            <div>
+              <div class="wf-kv">
+                <span class="k">Extracted — backlash with mate</span>
+                <span class="v mono">0.015″ – 0.023″</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Extracted — runout tolerance</span>
+                <span class="v mono">0.003″</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Tolerance class</span>
+                <span class="v">Geometric · inspection</span>
+              </div>
+              <div class="wf-kv">
+                <span class="k">Why flagged</span>
+                <span class="v">Span-over-teeth measurement should be re-checked <em>after</em> grind. AI noted the cross-reference but cannot verify the inspection plan accommodates it.</span>
+              </div>
+
+              <span class="wf-label" style="margin-top:14px;">Estimator note</span>
+              <div class="wf-block dashed" style="min-height:72px; padding:10px 12px; font-family:var(--mono); font-size:12px; color:var(--text-3);">
+                Add post-grind span-over-teeth check to routing inspection plan.
+              </div>
+
+              <div class="row" style="margin-top:12px; gap:8px; flex-wrap:wrap;">
+                <span class="wf-tag dashed">approve as extracted</span>
+                <span class="wf-tag dashed">override with value</span>
+                <span class="wf-tag dashed">send back to AI</span>
+                <div class="spacer"></div>
+                <span class="muted mono" style="font-size:11px;">sign-off · pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ Cluster C — Cross-reference ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>C · Cross-reference · prior similar parts</h2>
+        <span class="aside">pulled from Overton Foundation · AGMA 9–11 · induction-hardened gears</span>
+      </div>
+
+      <table class="wf-table">
+        <thead>
+          <tr>
+            <th>Quote ID</th>
+            <th>Customer</th>
+            <th>Part</th>
+            <th>AGMA class</th>
+            <th>Case depth</th>
+            <th>Outcome</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono"><a href="3-unified-record.html">Q1671</a></td>
+            <td>CUST 64225</td>
+            <td class="mono">51812 · Piping kit</td>
+            <td>AGMA 9</td>
+            <td class="mono">0.050″ eff.</td>
+            <td><span class="wf-tag ok dot">actual under estimate</span></td>
+          </tr>
+          <tr>
+            <td class="mono">Q9114</td>
+            <td>L &amp; H Industrial</td>
+            <td class="mono">6331288 · 28T spur</td>
+            <td>AGMA 10</td>
+            <td class="mono">0.060″ eff.</td>
+            <td><span class="wf-tag ok dot">closed · margin +9.2pts</span></td>
+          </tr>
+          <tr>
+            <td class="mono">Q11402</td>
+            <td>L &amp; H Industrial</td>
+            <td class="mono">6331402 · 36T helical</td>
+            <td>AGMA 10</td>
+            <td class="mono">0.072″ eff.</td>
+            <td><span class="wf-tag warn dot">runout rework</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="muted mono" style="font-size:11px; margin-top:10px;">3 of 14 comparable parts shown · full cross-reference available in Overton Foundation Mapping Reference.</div>
+    </div>
+
+    <!-- ═══ Cluster D — Sign-off ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>D · Sign-off</h2>
+        <span class="aside">all 3 flags must resolve before M1 handoff</span>
+      </div>
+
+      <div class="grid-3">
+        <div class="wf-block dashed" style="padding:22px; text-align:center; min-height:130px; display:flex; flex-direction:column; justify-content:center; gap:8px;">
+          <span class="wf-label" style="margin-bottom:4px;">Option A</span>
+          <div style="font-weight:600; color:var(--ink); font-size:14px;">Approve as extracted</div>
+          <div class="muted mono" style="font-size:11px;">accept AI values; move to M1 handoff</div>
+        </div>
+        <div class="wf-block dashed" style="padding:22px; text-align:center; min-height:130px; display:flex; flex-direction:column; justify-content:center; gap:8px;">
+          <span class="wf-label" style="margin-bottom:4px;">Option B</span>
+          <div style="font-weight:600; color:var(--ink); font-size:14px;">Override with estimator value</div>
+          <div class="muted mono" style="font-size:11px;">replace the flagged field; log reason</div>
+        </div>
+        <div class="wf-block dashed" style="padding:22px; text-align:center; min-height:130px; display:flex; flex-direction:column; justify-content:center; gap:8px;">
+          <span class="wf-label" style="margin-bottom:4px;">Option C</span>
+          <div style="font-weight:600; color:var(--ink); font-size:14px;">Send back to AI with note</div>
+          <div class="muted mono" style="font-size:11px;">re-run extraction scoped to region; estimator adds context</div>
+        </div>
+      </div>
+
+      <div class="row between" style="margin-top:22px; gap:14px; flex-wrap:wrap;">
+        <span class="muted" style="font-size:12.5px; max-width:60ch;">
+          Resolution state persists on the draft. When all flags are resolved, the draft unlocks for M1 handoff and the intake record is marked <code class="mono">ready_for_m1</code>. History of each sign-off is retained on the intake audit trail.
+        </span>
+        <div class="row" style="gap:8px;">
+          <a href="9-intake.html" class="wf-btn ghost">← Back to intake</a>
+          <span class="wf-tag dashed">Hand off to M1 · 0 of 3 resolved</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-foot">
+      <span>Screen 10 · Tolerance Review · Overton Intake</span>
+      <span><a href="9-intake.html">← Quote Intake</a> &nbsp;·&nbsp; <a href="index.html">Sitemap →</a></span>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overton Chicago Gear · Data Systems Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS ── */
+:root {
+  --bg:         #f4f6f8;
+  --surface:    #ffffff;
+  --border:     #dde3ea;
+  --text-1:     #1e2a38;
+  --text-2:     #64748b;
+  --ocg-dark:   #313131;
+  --ocg-blue:   #1890d7;
+  --ocg-teal:   #899fac;
+  --ocg-teal-dk:#4a6278;
+  --tier1-accent: #1890d7;
+  --tier2-accent: #313131;
+  --tier3-accent: #4a6278;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: 'Poppins', 'Segoe UI', sans-serif; color: var(--text-1); min-height: 100vh; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--ocg-dark); color: #fff;
+  padding: 22px 40px 18px;
+  display: flex; align-items: center; gap: 20px;
+  border-bottom: 3px solid var(--ocg-blue);
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.header-logo svg { width: 34px; height: 34px; fill: var(--ocg-blue); flex-shrink: 0; }
+.logo-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: #c8d6e0; line-height: 1.15; }
+.logo-wordmark span { display: block; font-size: 9.5px; font-weight: 400; color: rgba(255,255,255,.38); letter-spacing: .4px; text-transform: none; margin-top: 2px; }
+.header-titles { flex: 1; padding-left: 4px; }
+.header-titles h1 { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+.header-titles p { font-size: 12px; color: var(--ocg-teal); margin-top: 3px; font-weight: 400; }
+.header-badges { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: .3px; white-space: nowrap; }
+.badge-blue  { background: rgba(24,144,215,.14); color: #56b4e8; border: 1px solid rgba(24,144,215,.28); }
+.badge-teal  { background: rgba(137,159,172,.14); color: #adc4d3; border: 1px solid rgba(137,159,172,.28); }
+.badge-green { background: rgba(45,90,79,.28);  color: #6ec8b4; border: 1px solid rgba(45,90,79,.48); }
+.badge-amber { background: rgba(180,120,0,.2);  color: #f5c842; border: 1px solid rgba(180,120,0,.3); }
+
+/* ── CONTENT ── */
+.content { max-width: 1280px; margin: 0 auto; padding: 28px 32px 56px; }
+
+/* ── STATS BAR ── */
+.stats { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px; }
+.stat-card { flex: 1; min-width: 130px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,.04); }
+.stat-num { font-size: 26px; font-weight: 700; color: var(--ocg-blue); letter-spacing: -.5px; }
+.stat-lbl { font-size: 10.5px; color: var(--text-2); margin-top: 4px; text-transform: uppercase; letter-spacing: .7px; font-weight: 500; }
+
+/* ── PHASE STRIP ── */
+.phase-strip {
+  display: flex; align-items: stretch;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 28px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.phase {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 14px 12px;
+  border-right: 1px solid var(--border);
+  position: relative; gap: 5px;
+  transition: background .15s;
+}
+.phase:last-child { border-right: none; }
+.phase:hover { background: #f8fafc; }
+.phase-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--border); color: var(--text-2);
+  font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  letter-spacing: .2px; flex-shrink: 0;
+}
+.phase-title { font-size: 11.5px; font-weight: 700; color: var(--text-1); letter-spacing: .4px; text-transform: uppercase; }
+.phase-sub { font-size: 10px; color: var(--text-2); text-align: center; line-height: 1.4; font-style: italic; }
+.phase.active .phase-num { background: var(--ocg-blue); color: #fff; }
+.phase.active .phase-title { color: var(--ocg-blue); }
+.phase::after {
+  content: '›';
+  position: absolute; right: -10px; top: 50%; transform: translateY(-50%);
+  font-size: 18px; color: var(--text-2); z-index: 1; font-weight: 300; line-height: 1;
+}
+.phase:last-child::after { display: none; }
+
+/* ── TIER LAYOUT ── */
+.tier { margin-bottom: 6px; }
+.tier-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 12px;
+}
+.tier-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .8px;
+  text-transform: uppercase;
+  padding: 5px 14px; border-radius: 20px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.tier-badge.cloud   { background: rgba(24,144,215,.1); color: #1573aa; border: 1px solid rgba(24,144,215,.22); }
+.tier-badge.hub     { background: rgba(49,49,49,.08);  color: #313131;  border: 1px solid rgba(49,49,49,.18); }
+.tier-badge.onprem  { background: rgba(74,98,120,.1);  color: #3d5468;  border: 1px solid rgba(74,98,120,.22); }
+.tier-rule { flex: 1; height: 1px; background: var(--border); }
+
+.tier-cards {
+  display: flex; gap: 18px; flex-wrap: wrap;
+}
+.tier.hub-tier .tier-cards { justify-content: center; }
+
+/* ── TIER DIVIDER ── */
+.tier-divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 18px 0;
+}
+.divider-line { flex: 1; height: 0; border-top: 1.5px dashed var(--border); }
+.divider-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 10.5px; font-weight: 600; letter-spacing: .5px;
+  color: var(--text-2);
+  padding: 5px 14px; border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  white-space: nowrap;
+}
+.divider-label svg { width: 13px; height: 13px; flex-shrink: 0; }
+.divider-label.blue { color: var(--ocg-blue); border-color: rgba(24,144,215,.28); background: rgba(24,144,215,.05); }
+.divider-label.teal { color: var(--ocg-teal-dk); border-color: rgba(74,98,120,.28); background: rgba(74,98,120,.05); }
+
+/* ── SYSTEM CARDS ── */
+.sys-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  width: 300px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  transition: box-shadow .2s, border-color .2s, transform .15s;
+  display: flex; flex-direction: column;
+}
+.sys-card:hover {
+  box-shadow: 0 6px 24px rgba(24,144,215,.16);
+  border-color: rgba(24,144,215,.4);
+  transform: translateY(-2px);
+  z-index: 2;
+}
+.sys-card.hub-card { width: 480px; }
+.sys-card.wide-card { width: 260px; }
+
+/* top accent bar */
+.sys-card.t1 { border-top: 4px solid var(--tier1-accent); }
+.sys-card.t2 { border-top: 4px solid var(--tier2-accent); }
+.sys-card.t3 { border-top: 4px solid var(--tier3-accent); }
+
+.sys-logo-area {
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #f1f4f7;
+  min-height: 62px;
+}
+.sys-logo {
+  max-height: 30px; max-width: 120px;
+  object-fit: contain; object-position: left center;
+}
+.sys-logo-fallback {
+  font-size: 13px; font-weight: 800; color: #414042;
+  letter-spacing: -.5px; line-height: 1;
+}
+.sys-logo-fallback .sub { font-size: 9px; font-weight: 500; color: #4a5568; display: block; margin-top: 2px; letter-spacing: .3px; }
+.sys-type-pill {
+  font-size: 9px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 12px; white-space: nowrap; flex-shrink: 0;
+}
+.pill-cloud  { background: rgba(24,144,215,.1);  color: #1573aa; border: 1px solid rgba(24,144,215,.22); }
+.pill-new    { background: rgba(45,90,79,.15);   color: #256244; border: 1px solid rgba(45,90,79,.3); }
+.pill-ai     { background: rgba(137,159,172,.15); color: #4a6278; border: 1px solid rgba(137,159,172,.3); }
+.pill-hub    { background: rgba(49,49,49,.1);    color: #313131; border: 1px solid rgba(49,49,49,.2); }
+.pill-erp    { background: rgba(74,98,120,.1);   color: #3d5468; border: 1px solid rgba(74,98,120,.22); }
+.pill-etl    { background: rgba(61,79,98,.1);    color: #3d4f62; border: 1px solid rgba(61,79,98,.22); }
+
+.sys-body { padding: 12px 16px 14px; flex: 1; }
+.sys-name { font-size: 14px; font-weight: 700; color: var(--text-1); letter-spacing: .1px; line-height: 1.2; margin-bottom: 3px; }
+.sys-role { font-size: 10.5px; color: var(--text-2); font-style: italic; line-height: 1.45; margin-bottom: 10px; }
+.sys-caps { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+.sys-caps li {
+  font-size: 11px; font-weight: 500; color: var(--text-1);
+  padding-left: 14px; line-height: 1.4; position: relative;
+}
+.sys-caps li::before {
+  content: '';
+  position: absolute; left: 2px; top: 5px;
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--border);
+}
+.sys-card.t1 .sys-caps li::before { background: rgba(24,144,215,.4); }
+.sys-card.t2 .sys-caps li::before { background: rgba(49,49,49,.35); }
+.sys-card.t3 .sys-caps li::before { background: rgba(74,98,120,.4); }
+
+/* ── NEW FEATURE & WARNING BULLET INDICATORS ── */
+.sys-caps li.cap-new { position: relative; }
+.sys-caps li.cap-new::after {
+  content: 'NEW';
+  display: inline-block;
+  font-size: 8px; font-weight: 700; letter-spacing: .4px;
+  background: rgba(45,90,79,.12); color: #256244;
+  border: 1px solid rgba(45,90,79,.28);
+  border-radius: 8px; padding: 1px 6px;
+  margin-left: 7px; vertical-align: middle;
+  text-transform: uppercase;
+}
+.sys-caps li.cap-warn::before { background: #f59e0b !important; }
+.sys-caps li.cap-warn { color: #92400e; }
+
+/* ── OUTCOME CALLOUT ── */
+.outcome-strip {
+  display: flex; gap: 18px; flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.outcome-tile {
+  flex: 1; min-width: 260px;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-top: 4px solid var(--ocg-blue);
+  border-radius: 0 0 10px 10px;
+  padding: 18px 22px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+.outcome-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .8px;
+  text-transform: uppercase; color: var(--text-2); margin-bottom: 10px;
+}
+.outcome-before-after {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 10px;
+}
+.outcome-before {
+  font-size: 13px; font-weight: 500; color: #4a5568;
+  text-decoration: line-through; text-decoration-color: #cbd5e1;
+}
+.outcome-arrow { font-size: 14px; color: var(--ocg-blue); font-weight: 700; flex-shrink: 0; }
+.outcome-after { font-size: 20px; font-weight: 700; color: var(--ocg-blue); letter-spacing: -.5px; }
+.outcome-desc { font-size: 11px; color: var(--text-2); line-height: 1.5; }
+
+/* ── HOW IT WORKS ── */
+.how-it-works {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 4px solid var(--ocg-blue); border-radius: 0 8px 8px 0;
+  padding: 20px 24px; margin-bottom: 28px; font-size: 13px; line-height: 1.65;
+}
+.how-it-works h3 { font-size: 14px; font-weight: 700; color: var(--ocg-blue); margin-bottom: 10px; }
+.how-it-works p { color: var(--text-1); margin-bottom: 8px; }
+.how-it-works p:last-of-type { margin-bottom: 0; }
+.how-it-works em { color: var(--ocg-blue); font-style: normal; font-weight: 600; }
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border); padding-top: 16px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+
+/* ── PRINT ── */
+@media print {
+  .page-header { padding: 14px 24px; }
+  .tier-divider { margin: 10px 0; }
+  .sys-card { break-inside: avoid; box-shadow: 0 0 0 1px var(--border) !important; transform: none !important; }
+  .tier-cards { flex-wrap: wrap !important; }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+    <div class="logo-wordmark">
+      Overton Chicago Gear
+      <span>Precision Gear Manufacturer &middot; Est. 1888</span>
+    </div>
+  </div>
+  <div class="header-titles">
+    <h1>Data Systems Overview</h1>
+    <p>How our systems connect &mdash; from customer drawing to profitability insight</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">3 Source Systems</span>
+    <span class="badge badge-green">1 Staging Database</span>
+    <span class="badge badge-teal">Cloud + On-Prem</span>
+    <span class="badge badge-amber">Zero Trust Access</span>
+  </div>
+</header>
+
+<div class="content">
+
+  <!-- Phase Strip -->
+  <div class="phase-strip">
+    <div class="phase active">
+      <div class="phase-num">1</div>
+      <div class="phase-title">Inquiry</div>
+      <div class="phase-sub">Customer submits drawing</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-num">2</div>
+      <div class="phase-title">Quoting</div>
+      <div class="phase-sub">Estimate, source materials &amp; flag tolerances</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-num">3</div>
+      <div class="phase-title">Production</div>
+      <div class="phase-sub">Shop floor clocks hours</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-num">4</div>
+      <div class="phase-title">Invoicing</div>
+      <div class="phase-sub">ProfitKey generates invoice</div>
+    </div>
+    <div class="phase active">
+      <div class="phase-num">5</div>
+      <div class="phase-title">Analysis</div>
+      <div class="phase-sub">Dashboard closes the loop</div>
+    </div>
+  </div>
+
+  <!-- ── TIER 1: Cloud & External ── -->
+  <div class="tier">
+    <div class="tier-header">
+      <span class="tier-badge cloud">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+        Cloud &amp; External
+      </span>
+      <div class="tier-rule"></div>
+    </div>
+    <div class="tier-cards">
+
+      <!-- Pipedrive CRM -->
+      <div class="sys-card t1">
+        <div class="sys-logo-area">
+          <img
+            src="https://www-cms.pipedriveassets.com/Generic_logo.png"
+            alt="Pipedrive"
+            class="sys-logo"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+          <div class="sys-logo-fallback" style="display:none;">
+            Pipedrive
+            <span class="sub">CRM Platform</span>
+          </div>
+          <span class="sys-type-pill pill-cloud">Cloud CRM</span>
+        </div>
+        <div class="sys-body">
+          <div class="sys-name">Pipedrive CRM</div>
+          <div class="sys-role">Tracks every sales deal from first contact to closed order</div>
+          <ul class="sys-caps">
+            <li>Deals, contacts, and pipeline stages in one place</li>
+            <li>Each deal links to its M1 quote and ProfitKey work order</li>
+            <li>Sales team manages the funnel without touching the ERP</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Web Quoting Application (new) -->
+      <div class="sys-card t1">
+        <div class="sys-logo-area">
+          <div class="sys-logo-fallback" style="display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" fill="#1890d7" style="width:26px;height:26px;flex-shrink:0;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            <span>Web Quoting App<span class="sub" style="color:#4a5568;">Overton · New System</span></span>
+          </div>
+          <span class="sys-type-pill pill-new">New · Secure Web</span>
+        </div>
+        <div class="sys-body">
+          <div class="sys-name">Web Quoting Application</div>
+          <div class="sys-role">Browser-based portal where estimators build quotes from anywhere</div>
+          <ul class="sys-caps">
+            <li>Log in from the office, home, or on the road</li>
+            <li>AI pre-fills gear specs directly from the customer drawing</li>
+            <li>Shows ProfitKey actuals alongside the current estimate</li>
+            <li class="cap-new">Request For Materials (RFM) — submit steel &amp; metal quote requests to suppliers without leaving the quoting flow</li>
+            <li class="cap-warn">Tolerance alerts surface when AI detects high-precision specs — estimator is prompted before finalizing price</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Gear Drawings -->
+      <div class="sys-card t1">
+        <div class="sys-logo-area">
+          <div class="sys-logo-fallback" style="display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" fill="#4a6278" style="width:26px;height:26px;flex-shrink:0;"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 9h-2V5h2v6zm0 4h-2v-2h2v2z"/></svg>
+            <span>Gear Drawings<span class="sub">AI Vision &amp; Extraction</span></span>
+          </div>
+          <span class="sys-type-pill pill-ai">AI Vision</span>
+        </div>
+        <div class="sys-body">
+          <div class="sys-name">Gear Drawings</div>
+          <div class="sys-role">AI reads customer gear drawings to extract specs and flag critical tolerances</div>
+          <ul class="sys-caps">
+            <li>Reads uploaded PDF or image drawings</li>
+            <li>Identifies teeth count, material grade, and dimensions</li>
+            <li>Returns structured data directly to the quoting form</li>
+            <li class="cap-warn">Flags tight-tolerance specs (e.g. ±0.0005&Prime;) — signals specialized machining required</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Tier Divider: Firewall -->
+  <div class="tier-divider">
+    <div class="divider-line"></div>
+    <div class="divider-label blue">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+      Zero Trust API Gateway &nbsp;&middot;&nbsp; Firewall Boundary
+    </div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- ── TIER 2: Central Hub ── -->
+  <div class="tier hub-tier">
+    <div class="tier-header">
+      <span class="tier-badge hub">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;"><path d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.5 6 2s-2.13 2-6 2-6-1.5-6-2 2.13-2 6-2z"/></svg>
+        Central Hub &nbsp;&middot;&nbsp; On-Premise
+      </span>
+      <div class="tier-rule"></div>
+    </div>
+    <div class="tier-cards">
+
+      <!-- Staging Database -->
+      <div class="sys-card t2 hub-card">
+        <div class="sys-logo-area">
+          <div class="sys-logo-fallback" style="display:flex; align-items:center; gap:10px;">
+            <svg viewBox="0 0 24 24" fill="#313131" style="width:28px;height:28px;flex-shrink:0;"><path d="M12 3C7.58 3 4 4.79 4 7v10c0 2.21 3.58 4 8 4s8-1.79 8-4V7c0-2.21-3.58-4-8-4zm0 2c3.87 0 6 1.5 6 2s-2.13 2-6 2-6-1.5-6-2 2.13-2 6-2zm6 5.45c-1.26.8-3.44 1.3-6 1.3s-4.74-.5-6-1.3V11c0 .5 2.13 2 6 2s6-1.5 6-2v-1.55zm0 4c-1.26.8-3.44 1.3-6 1.3s-4.74-.5-6-1.3V15c0 .5 2.13 2 6 2s6-1.5 6-2v-1.55z"/></svg>
+            <span style="font-size:15px; font-weight:800; color:#313131; letter-spacing:-.3px;">
+              Centralized Staging Database
+              <span class="sub" style="font-size:10px; font-weight:500; color:#4a5568; display:block; margin-top:2px;">Locked-down Local SQL Server</span>
+            </span>
+          </div>
+          <span class="sys-type-pill pill-hub">Single Source of Truth</span>
+        </div>
+        <div class="sys-body" style="display:flex; gap:24px;">
+          <div style="flex:1;">
+            <div class="sys-name">Centralized Staging Database</div>
+            <div class="sys-role">The linchpin connecting all three systems under one roof</div>
+            <ul class="sys-caps">
+              <li>Mapped IDs tie every Deal &rarr; Quote &rarr; Work Order together</li>
+              <li>Feeds the quoting app and the feedback dashboard</li>
+              <li>Read-only extract &mdash; production systems are never touched</li>
+            </ul>
+          </div>
+          <div style="flex:1;">
+            <div class="sys-name" style="color:var(--text-2); font-weight:600;">What gets linked</div>
+            <div class="sys-role">Three systems, one unified record</div>
+            <ul class="sys-caps">
+              <li>Pipedrive Deal ID &harr; M1 Quote ID</li>
+              <li>M1 Quote ID &harr; ProfitKey Work Order No.</li>
+              <li>Estimated hours (qmo) &harr; Actual hours (labor tickets)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Tier Divider: ETL -->
+  <div class="tier-divider">
+    <div class="divider-line"></div>
+    <div class="divider-label teal">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/></svg>
+      Nightly ETL &nbsp;&middot;&nbsp; Read-Only Extract &nbsp;&middot;&nbsp; No Production Impact
+    </div>
+    <div class="divider-line"></div>
+  </div>
+
+  <!-- ── TIER 3: On-Premise ── -->
+  <div class="tier">
+    <div class="tier-header">
+      <span class="tier-badge onprem">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+        On-Premise Systems
+      </span>
+      <div class="tier-rule"></div>
+    </div>
+    <div class="tier-cards">
+
+      <!-- M1 ERP -->
+      <div class="sys-card t3">
+        <div class="sys-logo-area">
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <img
+              src="https://melted-magpie.transforms.svdcdn.com/production/images/ECI-Software-logo-md.png"
+              alt="ECI Software"
+              class="sys-logo"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <div class="sys-logo-fallback" style="display:none;">ECI Software</div>
+            <div style="font-size:9px; font-weight:700; color:#4a5568; text-transform:uppercase; letter-spacing:.5px;">Software: M1 ERP</div>
+          </div>
+          <span class="sys-type-pill pill-erp">On-Prem ERP</span>
+        </div>
+        <div class="sys-body">
+          <div class="sys-name">M1 ERP</div>
+          <div class="sys-role">Quoting and engineering record — 25+ years of estimated labor routings and material standards</div>
+          <ul class="sys-caps">
+            <li>42,000+ historical quotes dating back to 1999</li>
+            <li>Estimated labor routings and raw material standards</li>
+            <li>Source for the quoting app&rsquo;s comparison baseline</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Data Pipelines -->
+      <div class="sys-card t3 wide-card">
+        <div class="sys-logo-area">
+          <div class="sys-logo-fallback" style="display:flex; align-items:center; gap:8px;">
+            <svg viewBox="0 0 24 24" fill="#3d4f62" style="width:26px;height:26px;flex-shrink:0;"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+            <span>Data Pipelines<span class="sub">Nightly Automation</span></span>
+          </div>
+          <span class="sys-type-pill pill-etl">ETL</span>
+        </div>
+        <div class="sys-body">
+          <div class="sys-name">Automated Data Pipelines</div>
+          <div class="sys-role">Scheduled jobs that move data nightly — no manual exports, no rekeying</div>
+          <ul class="sys-caps">
+            <li>Runs overnight, completely automated</li>
+            <li>Replicates qmo, qml, and labor tickets</li>
+            <li>Read-only — production is never touched</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ProfitKey ERP -->
+      <div class="sys-card t3">
+        <div class="sys-logo-area">
+          <div style="display:flex; flex-direction:column; gap:3px;">
+            <img
+              src="https://melted-magpie.transforms.svdcdn.com/production/images/ECI-Software-logo-md.png"
+              alt="ECI Software"
+              class="sys-logo"
+              onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+            <div class="sys-logo-fallback" style="display:none;">ECI Software</div>
+            <div style="font-size:9px; font-weight:700; color:#4a5568; text-transform:uppercase; letter-spacing:.5px;">Software: ProfitKey</div>
+          </div>
+          <span class="sys-type-pill pill-erp">On-Prem ERP</span>
+        </div>
+        <div class="sys-body">
+          <div class="sys-name">ProfitKey ERP</div>
+          <div class="sys-role">Production ERP tracking actual shop floor hours — what jobs actually cost to make</div>
+          <ul class="sys-caps">
+            <li>Every clock-in and clock-out stored as a labor ticket</li>
+            <li>Actual hours by employee, work center, and operation</li>
+            <li>The source of truth for cost-to-manufacture</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── OUTCOME CALLOUT (hidden) ── -->
+  <!--
+  <div style="margin-top:32px; margin-bottom:10px;">
+    <div class="tier-header">
+      <span class="tier-badge cloud">
+        <svg viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px;"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        Business Outcomes
+      </span>
+      <div class="tier-rule"></div>
+    </div>
+  </div>
+  <div class="outcome-strip">
+
+    <div class="outcome-tile">
+      <div class="outcome-label">Quoting Speed</div>
+      <div class="outcome-before-after">
+        <span class="outcome-before">3&ndash;4 hrs</span>
+        <span class="outcome-arrow">&rarr;</span>
+        <span class="outcome-after">&lt; 30 min</span>
+      </div>
+      <div class="outcome-desc">AI pre-fills gear specs directly from the customer drawing. The estimator refines rather than starts from scratch.</div>
+    </div>
+
+    <div class="outcome-tile">
+      <div class="outcome-label">Cost Accuracy</div>
+      <div class="outcome-before-after">
+        <span class="outcome-before">Gap unknown</span>
+        <span class="outcome-arrow">&rarr;</span>
+        <span class="outcome-after">Closed loop</span>
+      </div>
+      <div class="outcome-desc">Every job feeds back into quoting. M1 estimated hours versus ProfitKey actual hours — visible on every order.</div>
+    </div>
+
+    <div class="outcome-tile">
+      <div class="outcome-label">Remote Access</div>
+      <div class="outcome-before-after">
+        <span class="outcome-before">Office only</span>
+        <span class="outcome-arrow">&rarr;</span>
+        <span class="outcome-after">Any browser</span>
+      </div>
+      <div class="outcome-desc">Zero Trust architecture means the quoting portal is accessible from any device, anywhere — without a VPN or remote desktop.</div>
+    </div>
+
+  </div>
+  -->
+
+  <!-- How It Works -->
+  <div class="how-it-works">
+    <h3>How the Systems Connect</h3>
+    <p>The <em>Staging Database</em> is the linchpin — it holds mapped IDs that tie a Pipedrive deal to its M1 quote to its ProfitKey work order, so actual shop hours can be compared against the original estimate on every single job. Nightly <em>Data Pipelines</em> replicate critical tables from both on-premise ERPs read-only, leaving production systems untouched and the shop floor unaffected. The <em>Web Quoting Application</em> accesses the staging database through a secured API layer, which means estimators get full access to historical data and live actuals from any browser — without exposing the on-premise network.</p>
+    <p>Two new capabilities are built into the quoting workflow: <em>Request For Materials (RFM)</em> lets estimators solicit steel and metal pricing from suppliers directly within the quoting interface, rounding out the full cost picture before a quote is finalized. <em>Tolerance Flagging</em> automatically surfaces when the AI detects high-precision specs on a gear drawing — prompting the estimator early, since tight-tolerance jobs require specialized production routing and carry different cost profiles.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Overton Chicago Gear &nbsp;&middot;&nbsp; Data Systems Overview &nbsp;&middot;&nbsp; April 2026</span>
+    <span>Systems: Pipedrive CRM &nbsp;&middot;&nbsp; Web Quoting App &nbsp;&middot;&nbsp; Gear Drawings (AI) &nbsp;&middot;&nbsp; Centralized Staging DB &nbsp;&middot;&nbsp; M1 ERP (ECI) &nbsp;&middot;&nbsp; ProfitKey (ECI)</span>
+  </div>
+
+</div>
+</body>
+</html>

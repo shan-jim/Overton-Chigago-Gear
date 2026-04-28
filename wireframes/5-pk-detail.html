@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProfitKey WO Detail · Overton Foundation · Wireframes</title>
+<link rel="stylesheet" href="_shared/wireframe.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="brand-title">Overton Wireframes</span>
+      <span class="brand-sub">Foundation · Intake · Phases 1–2</span>
+    </div>
+
+    <div class="rail-section">Overview</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="index.html"><span class="rail-num">◇</span>Sitemap</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · User</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="1-login.html"><span class="rail-num">01</span>Login</a></li>
+      <li class="rail-item"><a href="2-search.html"><span class="rail-num">02</span>Search</a></li>
+      <li class="rail-item"><a href="3-unified-record.html"><span class="rail-num">03</span>Unified Record</a></li>
+      <li class="rail-item"><a href="4-m1-detail.html"><span class="rail-num">04</span>M1 Quote Detail</a></li>
+      <li class="rail-item current"><a href="5-pk-detail.html"><span class="rail-num">05</span>ProfitKey WO Detail</a></li>
+      <li class="rail-item"><a href="6-reconcile.html"><span class="rail-num">06</span>Reconciliation</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · Admin</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="7-pipeline-health.html"><span class="rail-num">07</span>Pipeline Health</a></li>
+      <li class="rail-item"><a href="8-mapping-reference.html"><span class="rail-num">08</span>Mapping Reference</a></li>
+    </ul>
+
+    <div class="rail-section">Intake</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="9-intake.html"><span class="rail-num">09</span>Quote Intake</a></li>
+      <li class="rail-item"><a href="10-tolerance-review.html"><span class="rail-num">10</span>Tolerance Review</a></li>
+    </ul>
+
+    <div class="rail-foot">
+      <a href="../ocg_index.html">↩ OCG Review hub</a>
+      <span>v0.1 · 2026-04-16</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="crumb">
+      <span>Wireframes</span>
+      <span class="sep">/</span>
+      <a href="2-search.html">Search</a>
+      <span class="sep">/</span>
+      <a href="3-unified-record.html">Q1671 ↔ SO 0271926</a>
+      <span class="sep">/</span>
+      <span class="here">ProfitKey WO Detail</span>
+    </div>
+
+    <div class="screen-head">
+      <div>
+        <h1 class="screen-title">ProfitKey · SO 0271926</h1>
+        <p class="screen-sub">Full drill-down of the ProfitKey work order. Three tabs: header, cost breakdown, hours. Numbers reconcile against the Work Order Performance Detail report (AALI · 2024-05-17).</p>
+      </div>
+      <div class="screen-meta">
+        Screen 05 of 08<br>
+        Source: ProfitKey ERP<br>
+        WO_MASTER · JOB_HOURS · LABOR_TKT
+      </div>
+    </div>
+
+    <!-- ─── Record header strip ─── -->
+    <div class="wf-card" style="margin-bottom:22px;">
+      <div class="rec-head">
+        <div class="rec-field">
+          <span class="wf-label">Shop Order</span>
+          <div class="rec-value primary">0271926</div>
+        </div>
+        <div class="rec-fields">
+          <div class="rec-field">
+            <span class="wf-label">Item · Rev</span>
+            <div class="rec-value mono">51812 · 21000</div>
+          </div>
+          <div class="rec-field">
+            <span class="wf-label">Description</span>
+            <div class="rec-value">Piping fittings assembly kit — 5 assembly locations</div>
+          </div>
+          <div class="rec-field">
+            <span class="wf-label">Status</span>
+            <div class="rec-value"><span class="wf-tag ok dot">Closed</span></div>
+          </div>
+          <div class="rec-field">
+            <span class="wf-label">Quantity</span>
+            <div class="rec-value mono">4 units</div>
+          </div>
+        </div>
+        <div class="rec-tags">
+          <span class="wf-tag ink">Actuals</span>
+          <span class="wf-tag">ProfitKey ERP</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tabs ─── -->
+    <div class="wf-tabs">
+      <div class="wf-tab active">Header <span class="muted" style="margin-left:6px;">WO_MASTER</span></div>
+      <div class="wf-tab">Costs <span class="muted" style="margin-left:6px;">est vs actual</span></div>
+      <div class="wf-tab">Hours <span class="muted" style="margin-left:6px;">41 ops · 127 tkts</span></div>
+    </div>
+
+    <!-- ─── Header tab content ─── -->
+    <div class="grid-2" style="gap:22px;">
+
+      <!-- Left column -->
+      <div class="stack">
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Work order header</span>
+            <span class="aside">WORK_ORDER_MASTER</span>
+          </div>
+          <div class="grid-2" style="gap:0 28px;">
+            <div class="wf-kv"><span class="k">WO_NUMBER</span><span class="v mono">0271926</span></div>
+            <div class="wf-kv"><span class="k">WO_STATUS</span><span class="v">Closed</span></div>
+            <div class="wf-kv"><span class="k">PART_NUMBER</span><span class="v mono">51812</span></div>
+            <div class="wf-kv"><span class="k">REVISION</span><span class="v mono">21000</span></div>
+            <div class="wf-kv"><span class="k">RELEASED_DATE</span><span class="v mono">2024-03-02</span></div>
+            <div class="wf-kv"><span class="k">DUE_DATE</span><span class="v mono">2024-04-15</span></div>
+            <div class="wf-kv"><span class="k">CLOSED_DATE</span><span class="v mono">2024-04-11</span></div>
+            <div class="wf-kv"><span class="k">QTY_ORDERED</span><span class="v mono">4</span></div>
+            <div class="wf-kv"><span class="k">QTY_COMPLETE</span><span class="v mono">4</span></div>
+            <div class="wf-kv"><span class="k">QTY_SCRAPPED</span><span class="v mono">0</span></div>
+            <div class="wf-kv" style="grid-column:span 2;"><span class="k">QUOTE_REF</span><span class="v mono">Q1671  <span class="wf-tag" style="margin-left:8px;">join key</span></span></div>
+          </div>
+        </div>
+
+        <div class="wf-card quiet">
+          <div class="wf-card-head">
+            <span class="title">Lot summary</span>
+            <span class="aside">lot est. vs to-date actual · from WO report</span>
+          </div>
+          <div class="grid-2" style="gap:12px 22px;">
+            <div class="wf-stat">
+              <span class="wf-label">Sales / unit</span>
+              <div class="value">$13,175<span class="unit">/u</span></div>
+            </div>
+            <div class="wf-stat">
+              <span class="wf-label">Cost / unit</span>
+              <div class="value">$6,196<span class="unit">/u</span></div>
+            </div>
+            <div class="wf-stat">
+              <span class="wf-label">Margin / unit</span>
+              <div class="value">$6,978<span class="unit">/u</span></div>
+            </div>
+            <div class="wf-stat accent">
+              <span class="wf-label">Margin %</span>
+              <div class="value">52.96%<span class="unit">actual</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column -->
+      <div class="stack">
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Linked · M1 quote</span>
+            <span class="aside">resolved via staging.linked_records</span>
+          </div>
+          <div class="row between">
+            <div>
+              <div class="mono" style="font-size:14px; font-weight:600; color:var(--ink);">Q1671</div>
+              <div class="muted" style="font-size:12px;">Quoted 2000-12-08 · KSTOCK</div>
+            </div>
+            <a href="4-m1-detail.html" class="wf-btn sm">Open quote →</a>
+          </div>
+          <hr class="hr" style="margin:14px 0;">
+          <div class="row between" style="font-size:12px; color:var(--text-2);">
+            <span>Quote-to-close interval</span>
+            <span class="mono" style="color:var(--ink); font-weight:600;">23 yrs · 3 mo</span>
+          </div>
+          <div class="row between" style="font-size:12px; color:var(--text-2); margin-top:6px;">
+            <span>Closed cycles of this part</span>
+            <span class="mono" style="color:var(--ink); font-weight:600;">4 (incl. this)</span>
+          </div>
+        </div>
+
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Performance vs estimate</span>
+            <span class="aside">top-line from WO report</span>
+          </div>
+          <div class="stack" style="gap:0;">
+            <div class="wf-kv"><span class="k">Hours</span><span class="v mono">214.16 / 273.37 &nbsp;<span style="color:var(--ink);">−21.7%</span></span></div>
+            <div class="wf-kv"><span class="k">Cost</span><span class="v mono">$24,787.20 / $31,377.63 &nbsp;<span style="color:var(--ink);">−21.0%</span></span></div>
+            <div class="wf-kv"><span class="k">Margin Δ</span><span class="v mono">+12.51 pts</span></div>
+            <div class="wf-kv"><span class="k">Savings · lot</span><span class="v mono">$6,590.43</span></div>
+          </div>
+          <a href="6-reconcile.html" class="wf-btn primary" style="margin-top:14px; width:100%;">Open reconciliation →</a>
+        </div>
+
+        <div class="wf-card quiet">
+          <div class="wf-card-head">
+            <span class="title">Report provenance</span>
+            <span class="aside">source document</span>
+          </div>
+          <div class="wf-kv"><span class="k">Report</span><span class="v">Work Order Performance Detail</span></div>
+          <div class="wf-kv"><span class="k">Generated by</span><span class="v mono">AALI</span></div>
+          <div class="wf-kv"><span class="k">PKI date</span><span class="v mono">2024-05-17</span></div>
+          <div class="wf-kv"><span class="k">Confidence</span><span class="v"><span class="wf-tag ok dot">Report-verified</span></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Hours preview strip ─── -->
+    <div class="cluster" style="margin-top:34px;">
+      <div class="cluster-head">
+        <h2>Hours preview</h2>
+        <span class="aside">LABOR_TICKETS rolled to employee · 127 tickets · 6 employees</span>
+      </div>
+
+      <table class="wf-table">
+        <thead>
+          <tr>
+            <th>Employee</th>
+            <th>Work center</th>
+            <th class="num">Tickets</th>
+            <th class="num">Machine hrs</th>
+            <th class="num">People hrs</th>
+            <th class="num">Total hrs</th>
+            <th class="num">% of lot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">MJOHNS</td><td class="mono">HOB-G3</td><td class="num mono">34</td><td class="num mono">42.10</td><td class="num mono">11.80</td><td class="num mono">53.90</td><td class="num mono">25.2%</td></tr>
+          <tr><td class="mono">DWONG</td><td class="mono">GRND-5</td><td class="num mono">28</td><td class="num mono">29.40</td><td class="num mono">6.20</td><td class="num mono">35.60</td><td class="num mono">16.6%</td></tr>
+          <tr><td class="mono">RGARZA</td><td class="mono">MILL-VT2</td><td class="num mono">22</td><td class="num mono">24.10</td><td class="num mono">5.40</td><td class="num mono">29.50</td><td class="num mono">13.8%</td></tr>
+          <tr><td class="mono">TSMITH</td><td class="mono">ASSY-B1</td><td class="num mono">18</td><td class="num mono">3.80</td><td class="num mono">38.20</td><td class="num mono">42.00</td><td class="num mono">19.6%</td></tr>
+          <tr><td class="mono">BCHEN</td><td class="mono">INSP-CMM</td><td class="num mono">14</td><td class="num mono">4.20</td><td class="num mono">18.10</td><td class="num mono">22.30</td><td class="num mono">10.4%</td></tr>
+          <tr><td class="mono">PANDERS</td><td class="mono">MULTI</td><td class="num mono">11</td><td class="num mono">2.90</td><td class="num mono">27.96</td><td class="num mono">30.86</td><td class="num mono">14.4%</td></tr>
+          <tr style="background:var(--surface-2);">
+            <td><strong>Total</strong></td>
+            <td></td>
+            <td class="num mono"><strong>127</strong></td>
+            <td class="num mono"><strong>106.50</strong></td>
+            <td class="num mono"><strong>107.66</strong></td>
+            <td class="num mono"><strong>214.16</strong></td>
+            <td class="num mono"><strong>100.0%</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="row between" style="margin-top:12px;">
+        <span class="muted mono" style="font-size:11px;">Machine vs people split: 49.7% / 50.3%</span>
+        <span class="wf-btn ghost sm">Open Hours tab →</span>
+      </div>
+    </div>
+
+    <div class="page-foot">
+      <span>Screen 05 · ProfitKey WO Detail · Header tab</span>
+      <span><a href="4-m1-detail.html">← M1 Detail</a> &nbsp;·&nbsp; <a href="6-reconcile.html">Reconciliation →</a></span>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M1 Quote Record Viewer &middot; Phase A &mdash; Overton Chicago Gear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS (shared with M1_erd_review.html) ── */
+:root {
+  --bg:          #f4f6f8;
+  --surface:     #ffffff;
+  --surface-2:   #fafbfc;
+  --border:      #dde3ea;
+  --border-soft: #eef2f6;
+  --text-1:      #1e2a38;
+  --text-2:      #64748b;
+  --text-3:      #94a3b8;
+  --ocg-dark:    #313131;
+  --ocg-blue:    #1890d7;
+  --ocg-teal:    #899fac;
+  --th-master:   #313131;
+  --th-trans:    #1890d7;
+  --th-lookup:   #4a6278;
+  --th-finance:  #2d5a4f;
+  --th-config:   #3d4f62;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  color: var(--text-1);
+  min-height: 100vh;
+}
+
+a { color: var(--ocg-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--ocg-dark);
+  color: #fff;
+  padding: 22px 40px 18px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 3px solid var(--ocg-blue);
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.header-logo svg { width: 34px; height: 34px; fill: var(--ocg-blue); flex-shrink: 0; }
+.logo-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: #c8d6e0; line-height: 1.15; }
+.logo-wordmark span { display: block; font-size: 9.5px; font-weight: 400; color: rgba(255,255,255,.38); letter-spacing: .4px; text-transform: none; margin-top: 2px; }
+.header-titles { flex: 1; padding-left: 4px; }
+.header-titles h1 { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+.header-titles p { font-size: 12px; color: var(--ocg-teal); margin-top: 3px; font-weight: 400; }
+.header-badges { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .3px; white-space: nowrap;
+}
+.badge-blue  { background: rgba(24,144,215,.14); color: #56b4e8; border: 1px solid rgba(24,144,215,.28); }
+.badge-teal  { background: rgba(137,159,172,.14); color: #adc4d3; border: 1px solid rgba(137,159,172,.28); }
+.badge-amber { background: rgba(180,120,0,.20);  color: #f5c842; border: 1px solid rgba(180,120,0,.30); }
+.badge-green { background: rgba(45,90,79,.28);   color: #6ec8b4; border: 1px solid rgba(45,90,79,.48); }
+
+/* ── CONTENT WRAP ── */
+.content { max-width: 1280px; margin: 0 auto; padding: 20px 32px 52px; }
+
+/* ── BREADCRUMB ── */
+.crumbs {
+  font-size: 12px; color: var(--text-2);
+  margin-bottom: 18px; display: flex; gap: 6px; align-items: center;
+  flex-wrap: wrap;
+}
+.crumbs a { color: var(--text-2); }
+.crumbs a:hover { color: var(--ocg-blue); }
+.crumbs .sep { color: var(--text-3); }
+.crumbs .here { color: var(--text-1); font-weight: 600; }
+
+/* ── INTRO STRIP ── */
+.intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ocg-blue);
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.intro h2 { font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: .2px; }
+.intro p { font-size: 12.5px; color: var(--text-2); line-height: 1.65; }
+.intro p + p { margin-top: 6px; }
+.intro .mono { font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 11.5px; color: var(--text-1); background: var(--border-soft); padding: 1px 6px; border-radius: 3px; }
+
+/* ── STATS BAR ── */
+.stats { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 22px; }
+.stat-card {
+  flex: 1; min-width: 150px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.stat-num { font-size: 26px; font-weight: 700; color: var(--ocg-blue); letter-spacing: -.5px; }
+.stat-lbl { font-size: 10.5px; color: var(--text-2); margin-top: 4px; text-transform: uppercase; letter-spacing: .7px; font-weight: 500; }
+
+/* ── OVERVIEW ROW: relationship tree + legend ── */
+.overview {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.panel-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+.tree {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 12px;
+  color: var(--text-1);
+  line-height: 1.75;
+  white-space: pre;
+  background: var(--surface-2);
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+  overflow-x: auto;
+}
+.tree b { color: var(--ocg-blue); font-weight: 700; }
+.tree i { color: var(--text-2); font-style: italic; }
+
+.leg-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-1); margin-bottom: 8px; }
+.leg-row:last-child { margin-bottom: 0; }
+.leg-row .pill {
+  font-size: 10.5px; font-weight: 700; padding: 2px 8px;
+  border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+  min-width: 22px; text-align: center;
+}
+.pill-real { background: rgba(45,90,79,.12); color: #1f5f51; border: 1px solid rgba(45,90,79,.3); }
+.pill-repr { background: rgba(180,120,0,.12); color: #8a5a00; border: 1px solid rgba(180,120,0,.3); }
+.leg-row .muted { color: var(--text-2); font-size: 11.5px; }
+
+.cluster-key { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.cluster-chip { font-size: 10.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: .2px; color: #fff; }
+.cc-intake   { background: var(--ocg-blue); }
+.cc-struct   { background: var(--th-lookup); }
+.cc-routing  { background: var(--th-config); }
+.cc-pricing  { background: var(--th-finance); }
+.cc-send     { background: var(--th-master); }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-size: 15px; font-weight: 700;
+  color: var(--text-1);
+  margin: 8px 0 14px;
+  letter-spacing: .2px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.section-title .sub {
+  font-size: 11.5px; font-weight: 400;
+  color: var(--text-2); font-style: italic;
+}
+
+/* ── STEP RAIL ── */
+.rail { display: flex; flex-direction: column; gap: 0; }
+
+.step {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--ocg-blue);
+  border-radius: 10px;
+  padding: 18px 22px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  margin-bottom: 12px;
+}
+.step.intake   { border-left-color: var(--ocg-blue); }
+.step.struct   { border-left-color: var(--th-lookup); }
+.step.routing  { border-left-color: var(--th-config); }
+.step.pricing  { border-left-color: var(--th-finance); }
+.step.send     { border-left-color: var(--th-master); }
+
+/* Connector between step cards */
+.connector {
+  display: block;
+  width: 2px; height: 18px;
+  background: linear-gradient(to bottom, rgba(24,144,215,.4), rgba(24,144,215,.1));
+  margin: -6px auto 6px 44px;
+  position: relative;
+}
+.connector::after {
+  content: ""; position: absolute;
+  left: -3px; bottom: -4px;
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid rgba(24,144,215,.55);
+}
+
+.step-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.step-num {
+  font-size: 32px; font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  min-width: 48px;
+  color: rgba(24,144,215,.22);
+}
+.step.intake  .step-num { color: rgba(24,144,215,.22); }
+.step.struct  .step-num { color: rgba(74,98,120,.22); }
+.step.routing .step-num { color: rgba(61,79,98,.22); }
+.step.pricing .step-num { color: rgba(45,90,79,.25); }
+.step.send    .step-num { color: rgba(49,49,49,.18); }
+
+.step-title-wrap { flex: 1; min-width: 0; }
+.step-title {
+  font-size: 16px; font-weight: 700;
+  color: var(--text-1); letter-spacing: .1px;
+  margin-bottom: 3px;
+}
+.step-desc {
+  font-size: 12.5px; color: var(--text-2);
+  line-height: 1.6;
+}
+.step-cluster {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: 4px 10px; border-radius: 20px;
+  color: #fff; flex-shrink: 0;
+  align-self: flex-start;
+}
+.step.intake  .step-cluster { background: var(--ocg-blue); }
+.step.struct  .step-cluster { background: var(--th-lookup); }
+.step.routing .step-cluster { background: var(--th-config); }
+.step.pricing .step-cluster { background: var(--th-finance); }
+.step.send    .step-cluster { background: var(--th-master); }
+
+.step-body {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 16px;
+}
+@media (max-width: 820px) {
+  .step-body { grid-template-columns: 1fr; }
+  .overview  { grid-template-columns: 1fr; }
+}
+
+/* Left col: tables + Q1671 anchor */
+.meta-block { display: flex; flex-direction: column; gap: 12px; }
+.meta-row {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+}
+.meta-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+  min-width: 88px;
+}
+.tbl-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+.tbl-chip .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  display: inline-block;
+}
+.dot-qmp { background: var(--th-master); }
+.dot-qml { background: var(--th-trans); }
+.dot-qmq { background: var(--th-lookup); }
+.dot-qmo { background: var(--th-config); }
+.dot-qmm { background: var(--th-finance); }
+.dot-qmk { background: var(--th-config); }
+.dot-qma { background: var(--th-lookup); }
+.tbl-chip .op {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+  color: var(--text-2); letter-spacing: .3px;
+}
+
+.anchor {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: var(--text-1);
+  line-height: 1.55;
+}
+.anchor-head {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+.anchor-lbl {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+}
+.prov {
+  font-size: 9.5px; font-weight: 700;
+  padding: 1.5px 6px; border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.prov-real { background: rgba(45,90,79,.12);  color: #1f5f51; border: 1px solid rgba(45,90,79,.3); }
+.prov-repr { background: rgba(180,120,0,.12); color: #8a5a00; border: 1px solid rgba(180,120,0,.3); }
+.anchor code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--text-1);
+}
+.anchor ul { list-style: none; padding: 0; margin: 4px 0 0; }
+.anchor li { margin: 2px 0; }
+
+/* Right col: wireframe mock */
+.mock {
+  background: repeating-linear-gradient(
+    135deg,
+    #f6f8fb,
+    #f6f8fb 10px,
+    #f1f4f8 10px,
+    #f1f4f8 20px
+  );
+  border: 1.5px dashed #c6d0db;
+  border-radius: 8px;
+  padding: 14px 14px 14px;
+  min-height: 160px;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative;
+}
+.mock::before {
+  content: "WIREFRAME"; position: absolute;
+  top: 8px; right: 10px;
+  font-size: 8.5px; font-weight: 700; letter-spacing: 1.2px;
+  color: var(--text-3); font-family: 'JetBrains Mono', monospace;
+}
+.mock-title {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.mock-field {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; align-items: center; gap: 8px;
+  min-height: 26px;
+}
+.mock-field .lbl {
+  font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text-3);
+  min-width: 92px;
+}
+.mock-field .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text-1);
+}
+.mock-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.mock-row .mock-field { flex: 1; min-width: 0; }
+.mock-pill {
+  font-size: 9.5px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: #fff; border: 1px solid var(--border);
+  color: var(--text-2); letter-spacing: .3px;
+}
+.mock-btn {
+  font-size: 10px; font-weight: 700;
+  padding: 6px 12px; border-radius: 4px;
+  background: var(--ocg-blue); color: #fff;
+  text-transform: uppercase; letter-spacing: .8px;
+  align-self: flex-start;
+  opacity: .75;
+}
+.mock-btn.muted { background: #c6d0db; color: #fff; }
+.mock-table {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-1);
+  overflow: hidden;
+}
+.mock-table .mt-head {
+  background: var(--surface-2);
+  padding: 5px 10px;
+  font-weight: 700; font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text-2);
+  display: grid; gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.mock-table .mt-row {
+  padding: 5px 10px;
+  display: grid; gap: 8px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-2);
+}
+.mock-table .mt-row:last-child { border-bottom: none; }
+
+/* ── DATA QUIRKS STRIP ── */
+.quirks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 28px 0 28px;
+}
+@media (max-width: 820px) { .quirks { grid-template-columns: 1fr; } }
+.quirk {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 4px solid #d97706;
+  border-radius: 8px;
+  padding: 16px 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.quirk-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: #d97706;
+  margin-bottom: 6px;
+}
+.quirk-title {
+  font-size: 13px; font-weight: 700;
+  color: var(--text-1); margin-bottom: 6px;
+}
+.quirk-body { font-size: 11.5px; color: var(--text-2); line-height: 1.55; }
+.quirk-body code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  padding: 1px 5px; border-radius: 3px;
+  font-size: 10.5px; color: var(--text-1);
+}
+
+/* ── PHASE B BANNER ── */
+.phase-b {
+  background: linear-gradient(90deg, rgba(24,144,215,.08), rgba(24,144,215,.02));
+  border: 1px solid rgba(24,144,215,.28);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.phase-b .pb-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--ocg-blue);
+  background: rgba(24,144,215,.14);
+  padding: 4px 10px; border-radius: 20px;
+  border: 1px solid rgba(24,144,215,.3);
+}
+.phase-b .pb-title {
+  font-size: 13.5px; font-weight: 700;
+  color: var(--text-1); flex: 1; min-width: 0;
+}
+.phase-b .pb-title span { color: var(--text-2); font-weight: 400; font-size: 12px; margin-left: 8px; }
+.phase-b .pb-cta {
+  font-size: 12px; font-weight: 600;
+  color: var(--ocg-blue);
+  white-space: nowrap;
+}
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 8px;
+}
+
+/* ── PRINT ── */
+@media print {
+  .page-header { padding: 14px 24px; }
+  .step { break-inside: avoid; }
+  .connector { display: none; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+    <div class="logo-wordmark">
+      Overton Chicago Gear
+      <span>Precision Gear Manufacturer &middot; Est. 1888</span>
+    </div>
+  </div>
+  <div class="header-titles">
+    <h1>M1 Quote Record Viewer</h1>
+    <p>Phase A &middot; Historical quote browser &mdash; reading the full record for a prior M1 quote</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">Phase A</span>
+    <span class="badge badge-teal">10 Views</span>
+    <span class="badge badge-amber">Wireframe</span>
+    <span class="badge badge-green">Q1671 Example</span>
+    <span class="badge badge-teal">Read-only</span>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="content">
+
+  <!-- Breadcrumb -->
+  <nav class="crumbs">
+    <a href="ocg_index.html">Index</a>
+    <span class="sep">&rsaquo;</span>
+    <a href="M1_erd_review.html">M1 ERP</a>
+    <span class="sep">&rsaquo;</span>
+    <span class="here">Quote Record Viewer (Phase A)</span>
+  </nav>
+
+  <!-- Intro -->
+  <section class="intro">
+    <h2>Why this view exists</h2>
+    <p>
+      The existing <a href="M1_erd_review.html">M1 ERP &middot; Quote Module ERD</a> shows the <em>shape</em> of M1's quote data &mdash; seven <span class="mono">qm*</span> tables and how they relate. This page shows the <em>contents</em>: ten read-only views into a historical M1 quote, so a quoter can see everything the record holds without opening M1 itself.
+    </p>
+    <p>
+      Every view is anchored to <span class="mono">Quote 1671</span> &mdash; a real piping-fittings assembly kit quote (customer <span class="mono">64225</span>, part <span class="mono">51812</span> rev <span class="mono">21000</span>, dated 2000-12-08). Q1671's header and line items are extracted directly from <span class="mono">m1_CG.mdf</span>; operations, materials, memos, assemblies, and price breaks are schema-confirmed but illustrative values.
+    </p>
+    <p style="margin-top:8px;">
+      <strong>This viewer is read-only.</strong> No records are created, duplicated, or edited &mdash; it surfaces what is already in M1 for easier review. <strong>Phase A</strong> (this page) is the full-record view for one quote. <strong>Phase B</strong> (coming) is the search/lookup experience across 42,000+ historical M1 quotes.
+    </p>
+  </section>
+
+  <!-- Overview: relationship tree + legend -->
+  <div class="overview">
+    <div class="panel">
+      <div class="panel-title">Relationship map &middot; qm* table fan-out</div>
+<pre class="tree"><b>qmp</b> (Quotes, PK: QuoteID)
+ &#9500;&#9472;&#9472; <b>qml</b> (QuoteLines)          <i>1 quote &rarr; many lines</i>       key: QuoteID + QuoteLineID
+ &#9474;    &#9500;&#9472;&#9472; <b>qmo</b> (Operations)     <i>1 line &rarr; many operations</i>   key: QuoteID + QuoteLineID
+ &#9474;    &#9500;&#9472;&#9472; <b>qmm</b> (Materials)      <i>1 line &rarr; many materials</i>    key: QuoteID + QuoteLineID
+ &#9474;    &#9492;&#9472;&#9472; <b>qma</b> (Assemblies)     <i>1 line &rarr; 1+ assembly node</i>  key: QuoteID + QuoteLineID
+ &#9500;&#9472;&#9472; <b>qmq</b> (Quantities)          <i>1 quote &rarr; many price breaks</i> key: QuoteID
+ &#9492;&#9472;&#9472; <b>qmk</b> (Memos)               <i>1 quote &rarr; many memos</i>        key: QuoteID</pre>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Legend &middot; provenance &amp; step clusters</div>
+      <div class="leg-row">
+        <span class="pill pill-real">&#10003;</span>
+        <span><strong>Real extracted</strong> <span class="muted">&mdash; from m1_CG.mdf (applies to qmp &amp; qml)</span></span>
+      </div>
+      <div class="leg-row" style="margin-bottom: 14px;">
+        <span class="pill pill-repr">&#9888;</span>
+        <span><strong>Representative</strong> <span class="muted">&mdash; schema confirmed from M1DD.mdf; values illustrative (qmq, qmo, qmm, qmk, qma)</span></span>
+      </div>
+      <div class="leg-row" style="display:block;">
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-2);margin-bottom:6px;">Step clusters</div>
+        <div class="cluster-key">
+          <span class="cluster-chip cc-intake">Intake 1&ndash;2</span>
+          <span class="cluster-chip cc-struct">Structure 3&ndash;4</span>
+          <span class="cluster-chip cc-routing">Routing 5&ndash;7</span>
+          <span class="cluster-chip cc-pricing">Pricing 8</span>
+          <span class="cluster-chip cc-send">Send 9&ndash;10</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section title for the rail -->
+  <div class="section-title">
+    Quote 1671 &middot; Full Record <span class="sub">&mdash; 10 read-only views into the historical quote data</span>
+  </div>
+
+  <!-- ── STEP RAIL ── -->
+  <div class="rail">
+
+    <!-- VIEW 1 · Inbound RFQ context -->
+    <div class="step intake">
+      <div class="step-head">
+        <div class="step-num">01</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Inbound RFQ context</div>
+          <div class="step-desc">The originating request for this quote, reconstructed from the header record and any linked drawing references. Read-only summary of what came in: customer, part, revision, due date, and requested quantities.</div>
+        </div>
+        <div class="step-cluster">Intake</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip" style="color:var(--text-3);border-style:dashed;">none &mdash; inferred <span class="op">(pre-M1)</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 shows</span><span class="prov prov-real">&#10003; Real</span></div>
+            Customer <code>64225</code> &middot; Part <code>51812</code> rev <code>21000</code> &middot; Due <code>2001-01-15</code><br>
+            <em>&ldquo;Piping fittings assembly kit &mdash; 5 assembly locations&rdquo;</em>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">RFQ Summary (read-only)</div>
+          <div class="mock-field"><span class="lbl">Customer</span><span class="val">64225</span></div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Part #</span><span class="val">51812</span></div>
+            <div class="mock-field"><span class="lbl">Rev</span><span class="val">21000</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Due Date</span><span class="val">2001-01-15</span></div>
+            <div class="mock-field"><span class="lbl">Qty ask</span><span class="val">1 / 5 / 10</span></div>
+          </div>
+          <div class="mock-field" style="min-height:44px;"><span class="lbl">Drawings</span><span class="val">&#128206; linked reference (view if attached)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 2 · Related M1 quotes -->
+    <div class="step intake">
+      <div class="step-head">
+        <div class="step-num">02</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Related quotes in M1 history</div>
+          <div class="step-desc">Other historical quotes in M1 that share this part/rev, the same customer, or a similar description. Lets a quoter jump sideways to prior records without reopening M1. Click any row to view that quote's record.</div>
+        </div>
+        <div class="step-cluster">Intake</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qmp"></span>qmp <span class="op">read</span></span>
+            <span class="tbl-chip"><span class="dot dot-qml"></span>qml <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 in context</span><span class="prov prov-real">&#10003; Real</span></div>
+            Part <code>51812</code> rev <code>21000</code> appears across all 5 line groups within Q1671 &mdash; the same finished-good part was used for assembly locations A&ndash;E. Other historical quotes for this part or customer are listed here for side-by-side reading.
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Related Historical Quotes (read-only)</div>
+          <div class="mock-field"><span class="lbl">Filter by</span><span class="val">part:51812  rev:21000</span></div>
+          <div class="mock-row">
+            <span class="mock-pill">Customer</span>
+            <span class="mock-pill">Date range</span>
+            <span class="mock-pill">Description</span>
+            <span class="mock-pill">Work center</span>
+          </div>
+          <div class="mock-table" style="margin-top:4px;">
+            <div class="mt-head" style="grid-template-columns: 60px 1fr 80px 60px;"><span>Quote</span><span>Description</span><span>Date</span><span>Match</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 1fr 80px 60px;"><span>1671</span><span>Piping fittings kit &middot; 5 locations</span><span>2000-12-08</span><span>this</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 1fr 80px 60px;"><span>____</span><span>___________________________</span><span>__________</span><span>__%</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 1fr 80px 60px;"><span>____</span><span>___________________________</span><span>__________</span><span>__%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 3 · Quote header -->
+    <div class="step struct">
+      <div class="step-head">
+        <div class="step-num">03</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Quote header</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">qmp</span> row for this quote: customer, quote/due/expiration dates, quoter, sales, status, and short memo. This is the parent record everything else hangs off.</div>
+        </div>
+        <div class="step-cluster">Structure</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qmp"></span>qmp <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 header</span><span class="prov prov-real">&#10003; Real</span></div>
+            <ul>
+              <li><code>qmpQuoteID = 1671</code></li>
+              <li><code>qmpCustomerOrgID = 64225</code></li>
+              <li><code>qmpQuoteDate = 2000-12-08</code> &middot; <code>qmpDueDate = 2001-01-15</code></li>
+              <li><code>qmpExpDate = null</code> &middot; <code>qmpStatus = A</code> (Active)</li>
+              <li><code>qmpMemo</code>: &ldquo;Piping fittings assembly kit &mdash; 5 assembly locations&rdquo;</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Quote Header &middot; qmp (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Quote ID</span><span class="val">1671</span></div>
+            <div class="mock-field"><span class="lbl">Status</span><span class="val">A</span></div>
+          </div>
+          <div class="mock-field"><span class="lbl">Customer</span><span class="val">64225</span></div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Quote Date</span><span class="val">2000-12-08</span></div>
+            <div class="mock-field"><span class="lbl">Due Date</span><span class="val">2001-01-15</span></div>
+            <div class="mock-field"><span class="lbl">Expires</span><span class="val">&mdash;</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Quoter</span><span class="val">_________</span></div>
+            <div class="mock-field"><span class="lbl">Sales</span><span class="val">_________</span></div>
+          </div>
+          <div class="mock-field" style="min-height:40px;"><span class="lbl">Memo</span><span class="val">Piping fittings assembly kit &mdash; 5 assembly locations</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 4 · Line groups -->
+    <div class="step struct">
+      <div class="step-head">
+        <div class="step-num">04</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Line groups</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">qml</span> line items, grouped by <span style="font-family:'JetBrains Mono',monospace;">qmlQuoteLineID</span>. Lines sharing an ID belong to the same logical group &mdash; e.g. one assembly location. Each line carries part, revision, description, and UOM as stored.</div>
+        </div>
+        <div class="step-cluster">Structure</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qml"></span>qml <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 line groups</span><span class="prov prov-real">&#10003; Real</span></div>
+            5 groups, 36 lines total &mdash; all <code>partID 51812</code>, <code>rev 21000</code>, <code>UOM EA</code>:
+            <ul>
+              <li><code>00686</code> Location A &middot; 7 items</li>
+              <li><code>00687</code> Location B &middot; 6 items</li>
+              <li><code>00688</code> Location C &middot; 7 items</li>
+              <li><code>00689</code> Location D &middot; 7 items</li>
+              <li><code>00690</code> Location E &middot; 9 items</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Line Groups &middot; qml (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 80px 1fr 60px 60px;"><span>Group</span><span>Description</span><span>Items</span><span>UOM</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 60px 60px;"><span>00686</span><span>Lube line &middot; Location A</span><span>7</span><span>EA</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 60px 60px;"><span>00687</span><span>Lube line &middot; Location B</span><span>6</span><span>EA</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 60px 60px;"><span>00688</span><span>Lube line &middot; Location C</span><span>7</span><span>EA</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 60px 60px;"><span>00689</span><span>Lube line &middot; Location D</span><span>7</span><span>EA</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 60px 60px;"><span>00690</span><span>Lube line &middot; Location E</span><span>9</span><span>EA</span></div>
+          </div>
+          <span class="mock-pill" style="align-self:flex-start;">5 groups &middot; 36 items total</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 5 · Operation routings -->
+    <div class="step routing">
+      <div class="step-head">
+        <div class="step-num">05</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Operation routings</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">qmo</span> operations stored for each line group: work center, setup hours, run hours per piece, notes. Shows the shop-floor routing as it was planned on this quote.</div>
+        </div>
+        <div class="step-cluster">Routing</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qmo"></span>qmo <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 operations</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            10 ops across 3 work centers:
+            <ul>
+              <li><code>KIT001</code> Kitting &amp; Staging &middot; <code>WC-KIT</code> &middot; 0.25 setup / 0.15 run (all 5 groups)</li>
+              <li><code>INS001</code> Inspection &middot; <code>WC-QC</code> &middot; 0.10&ndash;0.15 setup / 0.05&ndash;0.10 run</li>
+              <li><code>THR001</code> Thread gauge (ASME B1.20.1) &middot; <code>WC-QC</code></li>
+              <li><code>PKG001</code> Packaging &amp; labeling &middot; <code>WC-SHIP</code></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Operations &middot; qmo (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 70px 1fr 70px 50px 50px;"><span>Op</span><span>Description</span><span>WC</span><span>Setup</span><span>Run/pc</span></div>
+            <div class="mt-row"  style="grid-template-columns: 70px 1fr 70px 50px 50px;"><span>KIT001</span><span>Kitting &amp; staging</span><span>WC-KIT</span><span>0.25</span><span>0.15</span></div>
+            <div class="mt-row"  style="grid-template-columns: 70px 1fr 70px 50px 50px;"><span>INS001</span><span>Incoming inspection</span><span>WC-QC</span><span>0.10</span><span>0.05</span></div>
+            <div class="mt-row"  style="grid-template-columns: 70px 1fr 70px 50px 50px;"><span>THR001</span><span>Thread gauge inspection</span><span>WC-QC</span><span>0.10</span><span>0.08</span></div>
+            <div class="mt-row"  style="grid-template-columns: 70px 1fr 70px 50px 50px;"><span>PKG001</span><span>Packaging &amp; labeling</span><span>WC-SHIP</span><span>0.10</span><span>0.12</span></div>
+          </div>
+          <span class="mock-pill" style="align-self:flex-start;">10 ops across 3 work centers</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 6 · Material list -->
+    <div class="step routing">
+      <div class="step-head">
+        <div class="step-num">06</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Material list</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">qmm</span> raw components and purchased parts recorded for each line: qty required, UOM, unit cost, extended cost. Shows the material bill as it was captured on this quote.</div>
+        </div>
+        <div class="step-cluster">Routing</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qmm"></span>qmm <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 materials</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            12 rows, total raw cost <code>$239.90</code>. Common components:
+            <ul>
+              <li><code>54001</code> 1-1/2&quot; NPT ball valve w/lock &middot; $28.50</li>
+              <li><code>54002</code> 1-1/2&quot; NPT Y-strainer 100M &middot; $19.75</li>
+              <li><code>54003</code> / <code>54004</code> / <code>54005</code> reducers &middot; $1.85&ndash;$4.20</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Materials &middot; qmm (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 60px 1fr 40px 60px 60px;"><span>Part</span><span>Description</span><span>Qty</span><span>Unit $</span><span>Ext $</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 1fr 40px 60px 60px;"><span>54001</span><span>1-1/2&quot; NPT ball valve w/lock</span><span>1</span><span>28.50</span><span>28.50</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 1fr 40px 60px 60px;"><span>54002</span><span>1-1/2&quot; NPT Y-strainer 100M</span><span>1</span><span>19.75</span><span>19.75</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 1fr 40px 60px 60px;"><span>54003</span><span>1-1/2&quot;x1/2&quot; NPT tee reducer</span><span>2</span><span>4.20</span><span>8.40</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 1fr 40px 60px 60px;"><span>54004</span><span>1-1/2&quot;x1&quot; NPT bushing reducer</span><span>2</span><span>3.15</span><span>6.30</span></div>
+          </div>
+          <span class="mock-pill" style="align-self:flex-start;">12 rows &middot; total raw cost $239.90</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 7 · Sub-assembly structure -->
+    <div class="step routing">
+      <div class="step-head">
+        <div class="step-num">07</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Sub-assembly structure</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">qma</span> BOM nodes recorded for this quote. A null <span style="font-family:'JetBrains Mono',monospace;">qmaParentLineID</span> marks a top-level assembly; children reference their parent line. Shows the assembly tree as stored.</div>
+        </div>
+        <div class="step-cluster">Routing</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qma"></span>qma <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 assemblies</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            5 top-level nodes (all <code>parent = null</code>):
+            <ul>
+              <li><code>ASY-686</code> Lube line &middot; Location A &middot; seq 10</li>
+              <li><code>ASY-687</code> Lube line &middot; Location B &middot; seq 20</li>
+              <li><code>ASY-688</code> Lube line &middot; Location C &middot; seq 30</li>
+              <li><code>ASY-689</code> Lube line &middot; Location D &middot; seq 40</li>
+              <li><code>ASY-690</code> Lube line &middot; Location E &middot; seq 50</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Assembly Tree &middot; qma (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 90px 1fr 50px 50px;"><span>Asm ID</span><span>Description</span><span>Qty</span><span>Seq</span></div>
+            <div class="mt-row"  style="grid-template-columns: 90px 1fr 50px 50px;"><span>ASY-686</span><span>Lube line &middot; Location A</span><span>1</span><span>10</span></div>
+            <div class="mt-row"  style="grid-template-columns: 90px 1fr 50px 50px;"><span>ASY-687</span><span>Lube line &middot; Location B</span><span>1</span><span>20</span></div>
+            <div class="mt-row"  style="grid-template-columns: 90px 1fr 50px 50px;"><span>ASY-688</span><span>Lube line &middot; Location C</span><span>1</span><span>30</span></div>
+            <div class="mt-row"  style="grid-template-columns: 90px 1fr 50px 50px;"><span>ASY-689</span><span>Lube line &middot; Location D</span><span>1</span><span>40</span></div>
+            <div class="mt-row"  style="grid-template-columns: 90px 1fr 50px 50px;"><span>ASY-690</span><span>Lube line &middot; Location E</span><span>1</span><span>50</span></div>
+          </div>
+          <span class="mock-pill" style="align-self:flex-start;">All parent = null &middot; single-level BOM</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 8 · Price ladder -->
+    <div class="step pricing">
+      <div class="step-head">
+        <div class="step-num">08</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Price ladder</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">qmq</span> quantity breakpoints recorded on this quote: unit price, lead time, tooling and setup charges. Each row is an order point that was offered to the customer.</div>
+        </div>
+        <div class="step-cluster">Pricing</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qmq"></span>qmq <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 price breaks</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            3 breakpoints &middot; setup <code>$95</code> &middot; tooling <code>$0</code>:
+            <ul>
+              <li>Qty <code>1</code> &rarr; <code>$485.00</code>/ea &middot; 4d lead</li>
+              <li>Qty <code>5</code> &rarr; <code>$412.00</code>/ea &middot; 6d lead &middot; ext <code>$2,060</code></li>
+              <li>Qty <code>10</code> &rarr; <code>$378.50</code>/ea &middot; 10d lead &middot; ext <code>$3,785</code></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Price Ladder &middot; qmq (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 50px 70px 70px 60px 60px 60px;"><span>Qty</span><span>Unit $</span><span>Ext $</span><span>Lead d</span><span>Setup</span><span>Tool</span></div>
+            <div class="mt-row"  style="grid-template-columns: 50px 70px 70px 60px 60px 60px;"><span>1</span><span>485.00</span><span>485.00</span><span>4</span><span>95.00</span><span>0.00</span></div>
+            <div class="mt-row"  style="grid-template-columns: 50px 70px 70px 60px 60px 60px;"><span>5</span><span>412.00</span><span>2,060.00</span><span>6</span><span>95.00</span><span>0.00</span></div>
+            <div class="mt-row"  style="grid-template-columns: 50px 70px 70px 60px 60px 60px;"><span>10</span><span>378.50</span><span>3,785.00</span><span>10</span><span>95.00</span><span>0.00</span></div>
+          </div>
+          <span class="mock-pill" style="align-self:flex-start;">3 breakpoints &middot; setup $95 &middot; tooling $0</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 9 · Memos -->
+    <div class="step send">
+      <div class="step-head">
+        <div class="step-num">09</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Memos</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">qmk</span> free-text notes stored against this quote. Memo <em>type</em> classifies where each one lands: <code style="font-family:'JetBrains Mono',monospace;">EX</code> external (customer-facing), <code style="font-family:'JetBrains Mono',monospace;">SH</code> shipping, <code style="font-family:'JetBrains Mono',monospace;">PO</code> purchase order reference.</div>
+        </div>
+        <div class="step-cluster">Send</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qmk"></span>qmk <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 memos</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            3 memos:
+            <ul>
+              <li><code>EX</code> &ldquo;All fittings to be galvanized per ASTM A153. Substitutions require written approval &hellip;&rdquo; (quoter)</li>
+              <li><code>SH</code> &ldquo;Ship complete &mdash; partial shipments not accepted. Packaging must identify assembly location (686&ndash;690).&rdquo; (quoter)</li>
+              <li><code>PO</code> &ldquo;Reference customer P.O. # 64225-00-1842 on all shipping documents &hellip;&rdquo; (sales)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Memos &middot; qmk (read-only)</div>
+          <div class="mock-row">
+            <span class="mock-pill">EX &middot; External</span>
+            <span class="mock-pill">SH &middot; Shipping</span>
+            <span class="mock-pill">PO &middot; P.O. ref</span>
+          </div>
+          <div class="mock-field" style="min-height:48px;"><span class="lbl">EX</span><span class="val">Galvanized per ASTM A153. Substitutions require written approval &hellip;</span></div>
+          <div class="mock-field" style="min-height:48px;"><span class="lbl">SH</span><span class="val">Ship complete &mdash; packaging identifies assembly location 686&ndash;690 &hellip;</span></div>
+          <div class="mock-field" style="min-height:48px;"><span class="lbl">PO</span><span class="val">Reference P.O. # 64225-00-1842 on all shipping documents &hellip;</span></div>
+          <span class="mock-pill" style="align-self:flex-start;">3 memos stored</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 10 · Final status & handoff -->
+    <div class="step send">
+      <div class="step-head">
+        <div class="step-num">10</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Final status &amp; handoff</div>
+          <div class="step-desc">How this quote was finalized in M1: header <span style="font-family:'JetBrains Mono',monospace;">status</span>, expiration, and sales handoff as stored on the record. Read-only summary panel &mdash; any post-send revisions would appear as separate records in M1, not in-place edits here.</div>
+        </div>
+        <div class="step-cluster">Send</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-qmp"></span>qmp <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 final state</span><span class="prov prov-real">&#10003; Real</span></div>
+            <code>qmpStatus = A</code> &middot; <code>qmpExpDate = null</code> &middot; quoter + sales IDs on header &middot; memo preserved. As recorded in M1 at the time of quote close.
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Quote Summary (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Quote</span><span class="val">Q1671</span></div>
+            <div class="mock-field"><span class="lbl">Status</span><span class="val">A &middot; Active</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Lines</span><span class="val">36 in 5 groups</span></div>
+            <div class="mock-field"><span class="lbl">Breaks</span><span class="val">1 / 5 / 10</span></div>
+            <div class="mock-field"><span class="lbl">Memos</span><span class="val">3</span></div>
+          </div>
+          <div class="mock-field"><span class="lbl">Ext @ qty 10</span><span class="val">$3,785.00 + $95 setup</span></div>
+          <span class="mock-pill" style="align-self:flex-start;">Record as stored in M1 (read-only)</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /rail -->
+
+  <!-- Phase B preview banner -->
+  <div class="phase-b">
+    <span class="pb-label">Coming next &middot; Phase B</span>
+    <div class="pb-title">
+      Team-wide lookup across 42,000+ M1 quotes
+      <span>search by customer, part, date, or description &mdash; open any historical quote in this same read-only viewer.</span>
+    </div>
+    <span class="pb-cta">Wireframe pending &rarr;</span>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Source: m1_CG.mdf (Custom Gear Co.) &middot; M1DD.mdf &middot; Q1671 worked example</span>
+    <span><a href="ocg_index.html">&larr; Back to Index</a> &middot; <a href="M1_erd_review.html">M1 ERD</a></span>
+  </div>
+
+</div><!-- /content -->
+
+</body>
+</html>

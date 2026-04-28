@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mapping Reference · Overton Foundation · Wireframes</title>
+<link rel="stylesheet" href="_shared/wireframe.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="brand-title">Overton Wireframes</span>
+      <span class="brand-sub">Foundation · Intake · Phases 1–2</span>
+    </div>
+
+    <div class="rail-section">Overview</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="index.html"><span class="rail-num">◇</span>Sitemap</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · User</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="1-login.html"><span class="rail-num">01</span>Login</a></li>
+      <li class="rail-item"><a href="2-search.html"><span class="rail-num">02</span>Search</a></li>
+      <li class="rail-item"><a href="3-unified-record.html"><span class="rail-num">03</span>Unified Record</a></li>
+      <li class="rail-item"><a href="4-m1-detail.html"><span class="rail-num">04</span>M1 Quote Detail</a></li>
+      <li class="rail-item"><a href="5-pk-detail.html"><span class="rail-num">05</span>ProfitKey WO Detail</a></li>
+      <li class="rail-item"><a href="6-reconcile.html"><span class="rail-num">06</span>Reconciliation</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · Admin</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="7-pipeline-health.html"><span class="rail-num">07</span>Pipeline Health</a></li>
+      <li class="rail-item current"><a href="8-mapping-reference.html"><span class="rail-num">08</span>Mapping Reference</a></li>
+    </ul>
+
+    <div class="rail-section">Intake</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="9-intake.html"><span class="rail-num">09</span>Quote Intake</a></li>
+      <li class="rail-item"><a href="10-tolerance-review.html"><span class="rail-num">10</span>Tolerance Review</a></li>
+    </ul>
+
+    <div class="rail-foot">
+      <a href="../ocg_index.html">↩ OCG Review hub</a>
+      <span>v0.1 · 2026-04-16</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="crumb">
+      <span>Wireframes</span>
+      <span class="sep">/</span>
+      <span>Admin</span>
+      <span class="sep">/</span>
+      <span class="here">Mapping Reference</span>
+    </div>
+
+    <div class="screen-head">
+      <div>
+        <h1 class="screen-title">Mapping Reference</h1>
+        <p class="screen-sub">The contract between M1, ProfitKey, and the staging layer. Defines <code class="mono">staging.linked_records</code>, source-of-record for each field, and the join rules used by the nightly rebuild.</p>
+      </div>
+      <div class="screen-meta">
+        Screen 08 of 08<br>
+        Admin role · data eng<br>
+        schema v0.1 · 2026-04-16
+      </div>
+    </div>
+
+    <!-- ─── Source-of-record legend ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Source-of-record · legend</h2>
+        <span class="aside">which system owns which kind of data</span>
+      </div>
+
+      <div class="grid-3">
+        <div class="wf-card tight">
+          <span class="wf-tag ink" style="margin-bottom:10px;">M1 · source of record</span>
+          <div style="font-size:13px; line-height:1.6; color:var(--text-1);">
+            Quote header, line groups, routing, material BOM, sub-assemblies, price ladder, memos. All estimator-side data.
+          </div>
+          <hr class="hr">
+          <div class="mono muted" style="font-size:11px;">7 tables · qmp · qml · qmo · qmm · qma · qmq · qmk</div>
+        </div>
+
+        <div class="wf-card tight">
+          <span class="wf-tag ink" style="margin-bottom:10px;">ProfitKey · source of record</span>
+          <div style="font-size:13px; line-height:1.6; color:var(--text-1);">
+            Work order header, releases, labor tickets, job-hours summary, employee lookups. All production-floor actuals.
+          </div>
+          <hr class="hr">
+          <div class="mono muted" style="font-size:11px;">4 tables · WORK_ORDER_MASTER · JOB_HOURS_SUMMARY · LABOR_TICKETS · EMPLOYEE_MASTER</div>
+        </div>
+
+        <div class="wf-card tight" style="border-style:dashed; opacity:.65;">
+          <span class="wf-tag dashed" style="margin-bottom:10px;">Pipedrive · Phase 3+</span>
+          <div style="font-size:13px; line-height:1.6; color:var(--text-2);">
+            Deal pipeline, customer contacts, PO number. Not mapped in Phase&nbsp;1 — joins via <code class="mono">po_number</code> → <code class="mono">qmpQuoteID</code> when Phase&nbsp;3 lands.
+          </div>
+          <hr class="hr">
+          <div class="mono muted" style="font-size:11px;">6 entities · forward-pointer only</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── linked_records schema ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2><code class="mono">staging.linked_records</code> schema</h2>
+        <span class="aside">join table · rebuilt nightly by link_records_rebuild</span>
+      </div>
+
+      <div class="spec-block"><span class="kw">CREATE TABLE</span> <span class="tbl">staging.linked_records</span> (
+    id                <span class="comment">INT PRIMARY KEY</span>,       <span class="comment">-- mirrors qmpQuoteID for readability</span>
+    m1_quote_id       <span class="comment">INT NOT NULL</span>,           <span class="comment">-- FK → staging.m1_quotes.qmpQuoteID</span>
+    m1_quote_rev      <span class="comment">INT NOT NULL DEFAULT 0</span>,
+    pk_wo_number      <span class="comment">VARCHAR(10)</span>,             <span class="comment">-- FK → staging.pk_work_orders.WO_NUMBER · nullable if no WO yet</span>
+    pk_wo_status      <span class="comment">VARCHAR(16)</span>,
+    join_method       <span class="comment">VARCHAR(24)</span>,             <span class="comment">-- "quote_ref_direct" | "part_rev_inferred" | "manual"</span>
+    join_confidence   <span class="comment">DECIMAL(3,2)</span>,            <span class="comment">-- 0.00–1.00</span>
+    first_linked_at   <span class="comment">TIMESTAMP NOT NULL</span>,
+    last_verified_at  <span class="comment">TIMESTAMP NOT NULL</span>,
+    <span class="comment">-- Phase 3 columns (not populated yet) --</span>
+    <span class="comment">-- pd_deal_id      VARCHAR(32) NULL,</span>
+    <span class="comment">-- pd_po_number    VARCHAR(32) NULL,</span>
+    <span class="kw">INDEX</span> idx_m1  (m1_quote_id, m1_quote_rev),
+    <span class="kw">INDEX</span> idx_pk  (pk_wo_number),
+    <span class="kw">INDEX</span> idx_fresh (last_verified_at)
+);</div>
+    </div>
+
+    <!-- ─── Join rules ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Join rules · how records become pairs</h2>
+        <span class="aside">resolved during link_records_rebuild · ordered by priority</span>
+      </div>
+
+      <table class="wf-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Method</th>
+            <th>Rule</th>
+            <th class="num">Confidence</th>
+            <th class="num">Pairs resolved</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="mono">1</td>
+            <td class="mono"><strong>quote_ref_direct</strong></td>
+            <td>WO_MASTER.QUOTE_REF = 'Q' || m1_quotes.qmpQuoteID &nbsp; <span class="muted">(exact string match)</span></td>
+            <td class="num mono">1.00</td>
+            <td class="num mono">38,942</td>
+            <td><span class="wf-tag ok dot">Primary</span></td>
+          </tr>
+          <tr>
+            <td class="mono">2</td>
+            <td class="mono"><strong>part_rev_inferred</strong></td>
+            <td>WO.PART = qmp.qmpPartNum &nbsp;AND&nbsp; WO.REV = qmp.qmpPartRev &nbsp;AND&nbsp; most-recent closed quote</td>
+            <td class="num mono">0.72</td>
+            <td class="num mono">2,841</td>
+            <td><span class="wf-tag warn dot">Heuristic</span></td>
+          </tr>
+          <tr>
+            <td class="mono">3</td>
+            <td class="mono"><strong>manual</strong></td>
+            <td>Ops admin override via <code class="mono">staging.linked_overrides</code></td>
+            <td class="num mono">1.00</td>
+            <td class="num mono">184</td>
+            <td><span class="wf-tag">Manual</span></td>
+          </tr>
+          <tr>
+            <td class="mono muted">—</td>
+            <td class="mono muted"><strong>unmatched</strong></td>
+            <td class="muted">WO has no resolvable quote · quotes with no WO</td>
+            <td class="num mono muted">—</td>
+            <td class="num mono muted">580</td>
+            <td><span class="wf-tag dashed">Review queue</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ─── Join diagram ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Join graph</h2>
+        <span class="aside">visual · Phase 1 scope</span>
+      </div>
+
+      <div class="wf-card quiet">
+        <pre class="mono" style="margin:0; font-size:12px; line-height:1.9; color:var(--text-1); white-space:pre;">
+    <span style="color:var(--ink); font-weight:600;">M1 ERP (on-prem SQL)</span>                <span style="color:var(--ink); font-weight:600;">staging (central)</span>                 <span style="color:var(--ink); font-weight:600;">ProfitKey ERP (on-prem SQL)</span>
+    ─────────────────────────         ────────────────────────         ────────────────────────────
+    qmp  (quote header)    ───┐                                   ┌─── WORK_ORDER_MASTER
+    qml  (line groups)        │                                   │    JOB_HOURS_SUMMARY
+    qmo  (operations)         ├──► staging.m1_*  ──┐       ┌──────┤    LABOR_TICKETS
+    qmm  (materials)          │                     │       │          EMPLOYEE_MASTER
+    qma  (sub-assemblies)     │                     ▼       ▼
+    qmq  (price ladder)       │       <span style="color:var(--accent); font-weight:600;">staging.linked_records</span>
+    qmk  (memos)           ───┘                                   ◄─── staging.pk_*
+                                          id · m1_quote_id
+                                          pk_wo_number
+                                          join_method
+                                          join_confidence
+                                          <span class="muted">-- pd_deal_id (Phase 3)</span>
+
+                                          <span class="muted">rebuild: nightly · 06:07 UTC</span>
+</pre>
+      </div>
+    </div>
+
+    <!-- ─── Field-level mapping table (sample) ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Field map · unified record view</h2>
+        <span class="aside">what each card on Screen 03 reads from where</span>
+      </div>
+
+      <table class="wf-table">
+        <thead>
+          <tr>
+            <th>Unified field</th>
+            <th>Surface</th>
+            <th>Source system</th>
+            <th>Source column</th>
+            <th>Transform</th>
+            <th>Provenance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Customer name</td>
+            <td class="mono">M1 card</td>
+            <td class="mono">M1</td>
+            <td class="mono">qmp.qmpCustID → customers.name</td>
+            <td class="muted">lookup</td>
+            <td><span class="wf-tag ok dot">Real</span></td>
+          </tr>
+          <tr>
+            <td>Part &middot; Rev</td>
+            <td class="mono">M1 card</td>
+            <td class="mono">M1</td>
+            <td class="mono">qmp.qmpPartNum · qmp.qmpPartRev</td>
+            <td class="muted">concat</td>
+            <td><span class="wf-tag ok dot">Real</span></td>
+          </tr>
+          <tr>
+            <td>Est. total hours</td>
+            <td class="mono">M1 card</td>
+            <td class="mono">M1</td>
+            <td class="mono">SUM(qmo.setup + qmo.run × qty)</td>
+            <td class="muted">rollup</td>
+            <td><span class="wf-tag ok dot">Real</span></td>
+          </tr>
+          <tr>
+            <td>Actual hours</td>
+            <td class="mono">PK card</td>
+            <td class="mono">ProfitKey</td>
+            <td class="mono">JOB_HOURS_SUMMARY.total_hrs</td>
+            <td class="muted">direct</td>
+            <td><span class="wf-tag ok dot">Report-verified</span></td>
+          </tr>
+          <tr>
+            <td>WO status</td>
+            <td class="mono">PK card</td>
+            <td class="mono">ProfitKey</td>
+            <td class="mono">WORK_ORDER_MASTER.WO_STATUS</td>
+            <td class="muted">map to label</td>
+            <td><span class="wf-tag ok dot">Real</span></td>
+          </tr>
+          <tr>
+            <td>Sales / unit</td>
+            <td class="mono">PK card</td>
+            <td class="mono">M1</td>
+            <td class="mono">qmq · qty-4 tier price</td>
+            <td class="muted">tier lookup</td>
+            <td><span class="wf-tag warn dot">Representative</span></td>
+          </tr>
+          <tr>
+            <td>Cost saved · lot</td>
+            <td class="mono">Reconcile</td>
+            <td class="mono">derived</td>
+            <td class="mono">lot_est_cost − lot_actual_cost</td>
+            <td class="muted">compute</td>
+            <td><span class="wf-tag ok dot">Derived</span></td>
+          </tr>
+          <tr>
+            <td>Pipedrive deal</td>
+            <td class="mono muted">Phase 3</td>
+            <td class="mono muted">Pipedrive</td>
+            <td class="mono muted">deals.po_number</td>
+            <td class="muted">—</td>
+            <td><span class="wf-tag dashed">Phase 3</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="row between" style="margin-top:12px;">
+        <span class="muted mono" style="font-size:11px;">38 fields total · showing 8 · <a href="#" style="color:var(--text-2); border-bottom:1px solid var(--border);">Export full map (CSV)</a></span>
+        <span class="wf-btn ghost sm">Filter by source</span>
+      </div>
+    </div>
+
+    <div class="page-foot">
+      <span>Screen 08 · Mapping Reference · Admin</span>
+      <span><a href="7-pipeline-health.html">← Pipeline Health</a> &nbsp;·&nbsp; <a href="index.html">Sitemap ⌂</a></span>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

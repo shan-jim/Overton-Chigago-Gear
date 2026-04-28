@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unified Record · Overton Foundation · Wireframes</title>
+<link rel="stylesheet" href="_shared/wireframe.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="brand-title">Overton Wireframes</span>
+      <span class="brand-sub">Foundation · Intake · Phases 1–2</span>
+    </div>
+
+    <div class="rail-section">Overview</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="index.html"><span class="rail-num">◇</span>Sitemap</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · User</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="1-login.html"><span class="rail-num">01</span>Login</a></li>
+      <li class="rail-item"><a href="2-search.html"><span class="rail-num">02</span>Search</a></li>
+      <li class="rail-item current"><a href="3-unified-record.html"><span class="rail-num">03</span>Unified Record</a></li>
+      <li class="rail-item"><a href="4-m1-detail.html"><span class="rail-num">04</span>M1 Quote Detail</a></li>
+      <li class="rail-item"><a href="5-pk-detail.html"><span class="rail-num">05</span>ProfitKey WO Detail</a></li>
+      <li class="rail-item"><a href="6-reconcile.html"><span class="rail-num">06</span>Reconciliation</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · Admin</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="7-pipeline-health.html"><span class="rail-num">07</span>Pipeline Health</a></li>
+      <li class="rail-item"><a href="8-mapping-reference.html"><span class="rail-num">08</span>Mapping Reference</a></li>
+    </ul>
+
+    <div class="rail-section">Intake</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="9-intake.html"><span class="rail-num">09</span>Quote Intake</a></li>
+      <li class="rail-item"><a href="10-tolerance-review.html"><span class="rail-num">10</span>Tolerance Review</a></li>
+    </ul>
+
+    <div class="rail-foot">
+      <a href="../ocg_index.html">↩ OCG Review hub</a>
+      <span>v0.1 · 2026-04-16</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="crumb">
+      <span>Wireframes</span>
+      <span class="sep">/</span>
+      <a href="2-search.html">Search</a>
+      <span class="sep">/</span>
+      <span class="here">Unified Record · Q1671</span>
+    </div>
+
+    <div class="screen-head">
+      <div>
+        <h1 class="screen-title">Q1671 &nbsp;↔&nbsp; SO 0271926</h1>
+        <p class="screen-sub">Unified view of one historical quote and its linked work order. Left card reads from M1; right card reads from ProfitKey. Drill into either for the full record.</p>
+      </div>
+      <div class="screen-meta">
+        Screen 03 of 08<br>
+        staging.linked_records<br>
+        id · 1671
+      </div>
+    </div>
+
+    <div class="intro-strip">
+      <span class="wf-tag ink dot">Linked</span>
+      <span><strong>Join key:</strong> <code class="mono">qmpQuoteID&nbsp;1671</code> → <code class="mono">WO.quote_ref&nbsp;Q1671</code> · matched nightly · last refresh 2026-04-16&nbsp;06:00&nbsp;UTC</span>
+      <div class="spacer"></div>
+      <span class="wf-tag dashed">+ pd_deal_id in Phase 3</span>
+    </div>
+
+    <!-- ─── Dual-source header cards ─── -->
+    <div class="grid-2" style="margin-bottom:28px;">
+
+      <!-- M1 card -->
+      <div class="wf-card">
+        <div class="wf-card-head">
+          <span class="title">M1 · Quote 1671</span>
+          <span class="aside">7 tables</span>
+        </div>
+
+        <div class="row" style="margin-bottom:16px; gap:8px;">
+          <span class="wf-tag ink">Source of record</span>
+          <span class="wf-tag">M1 ERP</span>
+          <span class="wf-tag">Qty 4</span>
+        </div>
+
+        <div class="stack" style="gap:0;">
+          <div class="wf-kv">
+            <span class="k">Customer</span>
+            <span class="v mono">64225 · ACME Piping &amp; Valves</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Part · Rev</span>
+            <span class="v mono">51812 · 21000</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Description</span>
+            <span class="v">Piping fittings assembly kit — 5 assembly locations</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Quote date</span>
+            <span class="v mono">2000-12-08</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Est. total hours</span>
+            <span class="v mono">273.37 hrs</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Quoted price / unit</span>
+            <span class="v mono">$13,175.00</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Estimator</span>
+            <span class="v">KSTOCK</span>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:16px;">
+          <a href="4-m1-detail.html" class="wf-btn">Open M1 record →</a>
+          <span class="wf-tag" style="margin-left:auto;">7 tables · 38 fields</span>
+        </div>
+      </div>
+
+      <!-- ProfitKey card -->
+      <div class="wf-card">
+        <div class="wf-card-head">
+          <span class="title">ProfitKey · SO 0271926</span>
+          <span class="aside">4 tables</span>
+        </div>
+
+        <div class="row" style="margin-bottom:16px; gap:8px;">
+          <span class="wf-tag ink">Actuals</span>
+          <span class="wf-tag">ProfitKey ERP</span>
+          <span class="wf-tag ok dot">Closed</span>
+        </div>
+
+        <div class="stack" style="gap:0;">
+          <div class="wf-kv">
+            <span class="k">Item</span>
+            <span class="v mono">51812 · rev 21000</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Description</span>
+            <span class="v">Piping fittings assembly kit — 5 assembly locations</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Released</span>
+            <span class="v mono">2024-03-02</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Due</span>
+            <span class="v mono">2024-04-15</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Actual hours (to-date)</span>
+            <span class="v mono">214.16 hrs</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">Actual cost / unit</span>
+            <span class="v mono">$6,196.80</span>
+          </div>
+          <div class="wf-kv">
+            <span class="k">User</span>
+            <span class="v">AALI</span>
+          </div>
+        </div>
+
+        <div class="row" style="margin-top:16px;">
+          <a href="5-pk-detail.html" class="wf-btn">Open ProfitKey record →</a>
+          <span class="wf-tag" style="margin-left:auto;">4 tables · 22 fields</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─── Tabbed inline views ─── -->
+    <div class="wf-tabs">
+      <div class="wf-tab active">Reconciliation</div>
+      <div class="wf-tab">Timeline</div>
+      <div class="wf-tab">Documents</div>
+      <div class="wf-tab">Audit trail</div>
+    </div>
+
+    <!-- ─── Reconciliation preview ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Reconciliation preview</h2>
+        <span class="aside">estimate → actual · 23yr quote-to-close cycle</span>
+      </div>
+
+      <div class="grid-3" style="margin-bottom:20px;">
+        <div class="wf-stat">
+          <span class="wf-label">Total hours</span>
+          <div class="value">214.16<span class="unit">actual</span></div>
+          <div class="delta">est. 273.37 &nbsp;·&nbsp; Δ −59.21 hrs &nbsp;·&nbsp; <strong style="color:var(--ink)">−21.7%</strong></div>
+        </div>
+        <div class="wf-stat">
+          <span class="wf-label">Cost / unit</span>
+          <div class="value">$6,196.80<span class="unit">actual</span></div>
+          <div class="delta">saved $6,590.43 against lot est. &nbsp;·&nbsp; <strong style="color:var(--ink)">−21%</strong></div>
+        </div>
+        <div class="wf-stat accent">
+          <span class="wf-label">Margin</span>
+          <div class="value">52.96%<span class="unit">actual</span></div>
+          <div class="delta">est. 40.45% &nbsp;·&nbsp; <strong>+12.51 pts</strong></div>
+        </div>
+      </div>
+
+      <div class="row between">
+        <span class="muted" style="font-size:12.5px;">This quote/WO pair outperformed estimate on every dimension. See the full waterfall and commentary on the Reconciliation screen.</span>
+        <a href="6-reconcile.html" class="wf-btn primary">Full reconciliation →</a>
+      </div>
+    </div>
+
+    <!-- ─── Relationship tree ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Record relationships</h2>
+        <span class="aside">as resolved through staging.linked_records</span>
+      </div>
+
+      <div class="wf-card quiet">
+        <pre class="mono" style="margin:0; font-size:12px; line-height:1.8; color:var(--text-1); white-space:pre;">
+<span style="color:var(--ink); font-weight:600;">staging.linked_records #1671</span>
+├── <span style="color:var(--ink);">M1</span>  qmpQuoteID 1671
+│   ├── qml · 5 line groups
+│   ├── qmo · 18 operations
+│   ├── qmm · 12 material lines
+│   ├── qma · 3 sub-assemblies
+│   ├── qmq · 4-tier price ladder
+│   └── qmk · 7 memos
+└── <span style="color:var(--ink);">ProfitKey</span>  WO 0271926
+    ├── WORK_ORDER_MASTER · header · costs
+    ├── JOB_HOURS_SUMMARY  · 41 ops rolled
+    └── LABOR_TICKETS      · 127 tickets · 6 employees
+                          └── <span class="muted">EMPLOYEE_MASTER lookup</span>
+</pre>
+      </div>
+    </div>
+
+    <div class="page-foot">
+      <span>Screen 03 · Unified Record</span>
+      <span><a href="2-search.html">← Search</a> &nbsp;·&nbsp; <a href="4-m1-detail.html">M1 Detail →</a></span>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

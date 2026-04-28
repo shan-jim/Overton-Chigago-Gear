@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overton Chicago Gear · Strategic Systems Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS ── */
+:root {
+  --bg:         #f4f6f8;
+  --surface:    #ffffff;
+  --border:     #dde3ea;
+  --text-1:     #1e2a38;
+  --text-2:     #64748b;
+  --ocg-dark:   #313131;
+  --ocg-blue:   #1890d7;
+  --ocg-teal:   #899fac;
+  --ocg-teal-dk:#4a6278;
+  --amber:      #d97706;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: 'Poppins', 'Segoe UI', sans-serif; color: var(--text-1); min-height: 100vh; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--ocg-dark); color: #fff;
+  padding: 22px 40px 18px;
+  display: flex; align-items: center; gap: 20px;
+  border-bottom: 3px solid var(--ocg-blue);
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.header-logo svg { width: 34px; height: 34px; fill: var(--ocg-blue); flex-shrink: 0; }
+.logo-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: #c8d6e0; line-height: 1.15; }
+.logo-wordmark span { display: block; font-size: 9.5px; font-weight: 400; color: rgba(255,255,255,.38); letter-spacing: .4px; text-transform: none; margin-top: 2px; }
+.header-titles { flex: 1; padding-left: 4px; }
+.header-titles h1 { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+.header-titles p { font-size: 12px; color: var(--ocg-teal); margin-top: 3px; font-weight: 400; }
+.header-badges { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: .3px; white-space: nowrap; }
+.badge-blue  { background: rgba(24,144,215,.14); color: #56b4e8; border: 1px solid rgba(24,144,215,.28); }
+.badge-amber { background: rgba(217,119,6,.2);   color: #fbbf24; border: 1px solid rgba(217,119,6,.35); }
+.badge-teal  { background: rgba(137,159,172,.14); color: #adc4d3; border: 1px solid rgba(137,159,172,.28); }
+
+/* ── CONTENT ── */
+.content { max-width: 1100px; margin: 0 auto; padding: 32px 32px 56px; }
+
+/* ── CONTEXT NOTE ── */
+.context-note {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ocg-blue);
+  border-radius: 0 8px 8px 0;
+  padding: 18px 24px;
+  margin-bottom: 32px;
+  font-size: 13px; line-height: 1.65; color: var(--text-1);
+}
+.context-note strong { color: var(--ocg-blue); font-weight: 600; }
+.context-note .note-meta {
+  font-size: 10.5px; font-weight: 600; color: var(--text-2);
+  text-transform: uppercase; letter-spacing: .7px;
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 8px;
+}
+.context-note .note-meta svg { width: 13px; height: 13px; color: var(--ocg-blue); fill: currentColor; }
+
+/* ── SECTION HEADER ── */
+.section-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 18px;
+}
+.section-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .8px;
+  text-transform: uppercase;
+  padding: 5px 14px; border-radius: 20px;
+  white-space: nowrap; flex-shrink: 0;
+  background: rgba(24,144,215,.1); color: #1573aa; border: 1px solid rgba(24,144,215,.22);
+}
+.section-badge svg { width: 12px; height: 12px; }
+.section-rule { flex: 1; height: 1px; background: var(--border); }
+
+/* ── INITIATIVE CARDS ── */
+.initiative-cards {
+  display: flex; gap: 24px; flex-wrap: wrap;
+  margin-bottom: 32px;
+}
+
+.sys-card {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  flex: 1; min-width: 340px; max-width: 500px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+  transition: box-shadow .2s, border-color .2s, transform .15s;
+  display: flex; flex-direction: column;
+}
+.sys-card:hover {
+  box-shadow: 0 6px 24px rgba(24,144,215,.14);
+  border-color: rgba(24,144,215,.35);
+  transform: translateY(-2px);
+}
+.sys-card.evaluating { border-top: 4px solid var(--ocg-blue); }
+.sys-card.strategic  { border-top: 4px solid var(--amber); }
+.sys-card.strategic:hover {
+  box-shadow: 0 6px 24px rgba(217,119,6,.14);
+  border-color: rgba(217,119,6,.35);
+}
+
+.sys-logo-area {
+  padding: 14px 16px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid #f1f4f7;
+  min-height: 62px;
+}
+.sys-logo-fallback {
+  font-size: 13px; font-weight: 800; color: #414042;
+  letter-spacing: -.5px; line-height: 1;
+  display: flex; align-items: center; gap: 8px;
+}
+.sys-logo-fallback .sub { font-size: 9px; font-weight: 500; color: #4a5568; display: block; margin-top: 2px; letter-spacing: .3px; }
+
+.sys-type-pill {
+  font-size: 9px; font-weight: 700; letter-spacing: .5px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 12px; white-space: nowrap; flex-shrink: 0;
+}
+.pill-eval      { background: rgba(24,144,215,.1);  color: #1573aa;  border: 1px solid rgba(24,144,215,.22); }
+.pill-strategic { background: rgba(217,119,6,.1);   color: #92400e;  border: 1px solid rgba(217,119,6,.25); }
+
+.sys-body { padding: 14px 16px 12px; flex: 1; }
+.sys-name { font-size: 15px; font-weight: 700; color: var(--text-1); letter-spacing: .1px; line-height: 1.2; margin-bottom: 4px; }
+.sys-role { font-size: 11px; color: var(--text-2); font-style: italic; line-height: 1.5; margin-bottom: 12px; }
+.sys-caps { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.sys-caps li {
+  font-size: 11.5px; font-weight: 500; color: var(--text-1);
+  padding-left: 15px; line-height: 1.45; position: relative;
+}
+.sys-caps li::before {
+  content: '';
+  position: absolute; left: 2px; top: 6px;
+  width: 5px; height: 5px; border-radius: 50%;
+}
+.sys-card.evaluating .sys-caps li::before { background: rgba(24,144,215,.45); }
+.sys-card.strategic  .sys-caps li::before { background: rgba(217,119,6,.5); }
+
+/* ── EVALUATING ROW ── */
+.sys-evaluating {
+  padding: 10px 16px;
+  border-top: 1px solid #f1f4f7;
+  font-size: 10px; font-weight: 600; color: var(--text-2);
+  letter-spacing: .4px; text-transform: uppercase;
+  display: flex; align-items: center; gap: 6px;
+}
+.sys-evaluating svg { width: 11px; height: 11px; fill: var(--ocg-blue); flex-shrink: 0; }
+.sys-evaluating .eval-options { color: var(--ocg-blue); font-weight: 700; }
+.sys-card.strategic .sys-evaluating svg { fill: var(--amber); }
+.sys-card.strategic .sys-evaluating .eval-options { color: var(--amber); }
+
+/* ── INTEGRATION POINT FOOTER ── */
+.sys-integration {
+  padding: 9px 16px 12px;
+  border-top: 1px solid var(--border);
+  font-size: 10px; font-weight: 600; color: #4a5568;
+  letter-spacing: .35px;
+  display: flex; align-items: flex-start; gap: 6px;
+}
+.sys-integration svg { width: 11px; height: 11px; fill: var(--ocg-blue); flex-shrink: 0; margin-top: 1px; }
+.sys-card.strategic .sys-integration svg { fill: var(--amber); }
+.sys-integration .int-label { color: var(--text-2); margin-right: 4px; text-transform: uppercase; }
+.sys-integration .int-systems { color: var(--text-1); font-weight: 700; }
+
+/* ── HOW THEY CONNECT ── */
+.how-it-works {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 4px solid var(--ocg-blue); border-radius: 0 8px 8px 0;
+  padding: 20px 24px; margin-bottom: 28px; font-size: 13px; line-height: 1.7;
+}
+.how-it-works h3 { font-size: 14px; font-weight: 700; color: var(--ocg-blue); margin-bottom: 10px; }
+.how-it-works p { color: var(--text-1); margin-bottom: 8px; }
+.how-it-works p:last-of-type { margin-bottom: 0; }
+.how-it-works em { color: var(--ocg-blue); font-style: normal; font-weight: 600; }
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border); padding-top: 16px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+
+/* ── PRINT ── */
+@media print {
+  .page-header { padding: 14px 24px; }
+  .sys-card { break-inside: avoid; box-shadow: 0 0 0 1px var(--border) !important; transform: none !important; }
+  .initiative-cards { flex-wrap: wrap !important; }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+    <div class="logo-wordmark">
+      Overton Chicago Gear
+      <span>Precision Gear Manufacturer &middot; Est. 1888</span>
+    </div>
+  </div>
+  <div class="header-titles">
+    <h1>Strategic Systems Roadmap</h1>
+    <p>Planned integrations and emerging capabilities &mdash; April 2026</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">2 Strategic Initiatives</span>
+    <span class="badge badge-amber">AI Partnership</span>
+    <span class="badge badge-teal">Pipedrive-Connected</span>
+  </div>
+</header>
+
+<div class="content">
+
+  <!-- Section Header -->
+  <div class="section-header">
+    <span class="section-badge">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+      Planned Initiatives
+    </span>
+    <div class="section-rule"></div>
+  </div>
+
+  <!-- Initiative Cards -->
+  <div class="initiative-cards">
+
+    <!-- Case Management -->
+    <div class="sys-card evaluating">
+      <div class="sys-logo-area">
+        <div class="sys-logo-fallback">
+          <svg viewBox="0 0 24 24" fill="#1890d7" style="width:28px;height:28px;flex-shrink:0;">
+            <path d="M20 6h-2.18c.07-.44.18-.87.18-1.33C18 2.54 15.96.5 13.5.5c-1.32 0-2.46.56-3.33 1.44L9 3.12 7.83 1.94C6.96 1.06 5.82.5 4.5.5 2.04.5 0 2.54 0 4.67c0 .46.1.89.18 1.33H0c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h20c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-7.5-3.5c.83 0 1.5.67 1.5 1.5S13.33 5.5 12.5 5.5 11 4.83 11 4c0-.83.67-1.5 1.5-1.5zM4.5 3c.83 0 1.5.67 1.5 1.5S5.33 6 4.5 6 3 5.33 3 4.5 3.67 3 4.5 3zM20 20H4V8h16v12z"/>
+          </svg>
+          <span>Case Management<span class="sub">Project &amp; Customer Tracking</span></span>
+        </div>
+        <span class="sys-type-pill pill-eval">Evaluating &middot; Cloud</span>
+      </div>
+      <div class="sys-body">
+        <div class="sys-name">Case Management</div>
+        <div class="sys-role">Tracks every project from initiation to delivery &mdash; keeping sales, ops, and customers aligned in one place</div>
+        <ul class="sys-caps">
+          <li>Creates a case record automatically when a new project is initiated</li>
+          <li>Monitors project status and flags engineering delays in real time</li>
+          <li>Feeds status updates back into Pipedrive &mdash; sales reps always current</li>
+          <li>Sends proactive customer notifications on delays or scope changes</li>
+        </ul>
+      </div>
+      <div class="sys-evaluating">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        Evaluating: <span class="eval-options">Zendesk &nbsp;&middot;&nbsp; ThinkOwl</span>
+      </div>
+      <div class="sys-integration">
+        <svg viewBox="0 0 24 24"><path d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>
+        <span class="int-label">Connects to:</span>
+        <span class="int-systems">Pipedrive CRM &nbsp;&middot;&nbsp; Web Quoting App</span>
+      </div>
+    </div>
+
+    <!-- AI Knowledge Capture -->
+    <div class="sys-card strategic">
+      <div class="sys-logo-area">
+        <div class="sys-logo-fallback">
+          <svg viewBox="0 0 24 24" fill="#d97706" style="width:28px;height:28px;flex-shrink:0;">
+            <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+          </svg>
+          <span>AI Knowledge Capture<span class="sub">Institutional Intelligence</span></span>
+        </div>
+        <span class="sys-type-pill pill-strategic">Strategic &middot; AI</span>
+      </div>
+      <div class="sys-body">
+        <div class="sys-name">AI Knowledge Capture</div>
+        <div class="sys-role">Preserves the expertise of senior engineers and estimators before it walks out the door at retirement</div>
+        <ul class="sys-caps">
+          <li>Extracts best practices and decision logic from experienced staff</li>
+          <li>AI-assisted documentation &mdash; searchable, structured, and retrievable</li>
+          <li>Connects institutional knowledge directly to the quoting workflow</li>
+          <li>Reduces risk as key engineers and estimators approach retirement</li>
+        </ul>
+      </div>
+      <div class="sys-evaluating">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        Reference model: <span class="eval-options">RightNow &nbsp;&middot;&nbsp; AI-accelerated</span>
+      </div>
+      <div class="sys-integration">
+        <svg viewBox="0 0 24 24"><path d="M17 7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h10c2.76 0 5-2.24 5-5s-2.24-5-5-5zM7 15c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>
+        <span class="int-label">Connects to:</span>
+        <span class="int-systems">Web Quoting App &nbsp;&middot;&nbsp; Gear Drawings AI</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- How They Connect -->
+  <div class="how-it-works">
+    <h3>How These Initiatives Connect to the Current Project</h3>
+    <p>Both initiatives are natural extensions of the data infrastructure proposed for this engagement. The <em>Centralized Staging Database</em> and <em>Web Quoting Application</em> would give OCG a clean, connected foundation &mdash; Case Management could plug into that foundation through Pipedrive, creating a single thread from first customer contact through project delivery and invoicing. Rather than a separate silo, it would become another node in the same connected system.</p>
+    <p>The <em>AI Knowledge Capture</em> initiative is arguably the most strategic of the two. The data analysis work scoped for this engagement &mdash; mapping where information lives across M1, ProfitKey, and the quoting system &mdash; would directly inform what a knowledge capture program should target first. WBD is well-positioned to lead this effort, using AI to extract, structure, and surface the best practices of OCG&rsquo;s senior engineering and estimating team before those individuals retire.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Overton Chicago Gear &nbsp;&middot;&nbsp; Strategic Systems Roadmap &nbsp;&middot;&nbsp; April 2026</span>
+    <span>Source: Call Notes &mdash; Tim Canaly, VP of Sales &nbsp;&middot;&nbsp; April 6, 2026</span>
+  </div>
+
+</div>
+</body>
+</html>

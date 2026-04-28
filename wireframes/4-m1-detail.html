@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M1 Quote Detail · Overton Foundation · Wireframes</title>
+<link rel="stylesheet" href="_shared/wireframe.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="brand-title">Overton Wireframes</span>
+      <span class="brand-sub">Foundation · Intake · Phases 1–2</span>
+    </div>
+
+    <div class="rail-section">Overview</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="index.html"><span class="rail-num">◇</span>Sitemap</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · User</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="1-login.html"><span class="rail-num">01</span>Login</a></li>
+      <li class="rail-item"><a href="2-search.html"><span class="rail-num">02</span>Search</a></li>
+      <li class="rail-item"><a href="3-unified-record.html"><span class="rail-num">03</span>Unified Record</a></li>
+      <li class="rail-item current"><a href="4-m1-detail.html"><span class="rail-num">04</span>M1 Quote Detail</a></li>
+      <li class="rail-item"><a href="5-pk-detail.html"><span class="rail-num">05</span>ProfitKey WO Detail</a></li>
+      <li class="rail-item"><a href="6-reconcile.html"><span class="rail-num">06</span>Reconciliation</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · Admin</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="7-pipeline-health.html"><span class="rail-num">07</span>Pipeline Health</a></li>
+      <li class="rail-item"><a href="8-mapping-reference.html"><span class="rail-num">08</span>Mapping Reference</a></li>
+    </ul>
+
+    <div class="rail-section">Intake</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="9-intake.html"><span class="rail-num">09</span>Quote Intake</a></li>
+      <li class="rail-item"><a href="10-tolerance-review.html"><span class="rail-num">10</span>Tolerance Review</a></li>
+    </ul>
+
+    <div class="rail-foot">
+      <a href="../ocg_index.html">↩ OCG Review hub</a>
+      <span>v0.1 · 2026-04-16</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="crumb">
+      <span>Wireframes</span>
+      <span class="sep">/</span>
+      <a href="2-search.html">Search</a>
+      <span class="sep">/</span>
+      <a href="3-unified-record.html">Q1671 ↔ SO 0271926</a>
+      <span class="sep">/</span>
+      <span class="here">M1 Quote Detail</span>
+    </div>
+
+    <div class="screen-head">
+      <div>
+        <h1 class="screen-title">M1 · Quote 1671</h1>
+        <p class="screen-sub">Full drill-down of the M1 quote record. Five tabs map to the qm* table family: header, line groups, routing, pricing, memos. All read-only.</p>
+      </div>
+      <div class="screen-meta">
+        Screen 04 of 08<br>
+        Source: M1 ERP<br>
+        qmp · qml · qmo · qmm · qma · qmq · qmk
+      </div>
+    </div>
+
+    <!-- ─── Record header strip ─── -->
+    <div class="wf-card" style="margin-bottom:22px;">
+      <div class="rec-head">
+        <div class="rec-field">
+          <span class="wf-label">Quote ID</span>
+          <div class="rec-value primary">1671</div>
+        </div>
+        <div class="rec-fields">
+          <div class="rec-field">
+            <span class="wf-label">Customer</span>
+            <div class="rec-value">64225 · ACME Piping &amp; Valves</div>
+          </div>
+          <div class="rec-field">
+            <span class="wf-label">Part · Rev</span>
+            <div class="rec-value mono">51812 · 21000</div>
+          </div>
+          <div class="rec-field">
+            <span class="wf-label">Quote date</span>
+            <div class="rec-value mono">2000-12-08</div>
+          </div>
+          <div class="rec-field">
+            <span class="wf-label">Est. hours</span>
+            <div class="rec-value mono">273.37</div>
+          </div>
+        </div>
+        <div class="rec-tags">
+          <span class="wf-tag ink">Source of record</span>
+          <span class="wf-tag">42,547 quotes in M1</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Tabs ─── -->
+    <div class="wf-tabs">
+      <div class="wf-tab active">Header <span class="muted" style="margin-left:6px;">qmp</span></div>
+      <div class="wf-tab">Line Groups <span class="muted" style="margin-left:6px;">qml · 5</span></div>
+      <div class="wf-tab">Routing <span class="muted" style="margin-left:6px;">qmo · qmm · qma</span></div>
+      <div class="wf-tab">Pricing <span class="muted" style="margin-left:6px;">qmq</span></div>
+      <div class="wf-tab">Memos <span class="muted" style="margin-left:6px;">qmk · 7</span></div>
+    </div>
+
+    <!-- ─── Header tab content ─── -->
+    <div class="grid-2" style="gap:22px;">
+
+      <!-- Left column: header fields -->
+      <div class="stack">
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Quote header · qmp</span>
+            <span class="aside">primary record</span>
+          </div>
+
+          <div class="grid-2" style="gap:0 28px;">
+            <div class="wf-kv"><span class="k">qmpQuoteID</span><span class="v mono">1671</span></div>
+            <div class="wf-kv"><span class="k">qmpRevision</span><span class="v mono">0</span></div>
+            <div class="wf-kv"><span class="k">qmpCustID</span><span class="v mono">64225</span></div>
+            <div class="wf-kv"><span class="k">qmpStatus</span><span class="v">Won · closed cycle</span></div>
+            <div class="wf-kv"><span class="k">qmpQuoteDate</span><span class="v mono">2000-12-08</span></div>
+            <div class="wf-kv"><span class="k">qmpExpiryDate</span><span class="v mono">2001-03-08</span></div>
+            <div class="wf-kv"><span class="k">qmpEstimator</span><span class="v">KSTOCK</span></div>
+            <div class="wf-kv"><span class="k">qmpLeadTime</span><span class="v mono">10 wks</span></div>
+            <div class="wf-kv"><span class="k">qmpPartNum</span><span class="v mono">51812</span></div>
+            <div class="wf-kv"><span class="k">qmpPartRev</span><span class="v mono">21000</span></div>
+            <div class="wf-kv" style="grid-column:span 2;"><span class="k">qmpDescription</span><span class="v">Piping fittings assembly kit — 5 assembly locations</span></div>
+          </div>
+        </div>
+
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Inbound RFQ context</span>
+            <span class="aside">source of the quote</span>
+          </div>
+          <div class="wf-kv"><span class="k">Received via</span><span class="v">Email · attachment · PDF</span></div>
+          <div class="wf-kv"><span class="k">Received date</span><span class="v mono">2000-11-27</span></div>
+          <div class="wf-kv"><span class="k">Customer contact</span><span class="v">R. Martin · ACME Procurement</span></div>
+          <div class="wf-kv"><span class="k">Requested qty</span><span class="v mono">4 assemblies</span></div>
+          <div class="wf-kv"><span class="k">RFQ document</span><span class="v"><span class="wf-tag dashed">acme-rfq-2000-1127.pdf · archived</span></span></div>
+        </div>
+      </div>
+
+      <!-- Right column: summary + related -->
+      <div class="stack">
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Summary totals</span>
+            <span class="aside">rolled from qml · qmo · qmm</span>
+          </div>
+          <div class="grid-2" style="gap:12px 22px;">
+            <div class="wf-stat">
+              <span class="wf-label">Est. hours</span>
+              <div class="value">273.37<span class="unit">hrs</span></div>
+            </div>
+            <div class="wf-stat">
+              <span class="wf-label">Quoted / unit</span>
+              <div class="value">$13,175<span class="unit">/u</span></div>
+            </div>
+            <div class="wf-stat">
+              <span class="wf-label">Line groups</span>
+              <div class="value">5<span class="unit">qml</span></div>
+            </div>
+            <div class="wf-stat">
+              <span class="wf-label">Operations</span>
+              <div class="value">18<span class="unit">qmo</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="wf-card quiet">
+          <div class="wf-card-head">
+            <span class="title">Related quotes</span>
+            <span class="aside">same customer · same part family</span>
+          </div>
+          <table class="wf-table" style="border:none;">
+            <tbody>
+              <tr><td class="mono">Q1672</td><td>Follow-on · rev 21100</td><td class="mono muted">2001-03-14</td></tr>
+              <tr><td class="mono">Q1583</td><td>Prior gen part</td><td class="mono muted">2000-04-09</td></tr>
+              <tr><td class="mono">Q1492</td><td>First quote for cust 64225</td><td class="mono muted">1999-09-11</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="wf-card quiet">
+          <div class="wf-card-head">
+            <span class="title">Linked · production</span>
+            <span class="aside">resolved via staging.linked_records</span>
+          </div>
+          <div class="row between">
+            <div>
+              <div class="mono" style="font-size:14px; font-weight:600; color:var(--ink);">SO 0271926</div>
+              <div class="muted" style="font-size:12px;">ProfitKey · closed 2024</div>
+            </div>
+            <a href="5-pk-detail.html" class="wf-btn sm">Open WO →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── Routing preview strip ─── -->
+    <div class="cluster" style="margin-top:34px;">
+      <div class="cluster-head">
+        <h2>Routing preview</h2>
+        <span class="aside">qmo · 18 operations · top 5 by hours</span>
+      </div>
+
+      <table class="wf-table">
+        <thead>
+          <tr>
+            <th>Op</th>
+            <th>Work center</th>
+            <th>Description</th>
+            <th class="num">Setup hrs</th>
+            <th class="num">Run hrs / u</th>
+            <th class="num">Lot hrs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono">010</td><td class="mono">HOB-G3</td><td>Gear hobbing</td><td class="num mono">4.0</td><td class="num mono">12.40</td><td class="num mono">53.60</td></tr>
+          <tr><td class="mono">020</td><td class="mono">GRND-5</td><td>OD grinding</td><td class="num mono">3.5</td><td class="num mono">8.10</td><td class="num mono">35.90</td></tr>
+          <tr><td class="mono">030</td><td class="mono">MILL-VT2</td><td>Feature milling</td><td class="num mono">2.8</td><td class="num mono">6.75</td><td class="num mono">29.80</td></tr>
+          <tr><td class="mono">040</td><td class="mono">INSP-CMM</td><td>Final inspection</td><td class="num mono">1.5</td><td class="num mono">4.20</td><td class="num mono">18.30</td></tr>
+          <tr><td class="mono">050</td><td class="mono">ASSY-B1</td><td>Assembly · 5 locations</td><td class="num mono">1.2</td><td class="num mono">3.60</td><td class="num mono">15.60</td></tr>
+        </tbody>
+      </table>
+      <div class="row between" style="margin-top:12px;">
+        <span class="muted mono" style="font-size:11px;">13 more operations · click Routing tab to expand</span>
+        <span class="wf-btn ghost sm">Open Routing tab →</span>
+      </div>
+    </div>
+
+    <div class="page-foot">
+      <span>Screen 04 · M1 Quote Detail · Header tab</span>
+      <span><a href="3-unified-record.html">← Unified Record</a> &nbsp;·&nbsp; <a href="5-pk-detail.html">ProfitKey Detail →</a></span>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

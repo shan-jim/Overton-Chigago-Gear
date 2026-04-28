@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quote Intake · Overton Intake · Wireframes</title>
+<link rel="stylesheet" href="_shared/wireframe.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="brand-title">Overton Wireframes</span>
+      <span class="brand-sub">Foundation · Intake · Phases 1–2</span>
+    </div>
+
+    <div class="rail-section">Overview</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="index.html"><span class="rail-num">◇</span>Sitemap</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · User</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="1-login.html"><span class="rail-num">01</span>Login</a></li>
+      <li class="rail-item"><a href="2-search.html"><span class="rail-num">02</span>Search</a></li>
+      <li class="rail-item"><a href="3-unified-record.html"><span class="rail-num">03</span>Unified Record</a></li>
+      <li class="rail-item"><a href="4-m1-detail.html"><span class="rail-num">04</span>M1 Quote Detail</a></li>
+      <li class="rail-item"><a href="5-pk-detail.html"><span class="rail-num">05</span>ProfitKey WO Detail</a></li>
+      <li class="rail-item"><a href="6-reconcile.html"><span class="rail-num">06</span>Reconciliation</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · Admin</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="7-pipeline-health.html"><span class="rail-num">07</span>Pipeline Health</a></li>
+      <li class="rail-item"><a href="8-mapping-reference.html"><span class="rail-num">08</span>Mapping Reference</a></li>
+    </ul>
+
+    <div class="rail-section">Intake</div>
+    <ul class="rail-list">
+      <li class="rail-item current"><a href="9-intake.html"><span class="rail-num">09</span>Quote Intake</a></li>
+      <li class="rail-item"><a href="10-tolerance-review.html"><span class="rail-num">10</span>Tolerance Review</a></li>
+    </ul>
+
+    <div class="rail-foot">
+      <a href="../ocg_index.html">↩ OCG Review hub</a>
+      <span>v0.1 · 2026-04-16</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="crumb">
+      <span>Wireframes</span>
+      <span class="sep">/</span>
+      <span>Phase 2 · Intake</span>
+      <span class="sep">/</span>
+      <span class="here">Quote Intake · LHMS0808</span>
+    </div>
+
+    <div class="screen-head">
+      <div>
+        <h1 class="screen-title">Quote Intake</h1>
+        <p class="screen-sub">PDF upload → AI Vision extraction → M1-ready draft. Tolerances that exceed configured thresholds get flagged for estimator sign-off before the draft hands off to M1.</p>
+      </div>
+      <div class="screen-meta">
+        Screen 09 of 10<br>
+        Overton Intake · Phase 2<br>
+        M1 = system of record
+      </div>
+    </div>
+
+    <div class="intro-strip">
+      <span class="wf-tag ink dot">Phase 2</span>
+      <span><strong>AI Vision extracts incoming RFQs into M1's input shape.</strong> M1 remains the system of record for new quotes; this surface produces a reviewable draft, not a source record. Join back to Foundation via <code class="mono">qmpQuoteID</code> once the draft is accepted in M1.</span>
+      <div class="spacer"></div>
+      <span class="wf-tag warn dot">3 tolerance flags</span>
+      <span class="wf-tag dashed">Review pending</span>
+    </div>
+
+    <!-- ═══ Cluster A — Upload ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>A · Upload</h2>
+        <span class="aside">RFQ PDF · email attachment · drag &amp; drop</span>
+      </div>
+
+      <div class="grid-2" style="align-items:stretch;">
+        <!-- Drop zone -->
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Source document</span>
+            <span class="aside">1 file · uploaded 2026-04-15 14:22 UTC</span>
+          </div>
+
+          <div class="wf-block dashed" style="padding:26px 18px; text-align:center;">
+            <div class="mono" style="font-size:22px; color:var(--text-3); letter-spacing:.2em;">&#x1F4CE;</div>
+            <div style="font-weight:600; color:var(--ink); margin-top:8px;">Drop RFQ PDF here</div>
+            <div class="muted mono" style="font-size:11px; margin-top:4px;">or paste email attachment · 25 MB max</div>
+          </div>
+
+          <div class="row" style="margin-top:14px; gap:8px; flex-wrap:wrap;">
+            <span class="wf-tag ink">uploaded</span>
+            <span class="mono" style="font-size:12.5px; color:var(--ink); font-weight:600;">LHMS0808-RFQ-Rev1.pdf</span>
+            <div class="spacer"></div>
+            <span class="muted mono" style="font-size:11px;">2.4 MB · 8 pages · scanned</span>
+          </div>
+        </div>
+
+        <!-- Upload source metadata -->
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Upload source</span>
+            <span class="aside">email inbox · intake@overton</span>
+          </div>
+          <div class="stack" style="gap:0;">
+            <div class="wf-kv">
+              <span class="k">Received from</span>
+              <span class="v">Codi Hatzenbuhler · L &amp; H Industrial, Inc.</span>
+            </div>
+            <div class="wf-kv">
+              <span class="k">Email subject</span>
+              <span class="v">RFQ LHMS0808 · F/C 32T Spur Gear · rev-1</span>
+            </div>
+            <div class="wf-kv">
+              <span class="k">Date / time received</span>
+              <span class="v mono">2026-04-15 09:17 CDT</span>
+            </div>
+            <div class="wf-kv">
+              <span class="k">Customer</span>
+              <span class="v mono">L &amp; H Industrial, Inc.</span>
+            </div>
+            <div class="wf-kv">
+              <span class="k">RFQ #</span>
+              <span class="v mono">LHMS0808</span>
+            </div>
+            <div class="wf-kv">
+              <span class="k">Response due</span>
+              <span class="v mono">2026-04-22</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Cluster B — AI Vision extraction ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>B · AI Vision extraction</h2>
+        <span class="aside">model <code class="mono">DPT-2 · Preview</code> · 22 fields · avg conf 0.84</span>
+      </div>
+
+      <div class="grid-2" style="align-items:stretch; gap:18px;">
+
+        <!-- Left pane — PDF preview with region chips -->
+        <div class="wf-card" style="padding:16px;">
+          <div class="row between" style="margin-bottom:14px; align-items:center;">
+            <div class="row" style="gap:8px;">
+              <span class="wf-tag ink">Page 1 of 8</span>
+              <span class="wf-tag">scan · 300dpi</span>
+            </div>
+            <div class="row" style="gap:4px;">
+              <span class="wf-btn ghost sm">◁</span>
+              <span class="wf-btn ghost sm">▷</span>
+              <span class="wf-btn ghost sm">&#x1F50D;</span>
+            </div>
+          </div>
+
+          <div class="wf-image" style="height:440px;">
+            <!-- Region chips, absolutely positioned over the drawing hatch -->
+            <span class="region-chip" style="top:22px; left:22px;">DR figure · gear geometry</span>
+            <span class="region-chip" style="top:168px; left:34px;">DR table · materials &amp; HT</span>
+            <span class="region-chip" style="bottom:30px; right:26px;">DR table · tolerances</span>
+            <span class="region-chip" style="top:90px; right:26px;">DR title-block · part meta</span>
+          </div>
+
+          <div class="row between" style="margin-top:12px;">
+            <span class="muted mono" style="font-size:11px;">4 regions detected · hover to inspect</span>
+            <span class="muted mono" style="font-size:11px;">LHMS0808-RFQ-Rev1.pdf</span>
+          </div>
+        </div>
+
+        <!-- Right pane — Parse / Extract / Chat tabs + extracted fields -->
+        <div class="wf-card" style="padding:16px;">
+          <div class="row between" style="align-items:center; margin-bottom:0;">
+            <div class="wf-tabs" style="margin-bottom:0; flex:1;">
+              <div class="wf-tab">Parse</div>
+              <div class="wf-tab active">Extract</div>
+              <div class="wf-tab">Chat</div>
+            </div>
+            <div class="row" style="gap:6px; padding-bottom:6px;">
+              <span class="wf-tag ink">DPT-2 · Preview</span>
+            </div>
+          </div>
+
+          <div class="row between" style="margin:14px 0 10px; align-items:center;">
+            <span class="muted mono" style="font-size:10.5px; letter-spacing:.12em; text-transform:uppercase;">Structured output · 6 clusters · 22 fields</span>
+            <div class="row" style="gap:0;">
+              <span class="wf-tag solid" style="border-top-right-radius:0; border-bottom-right-radius:0;">Markdown</span>
+              <span class="wf-tag" style="border-top-left-radius:0; border-bottom-left-radius:0; border-left:none;">JSON</span>
+            </div>
+          </div>
+
+          <!-- Cluster: Intake -->
+          <div style="margin-top:6px;">
+            <div class="wf-label section">&#x25CF; Intake</div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">RFQ Source</span><div class="v">Email from Codi Hatzenbuhler · fwd to Ansaar Ali</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.98</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Requested response</span><div class="v mono">2026-04-22</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.96</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Estimator assigned</span><div class="v">Ansaar Ali</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.99</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cluster: Part ID -->
+          <div style="margin-top:6px;">
+            <div class="wf-label section">&#x25CF; Part Identification</div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Customer part #</span><div class="v mono">6331493</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.97</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Description</span><div class="v">F/C 32T Spur Gear · 0.774 DP · 20° PA · 14.49″ face · 42.25″ OD</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.93</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Drawing ref · rev</span><div class="v mono">B0007221 · Rev-02</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.95</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cluster: Technical -->
+          <div style="margin-top:6px;">
+            <div class="wf-label section">&#x25CF; Technical Requirements</div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Material spec</span><div class="v mono">AISI 4340 weldment · rim &amp; hub forging ASTM A668 MH</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.91</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Heat treat</span><div class="v">Induction harden teeth · case depth per drawing note</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag dashed warn">needs review</span><span class="muted mono" style="font-size:12px;">&#x26A0;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">AGMA quality class</span><div class="v muted">— not stated on drawing</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag dashed warn">needs review</span><span class="muted mono" style="font-size:12px;">&#x26A0;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Surface finish</span><div class="v mono">tooth profile 32 RMS</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.92</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cluster: Routing -->
+          <div style="margin-top:6px;">
+            <div class="wf-label section">&#x25CF; Routing &amp; Outsourcing</div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Operations list</span><div class="v">Inspect → Purchase material → Finish turn → Drill holes</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag warn dot">0.72</span><span class="muted mono" style="font-size:12px;">&#x26A0;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Outside processes</span><div class="v muted">— grind may be internal</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag dashed">uncertain</span><span class="muted mono" style="font-size:12px;">&#x26A0;</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cluster: Costing -->
+          <div style="margin-top:6px;">
+            <div class="wf-label section">&#x25CF; Costing</div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Material cost basis</span><div class="v mono">$928.00</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.94</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Direct labor</span><div class="v mono">$1,520.00</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag warn dot">0.78</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cluster: Tolerances -->
+          <div style="margin-top:6px;">
+            <div class="wf-label section">&#x25CF; Tolerances</div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Backlash with mate</span><div class="v mono">0.015″ – 0.023″</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag ok dot">0.88</span><span class="muted mono" style="font-size:12px;">&#x2713;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Runout tolerance</span><div class="v mono">0.003″</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag warn dot">0.74</span><span class="muted mono" style="font-size:12px;">&#x26A0;</span></div>
+              </div>
+            </div>
+            <div class="wf-kv">
+              <div class="row between" style="align-items:baseline;">
+                <div><span class="k">Induction case depth</span><div class="v muted">— missing from drawing</div></div>
+                <div class="row" style="gap:6px; flex-shrink:0;"><span class="wf-tag dashed warn">flagged</span><span class="muted mono" style="font-size:12px;">&#x2716;</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Feedback footer -->
+          <hr class="hr">
+          <div class="row between" style="align-items:center;">
+            <div class="row" style="gap:6px;">
+              <span class="wf-tag ok dot">Accurate</span>
+              <span class="muted mono" style="font-size:11px;">report per-field via &#x1F44D; / &#x1F44E;</span>
+            </div>
+            <a href="10-tolerance-review.html" class="wf-btn primary sm">Tolerance review →</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ═══ Cluster C — Estimator RFQ Summary ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>C · Estimator RFQ Summary</h2>
+        <span class="aside">M1-input shape · 11 categories · 24 rows</span>
+      </div>
+
+      <div class="row" style="gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+        <span class="wf-tag ink dot">LHMS0808</span>
+        <span class="wf-tag">Quote 40951-14 · Rev-1</span>
+        <span class="wf-tag">L &amp; H Industrial</span>
+        <span class="wf-tag">Qty 2 @ $47,975 ea</span>
+        <div class="spacer"></div>
+        <span class="muted mono" style="font-size:11px;">drafted 2026-04-15 · estimator Ansaar Ali</span>
+      </div>
+
+      <table class="wf-table">
+        <thead>
+          <tr>
+            <th style="width:22%;">Category</th>
+            <th style="width:30%;">Metadata item</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="wf-tag cat-process">RFQ Intake</span></td><td>RFQ Source</td><td>Email from Codi Hatzenbuhler · fwd to Ansaar Ali</td></tr>
+          <tr><td><span class="wf-tag cat-process">RFQ Intake</span></td><td>Date / Time Received</td><td class="mono">2026-04-15 09:17 CDT</td></tr>
+          <tr><td><span class="wf-tag cat-process">RFQ Intake</span></td><td>Requested Response Date</td><td class="mono">2026-04-22</td></tr>
+          <tr><td><span class="wf-tag cat-process">RFQ Intake</span></td><td>Estimator</td><td>Ansaar Ali</td></tr>
+
+          <tr><td><span class="wf-tag cat-reference">Part Identification</span></td><td>Customer Part Number</td><td class="mono">6331493</td></tr>
+          <tr><td><span class="wf-tag cat-reference">Part Identification</span></td><td>Part Description</td><td>F/C 32T Spur Gear · 0.774 DP · 20° PA · 14.49″ face · 42.25″ OD</td></tr>
+          <tr><td><span class="wf-tag cat-reference">Part Identification</span></td><td>Drawing / Model Ref</td><td class="mono">B0007221 · Rev-02</td></tr>
+
+          <tr><td><span class="wf-tag cat-money">Technical Requirements</span></td><td>Material Spec &amp; Form</td><td class="mono">AISI 4340 steel weldment</td></tr>
+          <tr><td><span class="wf-tag cat-money">Technical Requirements</span></td><td>Heat Treat · Hardness</td><td>Induction harden teeth <span class="wf-tag dashed warn" style="margin-left:6px;">flag</span></td></tr>
+          <tr><td><span class="wf-tag cat-money">Technical Requirements</span></td><td>Gear Quality · Tolerances</td><td class="muted">— not stated on drawing <span class="wf-tag dashed warn" style="margin-left:6px;">flag</span></td></tr>
+          <tr><td><span class="wf-tag cat-money">Technical Requirements</span></td><td>Surface Finish</td><td class="mono">tooth profile 32 RMS</td></tr>
+
+          <tr><td><span class="wf-tag cat-routing">Routing &amp; Outsourcing</span></td><td>Operations List</td><td>Inspect → Purchase material → Finish turn → Drill holes</td></tr>
+          <tr><td><span class="wf-tag cat-routing">Routing &amp; Outsourcing</span></td><td>Outside Processes</td><td class="muted">— grind may be internal</td></tr>
+          <tr><td><span class="wf-tag cat-routing">Routing &amp; Outsourcing</span></td><td>Work Centers / Hours</td><td>Setup 12.00 · Prod 26.00 · Total 38.00 hrs</td></tr>
+
+          <tr><td><span class="wf-tag cat-money">Costing</span></td><td>Material Cost Basis</td><td class="mono">$928.00</td></tr>
+          <tr><td><span class="wf-tag cat-money">Costing</span></td><td>Direct Labor</td><td class="mono">$1,520.00</td></tr>
+          <tr><td><span class="wf-tag cat-money">Costing</span></td><td>Overhead / Burden</td><td class="mono">$3,230.00</td></tr>
+          <tr><td><span class="wf-tag cat-money">Costing</span></td><td>Tooling / NRE</td><td class="mono">$0.00 noted</td></tr>
+
+          <tr><td><span class="wf-tag cat-ops">Lead-Time</span></td><td>Raw Material / Forging LT</td><td class="muted">— not specified <span class="wf-tag dashed" style="margin-left:6px;">uncertain</span></td></tr>
+          <tr><td><span class="wf-tag cat-ops">Lead-Time</span></td><td>Total Proposed LT</td><td class="mono">12–14 weeks ARO</td></tr>
+
+          <tr><td><span class="wf-tag cat-money">Pricing &amp; Commercials</span></td><td>Price Basis</td><td class="mono">$47,975.00 EA (Qty 2)</td></tr>
+          <tr><td><span class="wf-tag cat-money">Pricing &amp; Commercials</span></td><td>Quote Validity</td><td class="mono">Expires 2026-10-13</td></tr>
+
+          <tr><td><span class="wf-tag cat-process">Risks &amp; Assumptions</span></td><td>Key Assumptions</td><td>Customer pays freight · pricing / lead-time subject to drawing confirm</td></tr>
+          <tr><td><span class="wf-tag cat-process">Risks &amp; Assumptions</span></td><td>Identified Risks</td><td>Hardness spec mismatch; span-over-teeth value after grind <span class="wf-tag dashed warn" style="margin-left:6px;">flag</span></td></tr>
+
+          <tr><td><span class="wf-tag cat-reference">Documentation &amp; Controls</span></td><td>Inspection Plan</td><td>Span-over-teeth checks (pre / post grind) · final inspection</td></tr>
+          <tr><td><span class="wf-tag cat-reference">Documentation &amp; Controls</span></td><td>Certs Required</td><td class="muted">— not specified (ISO 9001 shown on quote)</td></tr>
+
+          <tr><td><span class="wf-tag cat-ops">Internal Coordination</span></td><td>Alt Materials / Paths</td><td class="muted">— none noted</td></tr>
+          <tr><td><span class="wf-tag cat-ops">Internal Coordination</span></td><td>Expedite Options</td><td class="muted">— not specified</td></tr>
+
+          <tr><td><span class="wf-tag cat-process">Dates &amp; Status</span></td><td>Quote Drafted</td><td class="mono">2026-04-15</td></tr>
+          <tr><td><span class="wf-tag cat-process">Dates &amp; Status</span></td><td>Internal Review Status</td><td>Approvals / signatures on file (QH40969 AA · Mohamed)</td></tr>
+          <tr><td><span class="wf-tag cat-process">Dates &amp; Status</span></td><td>Follow-Up Date</td><td class="mono">2026-04-22</td></tr>
+        </tbody>
+      </table>
+
+      <div class="wf-card quiet" style="margin-top:16px; padding:14px 18px; background:var(--surface-2);">
+        <span class="wf-label" style="margin-bottom:8px;">Notes</span>
+        <div style="font-size:12.5px; line-height:1.6; color:var(--text-2);">
+          Verify hardness spec (315/350 vs 325/365 BHN — some docs show different ranges). Confirm ship-to &amp; Incoterms with L &amp; H. Re-check span-over-teeth value <em>after grind</em>. Induction case-depth missing from drawing — blocking flag on M1 handoff until resolved.
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ Cluster D — Copy → M1 Quote Entry ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>D · Copy → M1 Quote Entry</h2>
+        <span class="aside">fields ordered to match M1 · tab-down &amp; paste</span>
+      </div>
+
+      <div class="intro-strip" style="margin-bottom:20px;">
+        <span class="wf-tag ink dot">M1 Quote Entry</span>
+        <span><strong>Fields rendered in M1's exact field order.</strong> Open <code class="mono">Quote Entry (chicago_gear)</code>, create a new Quote Line, and tab from field to field pasting each value. No re-typing, no re-ordering.</span>
+        <div class="spacer"></div>
+        <span class="wf-tag dashed">copy-paste aid · read-only</span>
+      </div>
+
+      <div class="wf-card" style="padding:0;">
+        <!-- Faux M1 title bar -->
+        <div style="background:var(--ink); color:var(--surface); padding:10px 16px; font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; display:flex; justify-content:space-between; align-items:center; border-top-left-radius:var(--radius); border-top-right-radius:var(--radius);">
+          <span>M1 · Quote Line <span style="opacity:.55;">(facsimile · field order only)</span></span>
+          <div class="row" style="gap:6px;">
+            <span class="wf-tag" style="border-color:rgba(255,255,255,.28); color:var(--surface); background:transparent;">&#x2398; copy all · JSON</span>
+            <span class="wf-tag" style="border-color:rgba(255,255,255,.28); color:var(--surface); background:transparent;">&#x2398; copy all · Markdown</span>
+          </div>
+        </div>
+
+        <div style="padding:20px;">
+
+          <!-- ID Info -->
+          <div class="row between" style="margin:0 0 10px; align-items:center;">
+            <span class="wf-label inked">&#x25A1; ID Info</span>
+            <span class="muted mono" style="font-size:11px;">— assign in M1 when the new Quote Line is created —</span>
+          </div>
+          <div class="grid-2" style="gap:14px; margin-bottom:22px;">
+            <div>
+              <span class="wf-label">Quote ID*</span>
+              <div class="wf-input empty mono">— M1 auto-assigns</div>
+            </div>
+            <div>
+              <span class="wf-label">Line#*</span>
+              <div class="wf-input empty mono">— M1 auto-assigns</div>
+            </div>
+          </div>
+
+          <!-- Part Info -->
+          <div class="row between" style="margin:0 0 10px; align-items:center;">
+            <span class="wf-label inked">&#x25A1; Part Info</span>
+            <span class="wf-tag">&#x2398; copy section</span>
+          </div>
+          <div class="grid-3" style="gap:14px; margin-bottom:14px;">
+            <div>
+              <span class="wf-label">Part ID*</span>
+              <div class="wf-input filled mono">6331493</div>
+            </div>
+            <div>
+              <span class="wf-label">Rev</span>
+              <div class="wf-input filled mono">Rev-02</div>
+            </div>
+            <div>
+              <span class="wf-label">UoM</span>
+              <div class="wf-input filled mono">EA</div>
+            </div>
+          </div>
+          <div class="grid-2" style="gap:14px; margin-bottom:18px;">
+            <div>
+              <span class="wf-label">Part Description*</span>
+              <div class="wf-input filled mono">F/C 32T SPUR GEAR</div>
+            </div>
+            <div>
+              <span class="wf-label">Part Group</span>
+              <div class="wf-input wf-select filled mono">TRADE</div>
+            </div>
+          </div>
+
+          <!-- Long Description -->
+          <div class="row between" style="margin:0 0 10px; align-items:center;">
+            <span class="wf-label inked">&#x25A1; Long Description</span>
+            <span class="wf-tag">&#x2398; copy</span>
+          </div>
+          <div class="wf-input ta filled mono" style="font-size:12px; white-space:pre-wrap; margin-bottom:22px;">- 32T-0.774DP-20&deg;PA-14.49&quot;FACE-42.25&quot;OD-B0007221
+- WITH AISI 4340 STEEL WELDMENT, RIM &amp; HUB PER ASTM A668 MH
+- INDUCTION HARDEN TEETH, CASE DEPTH PER DRAWING NOTE
+- BACKLASH WITH MATE 0.015&quot;-0.023&quot;, RUNOUT 0.003&quot;
+- TOOTH PROFILE FINISH 32 RMS</div>
+
+          <!-- Status row -->
+          <div class="grid-3" style="gap:14px; margin-bottom:22px;">
+            <div>
+              <span class="wf-label">Resolution Code</span>
+              <div class="wf-input wf-select filled mono">OPEN</div>
+            </div>
+            <div>
+              <span class="wf-label">Quote Markup Type*</span>
+              <div class="wf-input wf-select filled mono">Markup</div>
+            </div>
+            <div>
+              <span class="wf-label">Transferred to Order?</span>
+              <div class="wf-input empty mono">&#x2610; unchecked</div>
+            </div>
+          </div>
+
+          <!-- Quote Quantities -->
+          <div class="row between" style="margin:0 0 10px; align-items:center;">
+            <span class="wf-label inked">&#x25A1; Quote Quantities</span>
+            <span class="wf-tag">&#x2398; copy grid</span>
+          </div>
+          <table class="wf-table" style="margin-bottom:22px; font-size:12px;">
+            <thead>
+              <tr>
+                <th class="num">Quote Qty</th>
+                <th class="num">Scrap %</th>
+                <th class="num">Total Run Qty</th>
+                <th class="num">Calc Unit Price</th>
+                <th class="num">Revised Unit Price</th>
+                <th class="num">Setup Hrs</th>
+                <th class="num">Prod Hrs</th>
+                <th class="num">Total Hrs</th>
+                <th>Lead Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="num mono">1.00</td><td class="num mono">0.00</td><td class="num mono">1.00</td><td class="num mono">49,624.00</td><td class="num mono">49,624.00</td><td class="num mono">12.00</td><td class="num mono">26.00</td><td class="num mono">38.00</td><td class="mono">12&ndash;14 wks</td></tr>
+              <tr><td class="num mono">2.00</td><td class="num mono">0.00</td><td class="num mono">2.00</td><td class="num mono">47,975.00</td><td class="num mono">47,975.00</td><td class="num mono">12.00</td><td class="num mono">52.00</td><td class="num mono">64.00</td><td class="mono">12&ndash;14 wks</td></tr>
+            </tbody>
+          </table>
+
+          <!-- Quote Matrix -->
+          <div class="row between" style="margin:0 0 10px; align-items:center;">
+            <span class="wf-label inked">&#x25A1; Quote Matrix</span>
+            <span class="wf-tag">&#x2398; copy matrix</span>
+          </div>
+          <table class="wf-table" style="margin-bottom:16px; font-size:12px;">
+            <thead>
+              <tr>
+                <th style="width:32%;">Line</th>
+                <th class="num">Cost</th>
+                <th class="num">Markup %</th>
+                <th class="num">Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Material</td><td class="num mono">13,250.00</td><td class="num mono">30.00</td><td class="num mono">17,225.00</td></tr>
+              <tr><td>Subcontracting</td><td class="num mono">0.00</td><td class="num mono">30.00</td><td class="num mono">0.00</td></tr>
+              <tr><td class="muted">Labor <span class="mono muted" style="font-size:11px;">(rolled in Rate)</span></td><td class="num mono muted">8,150.00</td><td class="num mono muted">40.00</td><td class="num mono muted">&mdash;</td></tr>
+              <tr><td class="muted">Overhead <span class="mono muted" style="font-size:11px;">(rolled in Rate)</span></td><td class="num mono muted">11,500.00</td><td class="num mono muted">40.00</td><td class="num mono muted">&mdash;</td></tr>
+              <tr><td>Quoting Rate</td><td class="num mono">23,654.00</td><td class="num mono">30.00</td><td class="num mono">30,750.00</td></tr>
+              <tr style="background:var(--surface-2);"><td><strong>Total (per unit · qty 2)</strong></td><td class="num mono"><strong>36,904.00</strong></td><td class="num mono"><strong>30.00</strong></td><td class="num mono"><strong>47,975.00</strong></td></tr>
+            </tbody>
+          </table>
+
+          <!-- Bottom summary row (mirrors M1 footer) -->
+          <div class="row" style="padding:14px 16px; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); gap:22px; flex-wrap:wrap;">
+            <div>
+              <span class="wf-label" style="margin:0 0 4px;">Total Unit Cost</span>
+              <div class="mono" style="font-size:15px; font-weight:600; color:var(--ink);">$36,904.00</div>
+            </div>
+            <div class="muted mono" style="font-size:12px; align-self:center;">+ 30.00% =</div>
+            <div>
+              <span class="wf-label" style="margin:0 0 4px;">Total Unit Price</span>
+              <div class="mono" style="font-size:15px; font-weight:600; color:var(--ink);">$47,975.00</div>
+            </div>
+            <div class="muted mono" style="font-size:12px; align-self:center;">+ Comm 0.00 =</div>
+            <div>
+              <span class="wf-label" style="margin:0 0 4px;">Calc Unit Price</span>
+              <div class="mono" style="font-size:15px; font-weight:600; color:var(--ink);">$47,975.00</div>
+            </div>
+            <div class="spacer"></div>
+            <div>
+              <span class="wf-label" style="margin:0 0 4px;">Revised Unit Price</span>
+              <div class="mono" style="font-size:15px; font-weight:600; color:var(--ink);">$47,975.00</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:14px; gap:8px; flex-wrap:wrap;">
+        <span class="wf-tag ink dot">&#x2398; copy all · JSON</span>
+        <span class="wf-tag">&#x2398; copy all · Markdown</span>
+        <span class="wf-tag dashed">tab-through mode (&#x21E5;)</span>
+        <div class="spacer"></div>
+        <span class="muted mono" style="font-size:11px;">no edits here &middot; source of truth remains the extraction above</span>
+      </div>
+    </div>
+
+    <!-- ═══ Cluster E — Next step ═══ -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>E · Next step</h2>
+        <span class="aside">estimator sign-off → M1 handoff</span>
+      </div>
+
+      <div class="grid-3">
+        <div class="wf-stat">
+          <span class="wf-label">Extraction</span>
+          <div class="value">22<span class="unit">fields</span></div>
+          <div class="delta">avg confidence <strong>0.84</strong> · 16 high · 4 medium · 2 flagged</div>
+        </div>
+        <div class="wf-stat">
+          <span class="wf-label">Tolerance flags</span>
+          <div class="value">3<span class="unit">open</span></div>
+          <div class="delta">induction case depth · AGMA class · backlash/runout cross-ref</div>
+        </div>
+        <div class="wf-stat accent">
+          <span class="wf-label">M1 handoff</span>
+          <div class="value" style="font-size:20px;">Pending<span class="unit">review</span></div>
+          <div class="delta">blocked on tolerance sign-off · estimator Ansaar Ali</div>
+        </div>
+      </div>
+
+      <div class="row between" style="margin-top:22px; gap:14px; flex-wrap:wrap;">
+        <span class="muted" style="font-size:12.5px; max-width:60ch;">
+          Once tolerance flags are resolved by the estimator on the next screen, this draft is promoted into M1's <code class="mono">qmp</code> / <code class="mono">qml</code> / <code class="mono">qmq</code> shape via the intake adapter. M1 then becomes the system of record for this quote.
+        </span>
+        <div class="row" style="gap:8px; flex-wrap:wrap;">
+          <a href="10-tolerance-review.html" class="wf-btn primary">Open tolerance review →</a>
+          <span class="wf-tag dashed">Hand off to M1 · pending tolerance sign-off</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-foot">
+      <span>Screen 09 · Quote Intake · Overton Intake</span>
+      <span><a href="8-mapping-reference.html">← Mapping Reference</a> &nbsp;·&nbsp; <a href="10-tolerance-review.html">Tolerance Review →</a></span>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

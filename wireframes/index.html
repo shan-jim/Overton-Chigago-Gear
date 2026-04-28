@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overton Foundation + Intake · Wireframes · Sitemap</title>
+<link rel="stylesheet" href="_shared/wireframe.css">
+</head>
+<body>
+<div class="shell">
+
+  <!-- ═══ Persistent Left Rail ═══ -->
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="brand-title">Overton Wireframes</span>
+      <span class="brand-sub">Foundation · Intake · Phases 1–2</span>
+    </div>
+
+    <div class="rail-section">Overview</div>
+    <ul class="rail-list">
+      <li class="rail-item current"><a href="index.html"><span class="rail-num">◇</span>Sitemap</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · User</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="1-login.html"><span class="rail-num">01</span>Login</a></li>
+      <li class="rail-item"><a href="2-search.html"><span class="rail-num">02</span>Search</a></li>
+      <li class="rail-item"><a href="3-unified-record.html"><span class="rail-num">03</span>Unified Record</a></li>
+      <li class="rail-item"><a href="4-m1-detail.html"><span class="rail-num">04</span>M1 Quote Detail</a></li>
+      <li class="rail-item"><a href="5-pk-detail.html"><span class="rail-num">05</span>ProfitKey WO Detail</a></li>
+      <li class="rail-item"><a href="6-reconcile.html"><span class="rail-num">06</span>Reconciliation</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · Admin</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="7-pipeline-health.html"><span class="rail-num">07</span>Pipeline Health</a></li>
+      <li class="rail-item"><a href="8-mapping-reference.html"><span class="rail-num">08</span>Mapping Reference</a></li>
+    </ul>
+
+    <div class="rail-section">Intake</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="9-intake.html"><span class="rail-num">09</span>Quote Intake</a></li>
+      <li class="rail-item"><a href="10-tolerance-review.html"><span class="rail-num">10</span>Tolerance Review</a></li>
+    </ul>
+
+    <div class="rail-foot">
+      <a href="../ocg_index.html">↩ OCG Review hub</a>
+      <span>v0.1 · 2026-04-16</span>
+    </div>
+  </aside>
+
+  <!-- ═══ Main ═══ -->
+  <main class="main">
+
+    <div class="crumb">
+      <span>Wireframes</span>
+      <span class="sep">/</span>
+      <span class="here">Sitemap</span>
+    </div>
+
+    <div class="screen-head">
+      <div>
+        <h1 class="screen-title">Overton Foundation &nbsp;+&nbsp; Overton Intake</h1>
+        <p class="screen-sub"><strong>Phases&nbsp;1–2 of the OCG modernization.</strong> <em>Foundation</em> is the authenticated lookup surface that joins M1 quote estimates to ProfitKey production actuals. <em>Intake</em> is the Phase&nbsp;2 front door: RFQ PDFs upload, AI Vision extracts into M1's input shape, and tolerance-sensitive specs get flagged for estimator sign-off before handoff to M1.</p>
+      </div>
+      <div class="screen-meta">
+        Phases 1–2 of 4<br>
+        10 screens · 1 hub<br>
+        Read-only
+      </div>
+    </div>
+
+    <div class="intro-strip">
+      <span class="wf-tag ink dot">Read-only</span>
+      <span><strong>This app is a lookup surface, not an editor.</strong> No records are created, duplicated, or modified. Source-of-record remains with M1 and ProfitKey; the staging layer is a nightly read-only extract.</span>
+    </div>
+
+    <!-- ─── Phase 1 · User-facing ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Overton Foundation · User-facing · 6 screens</h2>
+        <span class="aside">Phase 1 · Estimator · Scheduler · Ops lead</span>
+      </div>
+
+      <div class="hub-grid">
+
+        <a class="hub-card" href="1-login.html">
+          <span class="num">Screen 01</span>
+          <span class="title">Login</span>
+          <span class="purpose">Auth-protected gateway. Username, password, or SSO. Single entry point to Overton Foundation.</span>
+          <div class="hint">
+            <div class="hint-stack" style="justify-content:center; max-width:60%; margin:0 auto;">
+              <div style="height:7px;"></div>
+              <div style="height:7px;"></div>
+              <div style="height:9px; background:var(--fill-3);"></div>
+            </div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="2-search.html">
+          <span class="num">Screen 02</span>
+          <span class="title">Search</span>
+          <span class="purpose">Lookup by quote ID, work order, customer, or part. Filter by date, status, source. Drill-down results.</span>
+          <div class="hint">
+            <div class="hint-stack" style="justify-content:flex-start;">
+              <div class="hint-bar" style="height:9px; background:var(--fill-3);"></div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+            </div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="3-unified-record.html">
+          <span class="num">Screen 03</span>
+          <span class="title">Unified Record</span>
+          <span class="purpose">Two-card header: M1 quote alongside ProfitKey WO. Condensed reads from both sources with drill-down links.</span>
+          <div class="hint">
+            <div class="hint-stack">
+              <div style="display:flex; gap:4px; height:22px;">
+                <div style="flex:1; background:var(--fill-2);"></div>
+                <div style="flex:1; background:var(--fill-2);"></div>
+              </div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+            </div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="4-m1-detail.html">
+          <span class="num">Screen 04</span>
+          <span class="title">M1 Quote Detail</span>
+          <span class="purpose">Full drill-down of the M1 record. Tabbed: Header · Line Groups · Routing · Pricing · Memos. Q1671 worked example.</span>
+          <div class="hint">
+            <div class="hint-stack">
+              <div style="display:flex; gap:3px; height:7px;">
+                <div style="flex:1; background:var(--fill-3);"></div>
+                <div style="flex:1; background:var(--fill-1);"></div>
+                <div style="flex:1; background:var(--fill-1);"></div>
+                <div style="flex:1; background:var(--fill-1);"></div>
+                <div style="flex:1; background:var(--fill-1);"></div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px;">
+                <div style="height:6px; background:var(--fill-2);"></div>
+                <div style="height:6px; background:var(--fill-2);"></div>
+                <div style="height:6px; background:var(--fill-2);"></div>
+                <div style="height:6px; background:var(--fill-2);"></div>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="5-pk-detail.html">
+          <span class="num">Screen 05</span>
+          <span class="title">ProfitKey WO Detail</span>
+          <span class="purpose">Full drill-down of the ProfitKey record. Tabbed: Header · Costs · Hours. SO 0271926 worked example.</span>
+          <div class="hint">
+            <div class="hint-stack">
+              <div style="display:flex; gap:3px; height:7px;">
+                <div style="flex:1; background:var(--fill-3);"></div>
+                <div style="flex:1; background:var(--fill-1);"></div>
+                <div style="flex:1; background:var(--fill-1);"></div>
+              </div>
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:3px;">
+                <div style="height:6px; background:var(--fill-2);"></div>
+                <div style="height:6px; background:var(--fill-2);"></div>
+                <div style="height:6px; background:var(--fill-2);"></div>
+                <div style="height:6px; background:var(--fill-2);"></div>
+              </div>
+            </div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="6-reconcile.html">
+          <span class="num">Screen 06</span>
+          <span class="title">Reconciliation</span>
+          <span class="purpose">The Phase 1 punchline. Estimate vs. actual: hours, cost, margin. Δ with variance waterfall and commentary.</span>
+          <div class="hint">
+            <div class="hint-stack">
+              <div style="display:flex; gap:5px; height:20px; align-items:flex-end;">
+                <div style="flex:1; background:var(--fill-3); height:100%;"></div>
+                <div style="flex:1; background:var(--fill-2); height:80%;"></div>
+                <div class="hint-accent" style="flex:1; height:60%;"></div>
+              </div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- ─── Phase 1 · Admin-facing ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Overton Foundation · Admin-facing · 2 screens</h2>
+        <span class="aside">Phase 1 · IT · Data engineering</span>
+      </div>
+
+      <div class="hub-grid">
+
+        <a class="hub-card admin" href="7-pipeline-health.html">
+          <span class="num">Screen 07</span>
+          <span class="title">Pipeline Health</span>
+          <span class="purpose">ETL job status, freshness timestamps, last-sync badges, error counts. Operational snapshot of the nightly extract.</span>
+          <div class="hint">
+            <div class="hint-stack">
+              <div style="display:flex; gap:5px; height:14px;">
+                <div style="flex:1; background:var(--fill-2);"></div>
+                <div style="flex:1; background:var(--fill-2);"></div>
+                <div style="flex:1; background:var(--fill-2);"></div>
+                <div style="flex:1; background:var(--fill-2);"></div>
+              </div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+            </div>
+          </div>
+        </a>
+
+        <a class="hub-card admin" href="8-mapping-reference.html">
+          <span class="num">Screen 08</span>
+          <span class="title">Mapping Reference</span>
+          <span class="purpose"><code class="mono">staging.linked_records</code> schema, source-of-record columns, join rules, provenance tiers.</span>
+          <div class="hint">
+            <div class="hint-stack" style="gap:4px;">
+              <div style="height:4px; background:var(--fill-2); width:70%;"></div>
+              <div style="height:4px; background:var(--fill-2); width:85%;"></div>
+              <div style="height:4px; background:var(--fill-2); width:60%;"></div>
+              <div style="height:4px; background:var(--fill-2); width:90%;"></div>
+              <div style="height:4px; background:var(--fill-2); width:75%;"></div>
+            </div>
+          </div>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- ─── Phase 2 · Overton Intake ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Overton Intake · Quote Intake · 2 screens</h2>
+        <span class="aside">Phase 2 · Estimator · AI Vision</span>
+      </div>
+
+      <div class="hub-grid">
+
+        <a class="hub-card" href="9-intake.html">
+          <span class="num">Screen 09</span>
+          <span class="title">Quote Intake</span>
+          <span class="purpose">RFQ PDF upload → AI Vision extraction → M1-ready draft. Split-pane document preview + per-field confidence. Estimator RFQ Summary in the M1 input shape.</span>
+          <div class="hint">
+            <div class="hint-stack">
+              <div style="display:flex; gap:4px; height:22px;">
+                <div style="flex:1; background:var(--fill-2);"></div>
+                <div style="flex:1; background:var(--fill-3);"></div>
+              </div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+            </div>
+          </div>
+        </a>
+
+        <a class="hub-card" href="10-tolerance-review.html">
+          <span class="num">Screen 10</span>
+          <span class="title">Tolerance Review</span>
+          <span class="purpose">Estimator sign-off on AI-flagged precision specs. Per-flag drawing reference, extracted value, tolerance class, and sign-off options. Cross-reference to historical Foundation parts.</span>
+          <div class="hint">
+            <div class="hint-stack">
+              <div style="display:flex; gap:3px; height:10px;">
+                <div style="flex:1; background:var(--fill-3);"></div>
+                <div style="flex:1; background:var(--fill-2);"></div>
+                <div class="hint-accent" style="flex:1;"></div>
+              </div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+              <div class="hint-line"></div>
+            </div>
+          </div>
+        </a>
+
+        <div class="hub-slot">
+          <span class="slot-phase">Phase 3+</span>
+          <span class="slot-title">Pipedrive sync &amp; vendor RFM</span>
+          <span class="slot-note">Added later</span>
+        </div>
+        <div class="hub-slot">
+          <span class="slot-phase">Phase 4</span>
+          <span class="slot-title">Customer-facing quote presentation</span>
+          <span class="slot-note">Added later</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="page-foot">
+      <span>Overton Foundation + Intake · Wireframes · Phases 1–2</span>
+      <span>10 screens · sitemap</span>
+    </div>
+
+  </main>
+
+</div>
+</body>
+</html>

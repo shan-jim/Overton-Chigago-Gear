@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login · Overton Foundation · Wireframes</title>
+<link rel="stylesheet" href="_shared/wireframe.css">
+</head>
+<body>
+<div class="shell">
+
+  <aside class="rail">
+    <div class="rail-brand">
+      <span class="brand-title">Overton Wireframes</span>
+      <span class="brand-sub">Foundation · Intake · Phases 1–2</span>
+    </div>
+
+    <div class="rail-section">Overview</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="index.html"><span class="rail-num">◇</span>Sitemap</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · User</div>
+    <ul class="rail-list">
+      <li class="rail-item current"><a href="1-login.html"><span class="rail-num">01</span>Login</a></li>
+      <li class="rail-item"><a href="2-search.html"><span class="rail-num">02</span>Search</a></li>
+      <li class="rail-item"><a href="3-unified-record.html"><span class="rail-num">03</span>Unified Record</a></li>
+      <li class="rail-item"><a href="4-m1-detail.html"><span class="rail-num">04</span>M1 Quote Detail</a></li>
+      <li class="rail-item"><a href="5-pk-detail.html"><span class="rail-num">05</span>ProfitKey WO Detail</a></li>
+      <li class="rail-item"><a href="6-reconcile.html"><span class="rail-num">06</span>Reconciliation</a></li>
+    </ul>
+
+    <div class="rail-section">Foundation · Admin</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="7-pipeline-health.html"><span class="rail-num">07</span>Pipeline Health</a></li>
+      <li class="rail-item"><a href="8-mapping-reference.html"><span class="rail-num">08</span>Mapping Reference</a></li>
+    </ul>
+
+    <div class="rail-section">Intake</div>
+    <ul class="rail-list">
+      <li class="rail-item"><a href="9-intake.html"><span class="rail-num">09</span>Quote Intake</a></li>
+      <li class="rail-item"><a href="10-tolerance-review.html"><span class="rail-num">10</span>Tolerance Review</a></li>
+    </ul>
+
+    <div class="rail-foot">
+      <a href="../ocg_index.html">↩ OCG Review hub</a>
+      <span>v0.1 · 2026-04-16</span>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="crumb">
+      <span>Wireframes</span>
+      <span class="sep">/</span>
+      <span>User</span>
+      <span class="sep">/</span>
+      <span class="here">Login</span>
+    </div>
+
+    <div class="screen-head">
+      <div>
+        <h1 class="screen-title">Login</h1>
+        <p class="screen-sub">Auth-protected gateway to Overton Foundation. Zero-trust perimeter: no access to the read-only endpoints without a valid session.</p>
+      </div>
+      <div class="screen-meta">
+        Screen 01 of 08<br>
+        Unauthenticated<br>
+        app.ocg.local / login
+      </div>
+    </div>
+
+    <!-- ─── Centered login card ─── -->
+    <div style="display:flex; justify-content:center; padding:40px 0 60px;">
+      <div style="width:440px;">
+
+        <!-- brand mark -->
+        <div style="display:flex; flex-direction:column; align-items:center; margin-bottom:32px;">
+          <img src="_shared/assets/ocg-logo.png" alt="Overton Chicago Gear" style="width:240px; height:auto; margin-bottom:18px;">
+          <div style="display:flex; align-items:center; gap:10px; font-family:var(--mono); font-size:10.5px; letter-spacing:.18em; color:var(--text-3); text-transform:uppercase;">
+            <span style="width:24px; height:1px; background:var(--border);"></span>
+            <span>Foundation · Phase 1</span>
+            <span style="width:24px; height:1px; background:var(--border);"></span>
+          </div>
+        </div>
+
+        <!-- card -->
+        <div class="wf-card">
+          <div class="wf-card-head">
+            <span class="title">Sign in</span>
+            <span class="aside">read-only access</span>
+          </div>
+
+          <div class="wf-field">
+            <span class="wf-label">Username</span>
+            <div class="wf-input empty">name@overton.com</div>
+          </div>
+
+          <div class="wf-field">
+            <span class="wf-label">Password</span>
+            <div class="wf-input empty">••••••••</div>
+          </div>
+
+          <div class="row between" style="margin:-4px 0 18px;">
+            <label style="display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--text-2);">
+              <span style="display:inline-block; width:14px; height:14px; border:1px solid var(--ink); background:var(--surface);"></span>
+              Remember this device
+            </label>
+            <a href="#" class="mono" style="font-size:11.5px; color:var(--text-2);">Forgot password</a>
+          </div>
+
+          <span class="wf-btn primary lg" style="width:100%;">Sign in</span>
+
+          <div style="display:flex; align-items:center; gap:12px; margin:20px 0;">
+            <div style="flex:1; height:1px; background:var(--border);"></div>
+            <span class="mono" style="font-size:10px; letter-spacing:.2em; color:var(--text-3); text-transform:uppercase;">or</span>
+            <div style="flex:1; height:1px; background:var(--border);"></div>
+          </div>
+
+          <span class="wf-btn" style="width:100%;">
+            <span style="display:inline-block; width:14px; height:14px; background:var(--hatch), var(--fill-1); border:1px solid var(--ink);"></span>
+            Continue with Overton SSO
+          </span>
+        </div>
+
+        <!-- footer note -->
+        <div style="margin-top:18px; padding:14px 18px; border:1px dashed var(--border); border-radius:var(--radius); font-size:12px; color:var(--text-2); line-height:1.55;">
+          <strong style="color:var(--ink);">Zero-trust perimeter.</strong> All traffic to
+          <code class="mono">staging.*</code> endpoints terminates at the gateway; direct ODBC to
+          M1 or ProfitKey is not exposed beyond the on-prem subnet.
+        </div>
+
+        <div style="margin-top:14px; text-align:center; font-family:var(--mono); font-size:10.5px; letter-spacing:.12em; color:var(--text-3); text-transform:uppercase;">
+          Need access? &nbsp; Contact IT · ext. 2211
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ─── Sign-in context strip ─── -->
+    <div class="cluster">
+      <div class="cluster-head">
+        <h2>Gateway context</h2>
+        <span class="aside">what happens after sign-in</span>
+      </div>
+
+      <div class="grid-3">
+        <div class="wf-card quiet tight">
+          <span class="wf-label">Role resolution</span>
+          <div style="font-size:13px; color:var(--text-1); margin-top:4px; line-height:1.55;">
+            AD group membership maps to one of three roles:
+            <span class="mono" style="color:var(--ink);">estimator</span>,
+            <span class="mono" style="color:var(--ink);">scheduler</span>,
+            <span class="mono" style="color:var(--ink);">admin</span>.
+          </div>
+        </div>
+        <div class="wf-card quiet tight">
+          <span class="wf-label">Session scope</span>
+          <div style="font-size:13px; color:var(--text-1); margin-top:4px; line-height:1.55;">
+            Read-only API token minted per session. 8-hour lifetime. No write endpoints exist in Phase&nbsp;1.
+          </div>
+        </div>
+        <div class="wf-card quiet tight">
+          <span class="wf-label">Landing</span>
+          <div style="font-size:13px; color:var(--text-1); margin-top:4px; line-height:1.55;">
+            Successful sign-in → <a href="2-search.html" class="mono" style="color:var(--ink); border-bottom:1px solid var(--border);">Screen 02 · Search</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-foot">
+      <span>Screen 01 · Login</span>
+      <span><a href="index.html">← Sitemap</a> &nbsp;·&nbsp; <a href="2-search.html">Search →</a></span>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

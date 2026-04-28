@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Overton Chicago Gear · Systems Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS ── */
+:root {
+  --bg:         #f4f6f8;
+  --surface:    #ffffff;
+  --border:     #dde3ea;
+  --text-1:     #1e2a38;
+  --text-2:     #64748b;
+  --ocg-dark:   #313131;
+  --ocg-blue:   #1890d7;
+  --ocg-teal:   #899fac;
+  --ocg-teal-dk:#4a6278;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: 'Poppins', 'Segoe UI', sans-serif; color: var(--text-1); min-height: 100vh; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--ocg-dark); color: #fff;
+  padding: 22px 40px 18px;
+  display: flex; align-items: center; gap: 20px;
+  border-bottom: 3px solid var(--ocg-blue);
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.header-logo svg { width: 34px; height: 34px; fill: var(--ocg-blue); flex-shrink: 0; }
+.logo-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: #c8d6e0; line-height: 1.15; }
+.logo-wordmark span { display: block; font-size: 9.5px; font-weight: 400; color: rgba(255,255,255,.38); letter-spacing: .4px; text-transform: none; margin-top: 2px; }
+.header-titles { flex: 1; padding-left: 4px; }
+.header-titles h1 { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+.header-titles p { font-size: 12px; color: var(--ocg-teal); margin-top: 3px; font-weight: 400; }
+.header-badges { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.badge { display: inline-flex; align-items: center; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: .3px; white-space: nowrap; }
+.badge-blue  { background: rgba(24,144,215,.14); color: #56b4e8; border: 1px solid rgba(24,144,215,.28); }
+.badge-teal  { background: rgba(137,159,172,.14); color: #adc4d3; border: 1px solid rgba(137,159,172,.28); }
+
+/* ── CONTENT ── */
+.content { max-width: 900px; margin: 0 auto; padding: 48px 32px 56px; }
+
+/* ── CHAPTER CARDS ── */
+.chapters { display: flex; flex-direction: column; gap: 18px; }
+
+.chapter-card {
+  display: flex; align-items: stretch;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none; color: inherit;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  transition: box-shadow .18s, transform .18s;
+  overflow: hidden;
+}
+.chapter-card:hover {
+  box-shadow: 0 6px 22px rgba(0,0,0,.11);
+  transform: translateY(-2px);
+}
+
+/* Left accent variants */
+.chapter-blue  { border-left: 5px solid #1890d7; }
+.chapter-dark  { border-left: 5px solid #313131; }
+.chapter-amber { border-left: 5px solid #d97706; }
+
+/* Chapter number column */
+.chapter-num {
+  font-size: 52px; font-weight: 700; letter-spacing: -3px;
+  width: 96px; min-width: 96px;
+  display: flex; align-items: center; justify-content: center;
+  border-right: 1px solid var(--border);
+  flex-shrink: 0;
+  line-height: 1;
+  padding: 0 16px;
+}
+.chapter-blue  .chapter-num { color: rgba(24,144,215,.18); }
+.chapter-dark  .chapter-num { color: rgba(49,49,49,.13); }
+.chapter-amber .chapter-num { color: rgba(217,119,6,.2); }
+
+/* Body */
+.chapter-body { flex: 1; padding: 26px 22px; min-width: 0; }
+.chapter-title {
+  font-size: 17px; font-weight: 700; color: var(--text-1);
+  letter-spacing: .1px; margin-bottom: 4px;
+}
+.chapter-subtitle {
+  font-size: 12px; color: var(--text-2); font-style: italic;
+  line-height: 1.5; margin-bottom: 10px;
+}
+.chapter-desc {
+  font-size: 12.5px; color: var(--text-2);
+  line-height: 1.65; margin-bottom: 16px;
+}
+.chapter-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+/* Chips (light bg, on white card) */
+.chip { font-size: 10.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: .2px; white-space: nowrap; }
+.chip-blue   { background: rgba(24,144,215,.09);  color: #1573aa; border: 1px solid rgba(24,144,215,.22); }
+.chip-teal   { background: rgba(74,98,120,.08);   color: #3d5468; border: 1px solid rgba(74,98,120,.2);  }
+.chip-amber  { background: rgba(217,119,6,.09);   color: #92400e; border: 1px solid rgba(217,119,6,.22); }
+.chip-dark   { background: rgba(49,49,49,.07);    color: #313131; border: 1px solid rgba(49,49,49,.18);  }
+
+/* CTA column */
+.chapter-cta {
+  font-size: 13px; font-weight: 600; color: var(--ocg-blue);
+  white-space: nowrap; flex-shrink: 0;
+  padding: 0 28px 0 20px;
+  display: flex; align-items: center; gap: 5px;
+  border-left: 1px solid var(--border);
+}
+.chapter-cta .arrow {
+  font-size: 20px; line-height: 1;
+  transition: transform .15s;
+  display: inline-block;
+}
+.chapter-card:hover .chapter-cta .arrow { transform: translateX(4px); }
+
+/* ── ERD SUB-GRID (card 02) ── */
+.erd-grid { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.erd-link {
+  flex: 1; min-width: 180px;
+  display: flex; flex-direction: column;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  padding: 14px 16px 12px;
+  text-decoration: none; color: inherit;
+  transition: box-shadow .15s, border-color .15s, background .15s;
+}
+.erd-link:hover {
+  background: var(--surface);
+  border-color: rgba(49,49,49,.28);
+  box-shadow: 0 3px 10px rgba(0,0,0,.08);
+}
+.erd-link-title { font-size: 12.5px; font-weight: 700; color: var(--text-1); margin-bottom: 3px; line-height: 1.3; }
+.erd-link-sub { font-size: 10.5px; color: var(--text-2); font-style: italic; line-height: 1.4; margin-bottom: 10px; }
+.erd-link-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; }
+.erd-link-cta { margin-top: auto; font-size: 11.5px; font-weight: 600; color: var(--ocg-blue); display: flex; align-items: center; gap: 3px; }
+.erd-link-cta .arrow { font-size: 15px; transition: transform .12s; display: inline-block; }
+.erd-link:hover .erd-link-cta .arrow { transform: translateX(3px); }
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border); padding-top: 16px; margin-top: 48px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+    <div class="logo-wordmark">
+      Overton Chicago Gear
+      <span>Precision Gear Manufacturer &middot; Est. 1888</span>
+    </div>
+  </div>
+  <div class="header-titles">
+    <h1>Systems Review &middot; April 2026</h1>
+    <p>A walkthrough of current architecture, data flow, and strategic direction</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">3 Sections</span>
+    <span class="badge badge-teal">April 2026</span>
+  </div>
+</header>
+
+<div class="content">
+
+  <div class="chapters">
+
+    <!-- 01 · Data Systems Overview -->
+    <a href="ocg_stakeholder_workflow.html" class="chapter-card chapter-blue">
+      <div class="chapter-num">01</div>
+      <div class="chapter-body">
+        <div class="chapter-title">Data Systems Overview</div>
+        <div class="chapter-subtitle">How our systems connect &mdash; from customer drawing to profitability insight</div>
+        <div class="chapter-desc">
+          Phases 1&ndash;5: Inquiry, Quoting, Production, Invoicing, and Analysis. A system-by-system view of the connected data infrastructure &mdash; including new capabilities for Request For Materials and Tolerance Flagging.
+        </div>
+        <div class="chapter-badges">
+          <span class="chip chip-blue">3 Source Systems</span>
+          <span class="chip chip-teal">1 Staging Database</span>
+          <span class="chip chip-teal">Cloud + On-Prem</span>
+          <span class="chip chip-teal">Zero Trust Access</span>
+        </div>
+      </div>
+      <div class="chapter-cta">Open <span class="arrow">→</span></div>
+    </a>
+
+    <!-- 02 · Entity Relationship Diagrams -->
+    <div class="chapter-card chapter-dark">
+      <div class="chapter-num">02</div>
+      <div class="chapter-body">
+        <div class="chapter-title">Entity Relationship Diagrams</div>
+        <div class="chapter-subtitle">Database schemas for the three source systems</div>
+        <div class="erd-grid">
+
+          <a href="M1_erd_review.html" class="erd-link">
+            <div class="erd-link-title">M1 ERP &middot; Quote Module</div>
+            <div class="erd-link-sub">Entity Relationship Diagram &mdash; m1_CG.mdf</div>
+            <div class="erd-link-chips">
+              <span class="chip chip-dark">42,547 Quotes</span>
+              <span class="chip chip-teal">7 Tables &middot; qm*</span>
+            </div>
+            <div class="erd-link-cta">Open <span class="arrow">→</span></div>
+          </a>
+
+          <a href="m1_quoter_workflow.html" class="erd-link">
+            <div class="erd-link-title">M1 &middot; Quote Record Viewer (Phase A)</div>
+            <div class="erd-link-sub">Wireframe &mdash; read-only historical record, anchored to Q1671</div>
+            <div class="erd-link-chips">
+              <span class="chip chip-blue">10 Views</span>
+              <span class="chip chip-teal">Read-only</span>
+              <span class="chip chip-amber">Wireframe</span>
+            </div>
+            <div class="erd-link-cta">Open <span class="arrow">→</span></div>
+          </a>
+
+          <a href="pipedrive_erd.html" class="erd-link">
+            <div class="erd-link-title">Pipedrive CRM &middot; Pipeline Deals</div>
+            <div class="erd-link-sub">Entity Relationship Diagram &mdash; Normalized from Flat CSV Export</div>
+            <div class="erd-link-chips">
+              <span class="chip chip-blue">$1.98M+ Pipeline</span>
+              <span class="chip chip-teal">6 Relational Entities</span>
+            </div>
+            <div class="erd-link-cta">Open <span class="arrow">→</span></div>
+          </a>
+
+          <a href="profitkey_erd2.html" class="erd-link">
+            <div class="erd-link-title">ProfitKey &middot; Work Order &amp; Labor</div>
+            <div class="erd-link-sub">Entity Relationship Diagram &mdash; Work Order Master &amp; Labor Ticket Transactions</div>
+            <div class="erd-link-chips">
+              <span class="chip chip-teal">Work Orders</span>
+              <span class="chip chip-teal">4 Core Tables</span>
+            </div>
+            <div class="erd-link-cta">Open <span class="arrow">→</span></div>
+          </a>
+
+          <a href="profitkey_workorder_viewer.html" class="erd-link">
+            <div class="erd-link-title">ProfitKey &middot; Work Order Record Viewer (Phase A)</div>
+            <div class="erd-link-sub">Wireframe &mdash; read-only historical record, anchored to SO 0271926</div>
+            <div class="erd-link-chips">
+              <span class="chip chip-blue">10 Views</span>
+              <span class="chip chip-teal">Read-only</span>
+              <span class="chip chip-amber">Wireframe</span>
+            </div>
+            <div class="erd-link-cta">Open <span class="arrow">→</span></div>
+          </a>
+
+          <a href="staging_db_viewer.html" class="erd-link">
+            <div class="erd-link-title">Staging DB &middot; Cross-System Record Viewer (Phase A)</div>
+            <div class="erd-link-sub">Wireframe &mdash; architecture + unified record, anchored to Q1671 &harr; SO 0271926</div>
+            <div class="erd-link-chips">
+              <span class="chip chip-blue">10 Views</span>
+              <span class="chip chip-teal">Read-only</span>
+              <span class="chip chip-amber">Wireframe</span>
+            </div>
+            <div class="erd-link-cta">Open <span class="arrow">→</span></div>
+          </a>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 03 · Strategic Systems Roadmap -->
+    <a href="ocg_strategic_roadmap.html" class="chapter-card chapter-amber">
+      <div class="chapter-num">03</div>
+      <div class="chapter-body">
+        <div class="chapter-title">Strategic Systems Roadmap</div>
+        <div class="chapter-subtitle">Planned integrations and emerging capabilities &mdash; April 2026</div>
+        <div class="chapter-desc">
+          Two planned next-phase initiatives: Case Management (evaluating Zendesk &amp; ThinkOwl) and AI Knowledge Capture &mdash; designed to preserve institutional expertise and extend the connected data strategy.
+        </div>
+        <div class="chapter-badges">
+          <span class="chip chip-amber">2 Strategic Initiatives</span>
+          <span class="chip chip-amber">AI Partnership</span>
+          <span class="chip chip-blue">Pipedrive-Connected</span>
+        </div>
+      </div>
+      <div class="chapter-cta">Open <span class="arrow">→</span></div>
+    </a>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Overton Chicago Gear &nbsp;&middot;&nbsp; Systems Review &nbsp;&middot;&nbsp; April 2026</span>
+    <span>Data Systems Overview &nbsp;&middot;&nbsp; Entity Relationship Diagrams &nbsp;&middot;&nbsp; Strategic Systems Roadmap</span>
+  </div>
+
+</div>
+</body>
+</html>

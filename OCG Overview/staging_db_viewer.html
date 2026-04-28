@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Staging DB · Cross-System Record Viewer · Phase A &mdash; Overton Chicago Gear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS (shared with M1_erd_review.html) ── */
+:root {
+  --bg:          #f4f6f8;
+  --surface:     #ffffff;
+  --surface-2:   #fafbfc;
+  --border:      #dde3ea;
+  --border-soft: #eef2f6;
+  --text-1:      #1e2a38;
+  --text-2:      #64748b;
+  --text-3:      #94a3b8;
+  --ocg-dark:    #313131;
+  --ocg-blue:    #1890d7;
+  --ocg-teal:    #899fac;
+  --th-master:   #313131;
+  --th-trans:    #1890d7;
+  --th-lookup:   #4a6278;
+  --th-finance:  #2d5a4f;
+  --th-config:   #3d4f62;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  color: var(--text-1);
+  min-height: 100vh;
+}
+
+a { color: var(--ocg-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--ocg-dark);
+  color: #fff;
+  padding: 22px 40px 18px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 3px solid var(--ocg-blue);
+}
+.header-logo {
+  display: flex; align-items: center; gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.header-logo svg { width: 34px; height: 34px; fill: var(--ocg-blue); flex-shrink: 0; }
+.logo-wordmark { font-size: 13px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: #c8d6e0; line-height: 1.15; }
+.logo-wordmark span { display: block; font-size: 9.5px; font-weight: 400; color: rgba(255,255,255,.38); letter-spacing: .4px; text-transform: none; margin-top: 2px; }
+.header-titles { flex: 1; padding-left: 4px; }
+.header-titles h1 { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+.header-titles p { font-size: 12px; color: var(--ocg-teal); margin-top: 3px; font-weight: 400; }
+.header-badges { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+  letter-spacing: .3px; white-space: nowrap;
+}
+.badge-blue  { background: rgba(24,144,215,.14); color: #56b4e8; border: 1px solid rgba(24,144,215,.28); }
+.badge-teal  { background: rgba(137,159,172,.14); color: #adc4d3; border: 1px solid rgba(137,159,172,.28); }
+.badge-amber { background: rgba(180,120,0,.20);  color: #f5c842; border: 1px solid rgba(180,120,0,.30); }
+.badge-green { background: rgba(45,90,79,.28);   color: #6ec8b4; border: 1px solid rgba(45,90,79,.48); }
+
+/* ── CONTENT WRAP ── */
+.content { max-width: 1280px; margin: 0 auto; padding: 20px 32px 52px; }
+
+/* ── BREADCRUMB ── */
+.crumbs {
+  font-size: 12px; color: var(--text-2);
+  margin-bottom: 18px; display: flex; gap: 6px; align-items: center;
+  flex-wrap: wrap;
+}
+.crumbs a { color: var(--text-2); }
+.crumbs a:hover { color: var(--ocg-blue); }
+.crumbs .sep { color: var(--text-3); }
+.crumbs .here { color: var(--text-1); font-weight: 600; }
+
+/* ── INTRO STRIP ── */
+.intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ocg-blue);
+  border-radius: 8px;
+  padding: 18px 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.intro h2 { font-size: 15px; font-weight: 700; margin-bottom: 6px; letter-spacing: .2px; }
+.intro p { font-size: 12.5px; color: var(--text-2); line-height: 1.65; }
+.intro p + p { margin-top: 6px; }
+.intro .mono { font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 11.5px; color: var(--text-1); background: var(--border-soft); padding: 1px 6px; border-radius: 3px; }
+
+/* ── OVERVIEW ROW: relationship tree + legend ── */
+.overview {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.panel-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+.tree {
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 12px;
+  color: var(--text-1);
+  line-height: 1.75;
+  white-space: pre;
+  background: var(--surface-2);
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+  overflow-x: auto;
+}
+.tree b { color: var(--ocg-blue); font-weight: 700; }
+.tree i { color: var(--text-2); font-style: italic; }
+
+.leg-row { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-1); margin-bottom: 8px; }
+.leg-row:last-child { margin-bottom: 0; }
+.leg-row .pill {
+  font-size: 10.5px; font-weight: 700; padding: 2px 8px;
+  border-radius: 4px; font-family: 'JetBrains Mono', monospace;
+  min-width: 22px; text-align: center;
+}
+.pill-real { background: rgba(45,90,79,.12); color: #1f5f51; border: 1px solid rgba(45,90,79,.3); }
+.pill-repr { background: rgba(180,120,0,.12); color: #8a5a00; border: 1px solid rgba(180,120,0,.3); }
+.leg-row .muted { color: var(--text-2); font-size: 11.5px; }
+
+.cluster-key { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.cluster-chip { font-size: 10.5px; font-weight: 600; padding: 3px 10px; border-radius: 20px; letter-spacing: .2px; color: #fff; }
+.cc-pipeline   { background: var(--ocg-blue); }
+.cc-gateway    { background: var(--th-lookup); }
+.cc-lookup     { background: var(--th-config); }
+.cc-reads      { background: var(--th-master); }
+.cc-reconcile  { background: var(--th-finance); }
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-size: 15px; font-weight: 700;
+  color: var(--text-1);
+  margin: 8px 0 14px;
+  letter-spacing: .2px;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.section-title .sub {
+  font-size: 11.5px; font-weight: 400;
+  color: var(--text-2); font-style: italic;
+}
+
+/* ── STEP RAIL ── */
+.rail { display: flex; flex-direction: column; gap: 0; }
+
+.step {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--ocg-blue);
+  border-radius: 10px;
+  padding: 18px 22px 20px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  margin-bottom: 12px;
+}
+.step.pipeline   { border-left-color: var(--ocg-blue); }
+.step.gateway    { border-left-color: var(--th-lookup); }
+.step.lookup     { border-left-color: var(--th-config); }
+.step.reads      { border-left-color: var(--th-master); }
+.step.reconcile  { border-left-color: var(--th-finance); }
+
+/* Connector between step cards */
+.connector {
+  display: block;
+  width: 2px; height: 18px;
+  background: linear-gradient(to bottom, rgba(24,144,215,.4), rgba(24,144,215,.1));
+  margin: -6px auto 6px 44px;
+  position: relative;
+}
+.connector::after {
+  content: ""; position: absolute;
+  left: -3px; bottom: -4px;
+  width: 0; height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 6px solid rgba(24,144,215,.55);
+}
+
+.step-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.step-num {
+  font-size: 32px; font-weight: 700;
+  letter-spacing: -1.5px;
+  line-height: 1;
+  min-width: 48px;
+}
+.step.pipeline   .step-num { color: rgba(24,144,215,.22); }
+.step.gateway    .step-num { color: rgba(74,98,120,.22); }
+.step.lookup     .step-num { color: rgba(61,79,98,.22); }
+.step.reads      .step-num { color: rgba(49,49,49,.18); }
+.step.reconcile  .step-num { color: rgba(45,90,79,.25); }
+
+.step-title-wrap { flex: 1; min-width: 0; }
+.step-title {
+  font-size: 16px; font-weight: 700;
+  color: var(--text-1); letter-spacing: .1px;
+  margin-bottom: 3px;
+}
+.step-desc {
+  font-size: 12.5px; color: var(--text-2);
+  line-height: 1.6;
+}
+.step-cluster {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  padding: 4px 10px; border-radius: 20px;
+  color: #fff; flex-shrink: 0;
+  align-self: flex-start;
+}
+.step.pipeline   .step-cluster { background: var(--ocg-blue); }
+.step.gateway    .step-cluster { background: var(--th-lookup); }
+.step.lookup     .step-cluster { background: var(--th-config); }
+.step.reads      .step-cluster { background: var(--th-master); }
+.step.reconcile  .step-cluster { background: var(--th-finance); }
+
+.step-body {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 16px;
+}
+@media (max-width: 820px) {
+  .step-body { grid-template-columns: 1fr; }
+  .overview  { grid-template-columns: 1fr; }
+}
+
+/* Left col: tables + anchor */
+.meta-block { display: flex; flex-direction: column; gap: 12px; }
+.meta-row {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+}
+.meta-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+  min-width: 88px;
+}
+.tbl-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 9px; border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-1);
+}
+.tbl-chip .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  display: inline-block;
+}
+.dot-stg  { background: var(--th-config); }
+.dot-pd   { background: var(--ocg-blue); }
+.dot-m1   { background: var(--th-master); }
+.dot-pk   { background: var(--th-finance); }
+.dot-api  { background: var(--th-lookup); }
+.tbl-chip .op {
+  font-size: 9.5px; font-weight: 700; text-transform: uppercase;
+  color: var(--text-2); letter-spacing: .3px;
+}
+
+.anchor {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 11.5px;
+  color: var(--text-1);
+  line-height: 1.55;
+}
+.anchor-head {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 6px;
+}
+.anchor-lbl {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+}
+.prov {
+  font-size: 9.5px; font-weight: 700;
+  padding: 1.5px 6px; border-radius: 3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+.prov-real { background: rgba(45,90,79,.12);  color: #1f5f51; border: 1px solid rgba(45,90,79,.3); }
+.prov-repr { background: rgba(180,120,0,.12); color: #8a5a00; border: 1px solid rgba(180,120,0,.3); }
+.anchor code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  background: #fff;
+  border: 1px solid var(--border-soft);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--text-1);
+}
+.anchor ul { list-style: none; padding: 0; margin: 4px 0 0; }
+.anchor li { margin: 2px 0; }
+
+/* Right col: wireframe mock */
+.mock {
+  background: repeating-linear-gradient(
+    135deg,
+    #f6f8fb,
+    #f6f8fb 10px,
+    #f1f4f8 10px,
+    #f1f4f8 20px
+  );
+  border: 1.5px dashed #c6d0db;
+  border-radius: 8px;
+  padding: 14px 14px 14px;
+  min-height: 160px;
+  display: flex; flex-direction: column; gap: 8px;
+  position: relative;
+}
+.mock::before {
+  content: "WIREFRAME"; position: absolute;
+  top: 8px; right: 10px;
+  font-size: 8.5px; font-weight: 700; letter-spacing: 1.2px;
+  color: var(--text-3); font-family: 'JetBrains Mono', monospace;
+}
+.mock-title {
+  font-size: 11px; font-weight: 700;
+  color: var(--text-2);
+  text-transform: uppercase; letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+.mock-field {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; align-items: center; gap: 8px;
+  min-height: 26px;
+}
+.mock-field .lbl {
+  font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text-3);
+  min-width: 92px;
+}
+.mock-field .val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px;
+  color: var(--text-1);
+}
+.mock-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.mock-row .mock-field { flex: 1; min-width: 0; }
+.mock-pill {
+  font-size: 9.5px; font-weight: 700;
+  padding: 2px 8px; border-radius: 20px;
+  background: #fff; border: 1px solid var(--border);
+  color: var(--text-2); letter-spacing: .3px;
+}
+.mock-pill.good  { color: #1f5f51; border-color: rgba(45,90,79,.35); background: rgba(45,90,79,.06); }
+.mock-pill.warn  { color: #8a5a00; border-color: rgba(180,120,0,.35); background: rgba(180,120,0,.06); }
+
+.mock-table {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 10.5px;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-1);
+  overflow: hidden;
+}
+.mock-table .mt-head {
+  background: var(--surface-2);
+  padding: 5px 10px;
+  font-weight: 700; font-size: 9.5px;
+  text-transform: uppercase; letter-spacing: .8px;
+  color: var(--text-2);
+  display: grid; gap: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.mock-table .mt-row {
+  padding: 5px 10px;
+  display: grid; gap: 8px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text-2);
+}
+.mock-table .mt-row:last-child { border-bottom: none; }
+.mock-table .mt-row.total {
+  background: var(--surface-2);
+  color: var(--text-1);
+  font-weight: 700;
+  border-top: 1px solid var(--border);
+}
+
+/* ── PHASE B BANNER ── */
+.phase-b {
+  background: linear-gradient(90deg, rgba(24,144,215,.08), rgba(24,144,215,.02));
+  border: 1px solid rgba(24,144,215,.28);
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin: 28px 0;
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.phase-b .pb-label {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--ocg-blue);
+  background: rgba(24,144,215,.14);
+  padding: 4px 10px; border-radius: 20px;
+  border: 1px solid rgba(24,144,215,.3);
+}
+.phase-b .pb-title {
+  font-size: 13.5px; font-weight: 700;
+  color: var(--text-1); flex: 1; min-width: 0;
+}
+.phase-b .pb-title span { color: var(--text-2); font-weight: 400; font-size: 12px; margin-left: 8px; }
+.phase-b .pb-cta {
+  font-size: 12px; font-weight: 600;
+  color: var(--ocg-blue);
+  white-space: nowrap;
+}
+
+/* ── ROADMAP STRIP (Phase 1 → 4) ── */
+.roadmap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px 18px;
+  margin-bottom: 22px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.roadmap-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: var(--text-2);
+  margin-bottom: 12px;
+}
+.roadmap-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+@media (max-width: 820px) { .roadmap-row { grid-template-columns: 1fr 1fr; } }
+.rm-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border-soft);
+  border-top: 3px solid var(--ocg-teal);
+  border-radius: 6px;
+  padding: 10px 12px 12px;
+}
+.rm-card.rm-current { border-top-color: var(--ocg-blue); background: rgba(24,144,215,.04); }
+.rm-card .rm-phase {
+  font-size: 9.5px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1.2px;
+  color: var(--text-3);
+  margin-bottom: 3px;
+}
+.rm-card.rm-current .rm-phase { color: var(--ocg-blue); }
+.rm-card .rm-name {
+  font-size: 12.5px; font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 5px; letter-spacing: .1px;
+}
+.rm-card .rm-body {
+  font-size: 11px; color: var(--text-2); line-height: 1.5;
+}
+.rm-card .rm-here {
+  display: inline-block;
+  font-size: 9px; font-weight: 700;
+  padding: 1.5px 6px; border-radius: 3px;
+  background: var(--ocg-blue); color: #fff;
+  margin-left: 5px; letter-spacing: .5px;
+  vertical-align: 1px;
+}
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 8px;
+}
+
+/* ── PRINT ── */
+@media print {
+  .page-header { padding: 14px 24px; }
+  .step { break-inside: avoid; }
+  .connector { display: none; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+    <div class="logo-wordmark">
+      Overton Chicago Gear
+      <span>Precision Gear Manufacturer &middot; Est. 1888</span>
+    </div>
+  </div>
+  <div class="header-titles">
+    <h1>Staging DB &middot; Cross-System Record Viewer</h1>
+    <p>Phase A &middot; Unified record across M1 and ProfitKey &mdash; quote estimates joined to production actuals</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">Phase A</span>
+    <span class="badge badge-teal">10 Views</span>
+    <span class="badge badge-amber">Wireframe</span>
+    <span class="badge badge-green">Q1671 &harr; SO 0271926</span>
+    <span class="badge badge-teal">Read-only</span>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="content">
+
+  <!-- Breadcrumb -->
+  <nav class="crumbs">
+    <a href="ocg_index.html">Index</a>
+    <span class="sep">&rsaquo;</span>
+    <a href="ocg_stakeholder_workflow.html">Centralized Staging DB</a>
+    <span class="sep">&rsaquo;</span>
+    <span class="here">Cross-System Record Viewer (Phase A)</span>
+  </nav>
+
+  <!-- Intro -->
+  <section class="intro">
+    <h2>Why this view exists</h2>
+    <p>
+      The <a href="ocg_stakeholder_workflow.html">Data Systems Overview</a> describes the <em>Centralized Staging Database</em> as the linchpin that joins every M1 quote to its ProfitKey work order. This page shows what that linchpin looks like in practice &mdash; how the data gets there (extracts, mapping, jobs, gateway), and what an end user sees when they look up a unified record from a single screen.
+    </p>
+    <p>
+      The architecture views are anchored to the <em>two source systems</em> in scope for Phase 1 &mdash; M1 and ProfitKey; the unified-record walkthrough is anchored to <span class="mono">Q1671</span> (M1) <span class="mono">&harr;</span> <span class="mono">SO 0271926</span> (ProfitKey). Pipedrive joins this picture in Phase 3, when production status flows back into deals and parts/material requirements are shareable with vendors &mdash; that work has its own viewer when we get there.
+    </p>
+    <p style="margin-top:8px;">
+      <strong>This viewer is read-only.</strong> The staging database is populated by scheduled extracts; no records are created, duplicated, or edited from this surface. <strong>Phase A</strong> (this page) shows the architecture and one walked record. <strong>Phase B</strong> (coming) is team-wide search across the full linked-record history.
+    </p>
+  </section>
+
+  <!-- 4-Phase Roadmap Strip -->
+  <section class="roadmap">
+    <div class="roadmap-title">Where this viewer sits in the broader OCG modernization roadmap</div>
+    <div class="roadmap-row">
+      <div class="rm-card rm-current">
+        <div class="rm-phase">Phase 1 &middot; You are here<span class="rm-here">NOW</span></div>
+        <div class="rm-name">Foundation</div>
+        <div class="rm-body">Staging DB ties M1 quotes to ProfitKey work orders; auth-protected web app reads the unified record (estimates &harr; actuals). M1 viewer &amp; ProfitKey viewer already live.</div>
+      </div>
+      <div class="rm-card">
+        <div class="rm-phase">Phase 2</div>
+        <div class="rm-name">Quote Intake + AI Vision</div>
+        <div class="rm-body">Upload incoming RFQ PDFs; AI Vision extracts fields into M1's input shape. M1 stays the system of record for new quotes.</div>
+      </div>
+      <div class="rm-card">
+        <div class="rm-phase">Phase 3</div>
+        <div class="rm-name">Pipedrive sync &amp; vendor sharing</div>
+        <div class="rm-body">Job statuses flow back into Pipedrive; part &amp; material requirements shareable with outside vendors via RFM.</div>
+      </div>
+      <div class="rm-card">
+        <div class="rm-phase">Phase 4</div>
+        <div class="rm-name">Customer-facing quotes</div>
+        <div class="rm-body">Static + interactive quote presentations that show the &ldquo;Overton difference&rdquo; through every step of the process.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Overview: relationship tree + legend -->
+  <div class="overview">
+    <div class="panel">
+      <div class="panel-title">Relationship map &middot; staging.linked_records as the bridge</div>
+<pre class="tree"><b>staging.linked_records</b> (PK: link_id)
+ &#9500;&#9472;&#9472; source: <b>M1 ERP</b> (qmp)         <i>1 quote &rarr; 0..n WOs</i>       key: qmp.qmpQuoteID
+ &#9492;&#9472;&#9472; source: <b>ProfitKey</b> (WOM)      <i>1 WO &rarr; 1 quote line</i>     key: WORK_ORDER.order_no
+                              &#9474;
+                              &#9492;&#9472;&#9472; exposed via: <b>Read-only API</b> &rarr; <b>Lookup Web App</b>
+
+ <i>Pipedrive joins as a third source in Phase 3.</i></pre>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">Legend &middot; provenance &amp; view clusters</div>
+      <div class="leg-row">
+        <span class="pill pill-real">&#10003;</span>
+        <span><strong>Real / Report</strong> <span class="muted">&mdash; reused from M1 (Q1671) and ProfitKey (SO 0271926) extracts already verified in prior viewers</span></span>
+      </div>
+      <div class="leg-row" style="margin-bottom: 14px;">
+        <span class="pill pill-repr">&#9888;</span>
+        <span><strong>Representative</strong> <span class="muted">&mdash; staging schema, ETL job catalog, and web-app UX are illustrative until live infra exists</span></span>
+      </div>
+      <div class="leg-row" style="display:block;">
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-2);margin-bottom:6px;">View clusters</div>
+        <div class="cluster-key">
+          <span class="cluster-chip cc-pipeline">Pipeline 1&ndash;3</span>
+          <span class="cluster-chip cc-gateway">Gateway 4&ndash;5</span>
+          <span class="cluster-chip cc-lookup">Lookup 6&ndash;7</span>
+          <span class="cluster-chip cc-reads">Reads 8&ndash;9</span>
+          <span class="cluster-chip cc-reconcile">Reconcile 10</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section title for the rail -->
+  <div class="section-title">
+    Staging Layer &middot; Architecture &amp; Walked Record <span class="sub">&mdash; 10 read-only views: 5 engine-room, then 5 unifying Q1671 &harr; SO 0271926</span>
+  </div>
+
+  <!-- ── STEP RAIL ── -->
+  <div class="rail">
+
+    <!-- VIEW 1 · Source extracts -->
+    <div class="step pipeline">
+      <div class="step-head">
+        <div class="step-num">01</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Source extracts</div>
+          <div class="step-desc">Two nightly extractors pull only new or changed rows from each source system &mdash; M1 over a SQL Server connection and ProfitKey over ODBC. Production systems are read-only from staging's perspective.</div>
+        </div>
+        <div class="step-cluster">Pipeline</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Sources</span>
+            <span class="tbl-chip"><span class="dot dot-m1"></span>M1 ERP <span class="op">SQL</span></span>
+            <span class="tbl-chip"><span class="dot dot-pk"></span>ProfitKey <span class="op">ODBC</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Extract scope</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            Per the stakeholder workflow: <em>&ldquo;Nightly ETL &middot; Read-Only Extract &middot; No Production Impact.&rdquo;</em> Each extractor stores a watermark (last-seen <code>updated_at</code> or row ID) and pulls only new or changed rows since the last successful run.
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Source Extractor Inventory (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 1fr 80px 80px 90px 80px;"><span>Source</span><span>Mode</span><span>Cadence</span><span>Watermark</span><span>Rows /run</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 90px 80px;"><span>M1 ERP &middot; qmp / qml / qmq / qmo / qmm / qmk / qma</span><span>SQL</span><span>nightly</span><span>updated_at</span><span>~120</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 90px 80px;"><span>ProfitKey &middot; WOM / JHS / LT / EMP</span><span>ODBC</span><span>nightly</span><span>last_modify</span><span>~85</span></div>
+          </div>
+          <div class="mock-row">
+            <span class="mock-pill good">&#10003; Read-only extracts</span>
+            <span class="mock-pill">No production impact</span>
+            <span class="mock-pill">Incremental</span>
+            <span class="mock-pill warn">Pipedrive joins in Phase 3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 2 · Mapping table schema -->
+    <div class="step pipeline">
+      <div class="step-head">
+        <div class="step-num">02</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Mapping table schema</div>
+          <div class="step-desc">The <span style="font-family:'JetBrains Mono',monospace;">staging.linked_records</span> table is the join surface &mdash; one row per recognised quote &harr; work-order pair. The link is established by business rule: the M1 quote number is stamped on the ProfitKey work order at release.</div>
+        </div>
+        <div class="step-cluster">Pipeline</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-stg"></span>staging.linked_records <span class="op">DDL</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Join keys</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            <ul>
+              <li>M1 Quote ID <code>&harr;</code> ProfitKey Work Order No. &mdash; via business rule (quote number stamped on WO release)</li>
+              <li>Customer ID carried through &mdash; <code>qmpCustomerOrgID</code> on the M1 side</li>
+              <li>Estimated hours (<code>qmo</code>) <code>&harr;</code> Actual hours (<code>JOB_HOURS_SUMMARY</code> / <code>LABOR_TICKETS</code>) &mdash; via <code>order_no</code></li>
+              <li>Phase 3 will add a <code>pd_deal_id</code> column for the Pipedrive join</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">staging.linked_records (read-only DDL)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 1fr 110px 70px;"><span>Column</span><span>Type</span><span>Source</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 110px 70px;"><span>link_id</span><span>BIGINT  PK</span><span>&mdash;</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 110px 70px;"><span>m1_quote_id</span><span>CHAR(10)  FK</span><span>M1</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 110px 70px;"><span>pk_order_no</span><span>VARCHAR(15) FK</span><span>ProfitKey</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 110px 70px;"><span>customer_id</span><span>CHAR(10)</span><span>M1</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 110px 70px;"><span>link_status</span><span>ENUM</span><span>derived</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 110px 70px;"><span>first_linked_at</span><span>DATETIME</span><span>system</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 110px 70px;"><span>last_verified_at</span><span>DATETIME</span><span>system</span></div>
+          </div>
+          <div class="mock-row">
+            <span class="mock-pill">7 columns &middot; 1 row per linked pair</span>
+            <span class="mock-pill warn">+ pd_deal_id in Phase 3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 3 · Nightly ETL job catalog -->
+    <div class="step pipeline">
+      <div class="step-head">
+        <div class="step-num">03</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Nightly ETL job catalog</div>
+          <div class="step-desc">The scheduled jobs that move data into staging each night. Each job records its last-success timestamp and row counts. Source extracts run first; the link-resolver job runs after all three sources have completed.</div>
+        </div>
+        <div class="step-cluster">Pipeline</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-stg"></span>staging.etl_runs <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Job ordering</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            From the workflow doc: <em>&ldquo;Scheduled jobs that move data nightly &mdash; no manual exports, no rekeying.&rdquo;</em> Source extracts run in parallel (M1, PK); the link-resolver runs once both succeed.
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">ETL Job Catalog (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 1fr 70px 80px 70px 60px;"><span>Job</span><span>Schedule</span><span>Depends on</span><span>Last OK</span><span>Status</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 70px 80px 70px 60px;"><span>extract_m1_qm</span><span>02:00</span><span>&mdash;</span><span>02:11</span><span>OK</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 70px 80px 70px 60px;"><span>extract_pk_wom</span><span>02:00</span><span>&mdash;</span><span>02:08</span><span>OK</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 70px 80px 70px 60px;"><span>resolve_links</span><span>02:30</span><span>2 above</span><span>02:34</span><span>OK</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 70px 80px 70px 60px;"><span>refresh_health_metrics</span><span>02:45</span><span>resolve</span><span>02:46</span><span>OK</span></div>
+          </div>
+          <div class="mock-row">
+            <span class="mock-pill good">&#10003; All green tonight</span>
+            <span class="mock-pill">Run window 02:00&ndash;03:00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 4 · Auth & API gateway -->
+    <div class="step gateway">
+      <div class="step-head">
+        <div class="step-num">04</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Auth &amp; API gateway</div>
+          <div class="step-desc">The lookup web app sits behind a username/password login. Access flows through the Zero Trust API gateway (per the stakeholder workflow) which exposes only read-only endpoints over the staging tables. Production systems are never reachable from this surface.</div>
+        </div>
+        <div class="step-cluster">Gateway</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Layer</span>
+            <span class="tbl-chip"><span class="dot dot-api"></span>read-only API <span class="op">expose</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Read-only endpoints</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            <ul>
+              <li><code>GET /quotes/:m1_quote_id</code> &mdash; returns header + lines from the M1 mirror</li>
+              <li><code>GET /work-orders/:order_no</code> &mdash; returns header + hours + actuals from the PK mirror</li>
+              <li><code>GET /linked/:m1_quote_id</code> &mdash; returns the unified triple from <code>staging.linked_records</code></li>
+              <li><code>GET /actuals/:order_no</code> &mdash; returns labor-ticket roll-up for one WO</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Lookup Web App &middot; Sign in (read-only)</div>
+          <div class="mock-field"><span class="lbl">Username</span><span class="val">_______________________</span></div>
+          <div class="mock-field"><span class="lbl">Password</span><span class="val">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span></div>
+          <div class="mock-row">
+            <span class="mock-pill">Username/password</span>
+            <span class="mock-pill">Zero Trust gateway</span>
+            <span class="mock-pill good">&#10003; Read-only</span>
+          </div>
+          <div class="mock-field" style="min-height:36px;"><span class="lbl">Endpoints</span><span class="val">/quotes  /work-orders  /linked  /actuals</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 5 · Data freshness & health -->
+    <div class="step gateway">
+      <div class="step-head">
+        <div class="step-num">05</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Data freshness &amp; health</div>
+          <div class="step-desc">A read of the staging-side health metrics: when each source last synced, how many rows are in the mirror, what % of M1 quotes have a matched ProfitKey work order, and a queue of records that failed to link cleanly.</div>
+        </div>
+        <div class="step-cluster">Gateway</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-stg"></span>staging.health_metrics <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Health snapshot</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            <ul>
+              <li>M1 mirror &middot; <code>42,547</code> quotes &middot; last sync <code>02:11</code></li>
+              <li>ProfitKey mirror &middot; ~<code>11,200</code> work orders &middot; last sync <code>02:08</code></li>
+              <li>Mapping coverage: <code>~63%</code> of M1 quotes have a linked ProfitKey work order (the rest are quotes that never went into production)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Staging Health (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">M1 last sync</span><span class="val">02:11 &middot; OK</span></div>
+            <div class="mock-field"><span class="lbl">PK last sync</span><span class="val">02:08 &middot; OK</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Quotes mirrored</span><span class="val">42,547</span></div>
+            <div class="mock-field"><span class="lbl">WOs mirrored</span><span class="val">~11,200</span></div>
+          </div>
+          <div class="mock-field"><span class="lbl">Quote &harr; WO</span><span class="val">~63% linked &middot; rest are quotes never released to production</span></div>
+          <div class="mock-row">
+            <span class="mock-pill good">&#10003; All sources fresh</span>
+            <span class="mock-pill warn">Broken-link queue: 17 records</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 6 · Lookup landing -->
+    <div class="step lookup">
+      <div class="step-head">
+        <div class="step-num">06</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Lookup landing</div>
+          <div class="step-desc">The single entry point estimators use day-to-day. Search by M1 quote number, ProfitKey work order, customer, or part number. Recent searches surface at the top so a follow-up takes one click.</div>
+        </div>
+        <div class="step-cluster">Lookup</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-stg"></span>staging.linked_records <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Search inputs</span><span class="prov prov-repr">&#9888; Representative</span></div>
+            One search field accepts any of: M1 quote ID (e.g. <code>1671</code>), ProfitKey order no. (e.g. <code>0271926</code>), customer ID (e.g. <code>64225</code>), or part number (e.g. <code>P&amp;H1J262CUS</code>). The web app routes to the right unified record.
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Lookup &middot; Search (read-only)</div>
+          <div class="mock-field" style="min-height:38px;"><span class="lbl">Find</span><span class="val">________________________________</span></div>
+          <div class="mock-row">
+            <span class="mock-pill">M1 quote #</span>
+            <span class="mock-pill">PK order #</span>
+            <span class="mock-pill">Customer</span>
+            <span class="mock-pill">Part #</span>
+          </div>
+          <div class="mock-title" style="margin-top:6px;">Recent searches</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 80px 1fr 90px;"><span>Type</span><span>Match</span><span>When</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 90px;"><span>M1 quote</span><span>Q1671 &middot; Piping fittings kit</span><span>2 hrs ago</span></div>
+            <div class="mt-row"  style="grid-template-columns: 80px 1fr 90px;"><span>PK order</span><span>SO 0271926 &middot; INT GEAR 87T</span><span>1 day ago</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 7 · Linked record summary -->
+    <div class="step lookup">
+      <div class="step-head">
+        <div class="step-num">07</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Linked record summary</div>
+          <div class="step-desc">The unified header that resolves once a search lands. Two cards side-by-side &mdash; M1 and ProfitKey &mdash; pointing at the same logical record. The link status pill makes it obvious whether both sides are confirmed.</div>
+        </div>
+        <div class="step-cluster">Lookup</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-stg"></span>staging.linked_records <span class="op">read</span></span>
+            <span class="tbl-chip"><span class="dot dot-m1"></span>qmp <span class="op">join</span></span>
+            <span class="tbl-chip"><span class="dot dot-pk"></span>WORK_ORDER_MASTER <span class="op">join</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Linked pair</span><span class="prov prov-real">&#10003; Real / Report</span></div>
+            <ul>
+              <li>M1 &middot; <code>Q1671</code> &middot; cust <code>64225</code> &middot; part <code>51812</code> rev <code>21000</code> &nbsp;<span class="prov prov-real">&#10003; Real</span></li>
+              <li>ProfitKey &middot; <code>SO 0271926</code> &middot; item <code>P&amp;H1J262CUS</code> rev <code>21</code> &nbsp;<span class="prov prov-real">&#10003; Report</span></li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Unified Header &middot; Q1671 &harr; SO 0271926 (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">M1 Quote</span><span class="val">Q1671</span></div>
+            <div class="mock-field"><span class="lbl">PK Order</span><span class="val">0271926</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Customer</span><span class="val">64225</span></div>
+            <div class="mock-field"><span class="lbl">Linked at</span><span class="val">2024-03-04</span></div>
+          </div>
+          <div class="mock-row">
+            <span class="mock-pill good">&#10003; Quote &harr; WO confirmed</span>
+            <span class="mock-pill warn">+ Pipedrive deal in Phase 3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 8 · Quote side (M1 read-back) -->
+    <div class="step reads">
+      <div class="step-head">
+        <div class="step-num">08</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Quote side &middot; M1 read-back</div>
+          <div class="step-desc">A condensed summary of the M1 quote pulled through the staging mirror &mdash; header, line groups, top of the price ladder. Enough to read the quote without opening M1; click through to the dedicated M1 viewer for the full record.</div>
+        </div>
+        <div class="step-cluster">Reads</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-m1"></span>qmp <span class="op">read</span></span>
+            <span class="tbl-chip"><span class="dot dot-m1"></span>qml <span class="op">read</span></span>
+            <span class="tbl-chip"><span class="dot dot-m1"></span>qmq <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">Q1671 read-back</span><span class="prov prov-real">&#10003; Real</span></div>
+            <ul>
+              <li>Header &middot; <code>qmpQuoteDate 2000-12-08</code> &middot; <code>qmpStatus A</code></li>
+              <li>Lines &middot; 5 line groups, 36 items, all part <code>51812</code> rev <code>21000</code></li>
+              <li>Price ladder &middot; <code>1 &rarr; $485</code>, <code>5 &rarr; $412</code>, <code>10 &rarr; $378.50</code></li>
+              <li>Memo &middot; &ldquo;Piping fittings assembly kit &mdash; 5 assembly locations&rdquo;</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Q1671 &middot; Quote-side condensed (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Quote ID</span><span class="val">Q1671</span></div>
+            <div class="mock-field"><span class="lbl">Status</span><span class="val">A &middot; Active</span></div>
+          </div>
+          <div class="mock-field"><span class="lbl">Customer</span><span class="val">64225 &middot; Custom Gear Co.</span></div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Lines</span><span class="val">36 in 5 groups</span></div>
+            <div class="mock-field"><span class="lbl">Breaks</span><span class="val">1 / 5 / 10</span></div>
+          </div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 60px 80px 80px;"><span>Qty</span><span>Unit $</span><span>Ext $</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 80px 80px;"><span>1</span><span>485.00</span><span>485.00</span></div>
+            <div class="mt-row"  style="grid-template-columns: 60px 80px 80px;"><span>5</span><span>412.00</span><span>2,060.00</span></div>
+            <div class="mt-row total" style="grid-template-columns: 60px 80px 80px;"><span>10</span><span>378.50</span><span>3,785.00</span></div>
+          </div>
+          <span class="mock-pill" style="align-self:flex-start;">Open full M1 viewer &rarr;</span>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 9 · Production side (PK read-back) -->
+    <div class="step reads">
+      <div class="step-head">
+        <div class="step-num">09</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Production side &middot; ProfitKey read-back</div>
+          <div class="step-desc">A condensed summary of the work order pulled through the ProfitKey mirror &mdash; header, schedule, performance snapshot. The actual hours and dollars that landed against the order. Click through to the dedicated PK viewer for the full Performance Detail Report.</div>
+        </div>
+        <div class="step-cluster">Reads</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-pk"></span>WORK_ORDER_MASTER <span class="op">read</span></span>
+            <span class="tbl-chip"><span class="dot dot-pk"></span>JOB_HOURS_SUMMARY <span class="op">read</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 read-back</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li>Released <code>3/2/2024</code> &middot; Due <code>4/15/2024</code> &middot; Status <code>Closed</code></li>
+              <li>Quantity <code>4</code> &middot; Sales/Unit <code>$13,175.00</code></li>
+              <li>Cost: <code>21% Under</code> &middot; <code>$6,590.43</code> saved vs. lot estimate</li>
+              <li>Margin/Unit: <code>$5,330.60</code> &rarr; <code>$6,978.20</code> (<code>+12.51</code> pts)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">SO 0271926 &middot; Production-side condensed (read-only)</div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Order #</span><span class="val">0271926</span></div>
+            <div class="mock-field"><span class="lbl">Status</span><span class="val">Closed</span></div>
+          </div>
+          <div class="mock-field"><span class="lbl">Item</span><span class="val">P&amp;H1J262CUS &middot; INT GEAR 87T</span></div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Released</span><span class="val">3/2/2024</span></div>
+            <div class="mock-field"><span class="lbl">Due</span><span class="val">4/15/2024</span></div>
+            <div class="mock-field"><span class="lbl">Qty</span><span class="val">4</span></div>
+          </div>
+          <div class="mock-row">
+            <div class="mock-field"><span class="lbl">Cost</span><span class="val">21% Under</span></div>
+            <div class="mock-field"><span class="lbl">$ Delta</span><span class="val">$6,590.43</span></div>
+          </div>
+          <div class="mock-row">
+            <span class="mock-pill good">&#10003; On Time &middot; Under Cost</span>
+            <span class="mock-pill">Open full ProfitKey viewer &rarr;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="connector"></div>
+
+    <!-- VIEW 10 · Estimate vs. actual reconciliation -->
+    <div class="step reconcile">
+      <div class="step-head">
+        <div class="step-num">10</div>
+        <div class="step-title-wrap">
+          <div class="step-title">Estimate vs. actual reconciliation</div>
+          <div class="step-desc">The punchline that justifies the entire staging layer. <span style="font-family:'JetBrains Mono',monospace;">qmo</span> estimated hours from M1 read side-by-side with <span style="font-family:'JetBrains Mono',monospace;">JOB_HOURS_SUMMARY</span> actuals from ProfitKey &mdash; the closed loop the workflow doc calls out. The next quote can be priced against what production actually ran, not the original estimate.</div>
+        </div>
+        <div class="step-cluster">Reconcile</div>
+      </div>
+      <div class="step-body">
+        <div class="meta-block">
+          <div class="meta-row">
+            <span class="meta-label">Tables</span>
+            <span class="tbl-chip"><span class="dot dot-m1"></span>qmo <span class="op">read</span></span>
+            <span class="tbl-chip"><span class="dot dot-pk"></span>JOB_HOURS_SUMMARY <span class="op">read</span></span>
+            <span class="tbl-chip"><span class="dot dot-stg"></span>linked_records <span class="op">join</span></span>
+          </div>
+          <div class="anchor">
+            <div class="anchor-head"><span class="anchor-lbl">SO 0271926 reconciliation</span><span class="prov prov-real">&#10003; Report</span></div>
+            <ul>
+              <li>Total hours: <code>273.37</code> est. &rarr; <code>214.16</code> actual</li>
+              <li>Delta: <code>&minus;59.21</code> hrs (<code>&minus;21.7%</code>)</li>
+              <li>Margin: <code>40.45%</code> lot est. &rarr; <code>52.96%</code> to-date (<code>+12.51</code> pts)</li>
+              <li>$ saved: <code>$6,590.43</code> vs. lot estimate</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mock">
+          <div class="mock-title">Estimate vs. Actual &middot; Q1671 &harr; SO 0271926 (read-only)</div>
+          <div class="mock-table">
+            <div class="mt-head" style="grid-template-columns: 1fr 80px 80px 80px;"><span>Metric</span><span>M1 Est.</span><span>PK Actual</span><span>Delta</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px;"><span>Run Hours</span><span>254.87</span><span>203.93</span><span>&minus;50.94</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px;"><span>Setup Hours</span><span>18.50</span><span>10.23</span><span>&minus;8.27</span></div>
+            <div class="mt-row total" style="grid-template-columns: 1fr 80px 80px 80px;"><span>Total Hours</span><span>273.37</span><span>214.16</span><span>&minus;59.21</span></div>
+            <div class="mt-row"  style="grid-template-columns: 1fr 80px 80px 80px;"><span>Cost/Unit</span><span>7,844.40</span><span>6,196.80</span><span>&minus;1,647.60</span></div>
+            <div class="mt-row total" style="grid-template-columns: 1fr 80px 80px 80px;"><span>Margin %</span><span>40.45</span><span>52.96</span><span>+12.51</span></div>
+          </div>
+          <div class="mock-row">
+            <span class="mock-pill good">&#10003; &minus;21.7% hrs vs. plan</span>
+            <span class="mock-pill good">&#10003; +12.51 pts margin</span>
+            <span class="mock-pill good">&#10003; $6,590.43 saved</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /rail -->
+
+  <!-- Phase B preview banner -->
+  <div class="phase-b">
+    <span class="pb-label">Coming next &middot; Phase B</span>
+    <div class="pb-title">
+      Team-wide search across the entire linked-record history
+      <span>customer-level rollups, trend dashboards, broken-link triage queue &mdash; one screen for every quote+WO+deal triple in staging.</span>
+    </div>
+    <span class="pb-cta">Wireframe pending &rarr;</span>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Source: Centralized Staging DB (planned) &middot; M1 mirror (Q1671) &middot; ProfitKey mirror (SO 0271926)</span>
+    <span><a href="ocg_index.html">&larr; Back to Index</a> &middot; <a href="ocg_stakeholder_workflow.html">Stakeholder Workflow</a> &middot; <a href="m1_quoter_workflow.html">M1 Viewer</a> &middot; <a href="profitkey_workorder_viewer.html">ProfitKey Viewer</a></span>
+  </div>
+
+</div><!-- /content -->
+
+</body>
+</html>
