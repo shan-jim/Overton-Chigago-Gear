@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>M1 ERP · Quote Module ERD — Overton Chicago Gear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS ── */
+:root {
+  --bg:          #f4f6f8;
+  --surface:     #ffffff;
+  --border:      #dde3ea;
+  --text-1:      #1e2a38;
+  --text-2:      #64748b;
+  --ocg-dark:    #313131;
+  --ocg-blue:    #1890d7;
+  --ocg-teal:    #899fac;
+  --th-master:   #313131;
+  --th-trans:    #1890d7;
+  --th-lookup:   #4a6278;
+  --th-finance:  #2d5a4f;
+  --th-config:   #3d4f62;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  color: var(--text-1);
+  min-height: 100vh;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--ocg-dark);
+  color: #fff;
+  padding: 22px 40px 18px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 3px solid var(--ocg-blue);
+}
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.header-logo svg {
+  width: 34px;
+  height: 34px;
+  fill: var(--ocg-blue);
+  flex-shrink: 0;
+}
+.logo-wordmark {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #c8d6e0;
+  line-height: 1.15;
+}
+.logo-wordmark span {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,.38);
+  letter-spacing: .4px;
+  text-transform: none;
+  margin-top: 2px;
+}
+.header-titles {
+  flex: 1;
+  padding-left: 4px;
+}
+.header-titles h1 {
+  font-size: 21px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .3px;
+}
+.header-titles p {
+  font-size: 12px;
+  color: var(--ocg-teal);
+  margin-top: 3px;
+  font-weight: 400;
+}
+.header-badges {
+  display: flex;
+  gap: 7px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .3px;
+  white-space: nowrap;
+}
+.badge-blue  { background: rgba(24,144,215,.14); color: #56b4e8; border: 1px solid rgba(24,144,215,.28); }
+.badge-teal  { background: rgba(137,159,172,.14); color: #adc4d3; border: 1px solid rgba(137,159,172,.28); }
+.badge-green { background: rgba(45,90,79,.28);  color: #6ec8b4; border: 1px solid rgba(45,90,79,.48); }
+.badge-amber { background: rgba(180,120,0,.2);  color: #f5c842; border: 1px solid rgba(180,120,0,.3); }
+
+/* ── CONTENT WRAP ── */
+.content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 32px 52px;
+}
+
+/* ── STATS BAR ── */
+.stats {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.stat-card {
+  flex: 1;
+  min-width: 130px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.stat-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ocg-blue);
+  letter-spacing: -.5px;
+}
+.stat-lbl {
+  font-size: 10.5px;
+  color: var(--text-2);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  font-weight: 500;
+}
+
+/* ── DIAGRAM CANVAS ── */
+#canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 840px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.05);
+  overflow: visible;
+  margin-bottom: 20px;
+}
+#erd-svg {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* ── TABLE CARDS ── */
+.tbl {
+  position: absolute;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 260px;
+  box-shadow: 0 2px 8px rgba(24,144,215,.06);
+  transition: box-shadow .2s, border-color .2s, transform .15s;
+}
+.tbl:hover {
+  box-shadow: 0 4px 22px rgba(24,144,215,.2);
+  border-color: var(--ocg-blue);
+  z-index: 10;
+  transform: translateY(-2px);
+}
+.tbl-head {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+}
+.th-master  { background: var(--th-master); }
+.th-trans   { background: var(--th-trans); }
+.th-lookup  { background: var(--th-lookup); }
+.th-finance { background: var(--th-finance); }
+.th-config  { background: var(--th-config); }
+.tbl-name  { flex: 1; font-size: 13px; font-weight: 700; letter-spacing: .3px; }
+.tbl-prefix {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: 20px;
+  background: rgba(255,255,255,.16);
+  color: rgba(255,255,255,.88);
+  border: 1px solid rgba(255,255,255,.22);
+  letter-spacing: .3px;
+}
+
+.tbl-desc {
+  font-size: 10.5px;
+  color: var(--text-2);
+  background: #fafbfc;
+  padding: 7px 14px;
+  line-height: 1.45;
+  border-bottom: 1px solid var(--border);
+  font-style: italic;
+}
+
+.tbl-fields { padding: 4px 0 6px; }
+.field {
+  display: flex;
+  align-items: center;
+  padding: 4px 14px;
+  gap: 8px;
+  font-size: 11.5px;
+  color: var(--text-1);
+  border-bottom: 1px solid #f1f4f7;
+  transition: background .1s;
+}
+.field:last-child { border-bottom: none; }
+.field:hover { background: #f0f7fd; }
+.field-tag {
+  font-size: 9px; font-weight: 700;
+  padding: 1.5px 5px; border-radius: 3px;
+  letter-spacing: .3px;
+  min-width: 22px; text-align: center;
+  flex-shrink: 0;
+}
+.pk { background: #e8f4fd; color: var(--ocg-blue); border: 1px solid #90caf9; }
+.fk { background: #edf2f5; color: #5d7a8a;          border: 1px solid #b0c4d0; }
+.field-name {
+  flex: 1; font-weight: 500;
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+  font-size: 11px;
+}
+.field-type {
+  font-size: 10px; color: var(--text-2);
+  font-family: 'JetBrains Mono', 'Consolas', monospace;
+}
+
+/* ── LEGEND ── */
+.legend {
+  display: flex; flex-wrap: wrap; gap: 20px;
+  align-items: center; padding: 12px 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; font-size: 11.5px; color: var(--text-2);
+  margin-bottom: 28px;
+}
+.legend-title { font-weight: 700; color: var(--text-1); margin-right: 4px; }
+.leg-item { display: flex; align-items: center; gap: 8px; }
+.leg-line { width: 28px; height: 2px; border-radius: 2px; }
+.leg-dot  { width: 9px; height: 9px; border-radius: 50%; }
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 8px;
+}
+
+/* ── PRINT ── */
+@media print {
+  .page-header { padding: 14px 24px; }
+  #erd-svg { display: none !important; }
+  .tbl {
+    position: relative !important;
+    left: auto !important; top: auto !important;
+    width: 240px; break-inside: avoid;
+    box-shadow: 0 0 0 1px var(--border) !important;
+    transform: none !important;
+  }
+  #canvas-wrap {
+    display: flex !important; flex-wrap: wrap !important;
+    gap: 12px !important; height: auto !important;
+    padding: 16px !important; border: none !important;
+    box-shadow: none !important;
+  }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+    <div class="logo-wordmark">
+      Overton Chicago Gear
+      <span>Precision Gear Manufacturer · Est. 1888</span>
+    </div>
+  </div>
+  <div class="header-titles">
+    <h1>M1 ERP &middot; Quote Module</h1>
+    <p>Entity Relationship Diagram &mdash; m1_CG.mdf (Custom Gear Company Database)</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">42,547 Quotes</span>
+    <span class="badge badge-green">71,946 Quote Lines</span>
+    <span class="badge badge-amber">1999 &ndash; 2006</span>
+    <span class="badge badge-teal">7 Tables · qm* prefix</span>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="content">
+
+  <!-- Stats Bar -->
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num">42,547</div><div class="stat-lbl">Total Quotes</div></div>
+    <div class="stat-card"><div class="stat-num">71,946</div><div class="stat-lbl">Quote Lines</div></div>
+    <div class="stat-card"><div class="stat-num">45,141</div><div class="stat-lbl">Highest Quote ID</div></div>
+    <div class="stat-card"><div class="stat-num">1,500+</div><div class="stat-lbl">Customers (est.)</div></div>
+    <div class="stat-card"><div class="stat-num">7</div><div class="stat-lbl">Tables (qm* prefix)</div></div>
+    <div class="stat-card"><div class="stat-num">8.9 GB</div><div class="stat-lbl">Source MDF Size</div></div>
+  </div>
+
+  <!-- Diagram Canvas -->
+  <div id="canvas-wrap">
+    <svg id="erd-svg"></svg>
+
+    <!-- qmp · Quotes (master) · CENTER -->
+    <div class="tbl" id="t-qmp" style="left:460px; top:318px;">
+      <div class="tbl-head th-master">
+        <span class="tbl-name">Quotes</span>
+        <span class="tbl-prefix">qmp</span>
+      </div>
+      <div class="tbl-desc">The master administrative envelope capturing customer info, validity dates, and overarching terms.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag pk">PK</span><span class="field-name">qmpQuoteID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmpCustomerOrganizationID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmpQuoteDate</span><span class="field-type">datetime</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmpDueDate</span><span class="field-type">datetime</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmpExpirationDate</span><span class="field-type">datetime</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmpQuoter</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmpSalesID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmpStatus</span><span class="field-type">char(2)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmpMemo</span><span class="field-type">text</span></div>
+      </div>
+    </div>
+
+    <!-- qml · Quote Lines · TOP CENTER -->
+    <div class="tbl" id="t-qml" style="left:460px; top:30px;">
+      <div class="tbl-head th-trans">
+        <span class="tbl-name">Quote Lines</span>
+        <span class="tbl-prefix">qml</span>
+      </div>
+      <div class="tbl-desc">The specific finished goods, gears, or assemblies being offered to the customer.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag pk">PK</span><span class="field-name">qmlQuoteLineID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmlQuoteID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmlPartID</span><span class="field-type">char(20)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmlPartRevisionID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmlDescription</span><span class="field-type">varchar(50)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmlUnitOfMeasure</span><span class="field-type">char(4)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmlQuantity</span><span class="field-type">decimal</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmlUnitPrice</span><span class="field-type">money</span></div>
+      </div>
+    </div>
+
+    <!-- qmq · Quote Quantities · RIGHT TOP -->
+    <div class="tbl" id="t-qmq" style="left:890px; top:298px;">
+      <div class="tbl-head th-lookup">
+        <span class="tbl-name">Quote Quantities</span>
+        <span class="tbl-prefix">qmq</span>
+      </div>
+      <div class="tbl-desc">The volume pricing matrix — how unit costs drop when ordering in larger batches.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmqQuoteID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmqQuantity</span><span class="field-type">decimal</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmqUnitPrice</span><span class="field-type">money</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmqLeadTime</span><span class="field-type">int</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmqToolingCharge</span><span class="field-type">money</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmqSetupCharge</span><span class="field-type">money</span></div>
+      </div>
+    </div>
+
+    <!-- qmo · Quote Operations · RIGHT BOTTOM -->
+    <div class="tbl" id="t-qmo" style="left:890px; top:578px;">
+      <div class="tbl-head th-config">
+        <span class="tbl-name">Quote Operations</span>
+        <span class="tbl-prefix">qmo</span>
+      </div>
+      <div class="tbl-desc">The shop floor routing — estimated setup and run hours for direct labor costing.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmoQuoteID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmoQuoteLineID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmoOperationID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmoSetupHours</span><span class="field-type">decimal</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmoRunHoursPerPiece</span><span class="field-type">decimal</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmoWorkCenterID</span><span class="field-type">char(10)</span></div>
+      </div>
+    </div>
+
+    <!-- qmm · Quote Materials · LEFT BOTTOM -->
+    <div class="tbl" id="t-qmm" style="left:20px; top:578px;">
+      <div class="tbl-head th-finance">
+        <span class="tbl-name">Quote Materials</span>
+        <span class="tbl-prefix">qmm</span>
+      </div>
+      <div class="tbl-desc">Raw materials and sub-contracting requirements (e.g. forgings) pegged to vendor quotes.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmmQuoteID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmmQuoteLineID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmmPartID</span><span class="field-type">char(20)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmmQuantity</span><span class="field-type">decimal</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmmUnitCost</span><span class="field-type">money</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmmUOM</span><span class="field-type">char(4)</span></div>
+      </div>
+    </div>
+
+    <!-- qmk · Quote Memos · LEFT CENTER -->
+    <div class="tbl" id="t-qmk" style="left:20px; top:298px;">
+      <div class="tbl-head th-config">
+        <span class="tbl-name">Quote Memos</span>
+        <span class="tbl-prefix">qmk</span>
+      </div>
+      <div class="tbl-desc">Free-text internal estimating notes or printed header/footer instructions for the customer.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmkQuoteID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmkMemoType</span><span class="field-type">char(2)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmkMemoText</span><span class="field-type">text</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmkSequence</span><span class="field-type">int</span></div>
+      </div>
+    </div>
+
+    <!-- qma · Quote Assemblies · LEFT TOP -->
+    <div class="tbl" id="t-qma" style="left:20px; top:30px;">
+      <div class="tbl-head th-lookup">
+        <span class="tbl-name">Quote Assemblies</span>
+        <span class="tbl-prefix">qma</span>
+      </div>
+      <div class="tbl-desc">BOM structure mapping sub-components for complex multi-part gear assemblies.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmaQuoteID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmaQuoteLineID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">qmaAssemblyID</span><span class="field-type">char(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmaQuantity</span><span class="field-type">decimal</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">qmaSequence</span><span class="field-type">int</span></div>
+      </div>
+    </div>
+
+  </div><!-- /canvas-wrap -->
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-title">KEY</span>
+    <div class="leg-item"><span class="field-tag pk" style="font-size:10px;padding:2px 6px;">PK</span> Primary Key</div>
+    <div class="leg-item"><span class="field-tag fk" style="font-size:10px;padding:2px 6px;">FK</span> Foreign Key</div>
+    <div style="flex:1"></div>
+    <div class="leg-item"><div class="leg-line" style="background:var(--ocg-blue)"></div> Quotes → Quote Lines (1:N)</div>
+    <div class="leg-item"><div class="leg-line" style="background:var(--ocg-teal)"></div> Quotes → Child tables (1:N)</div>
+    <div class="leg-item"><div class="leg-line" style="background:#e07b30"></div> Quote Lines → Detail tables (1:N)</div>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Source: M1DD.mdf (Data Dictionary) &nbsp;&middot;&nbsp; m1_CG.mdf (Custom Gear Co.) &nbsp;&middot;&nbsp; M1 ERP v10 &nbsp;&middot;&nbsp; SQL Server 2000</span>
+    <span>Confirmed extracted fields: qmpQuoteID, qmpCustomerOrganizationID, qmpQuoteDate, qmpDueDate, qmpExpirationDate, qmlQuoteID, qmlPartID, qmlPartRevisionID</span>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    const svg  = document.getElementById('erd-svg');
+    const wrap = document.getElementById('canvas-wrap');
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    const wr = wrap.getBoundingClientRect();
+
+    function pt(el, side) {
+      const r = el.getBoundingClientRect();
+      const x0 = r.left - wr.left, y0 = r.top - wr.top;
+      if (side === 'top')    return { x: x0 + r.width / 2, y: y0 };
+      if (side === 'bottom') return { x: x0 + r.width / 2, y: y0 + r.height };
+      if (side === 'left')   return { x: x0,                y: y0 + r.height / 2 };
+      if (side === 'right')  return { x: x0 + r.width,      y: y0 + r.height / 2 };
+    }
+
+    function addPath(a, b, color) {
+      const dx = Math.abs(b.x - a.x) * 0.5;
+      const dy = Math.abs(b.y - a.y) * 0.4;
+      let cpAx = a.x, cpAy = a.y, cpBx = b.x, cpBy = b.y;
+      if (Math.abs(a.x - b.x) >= Math.abs(a.y - b.y)) {
+        cpAx = a.x + (b.x > a.x ? dx : -dx);
+        cpBx = b.x - (b.x > a.x ? dx : -dx);
+      } else {
+        cpAy = a.y + (b.y > a.y ? dy : -dy);
+        cpBy = b.y - (b.y > a.y ? dy : -dy);
+      }
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', `M${a.x},${a.y} C${cpAx},${cpAy} ${cpBx},${cpBy} ${b.x},${b.y}`);
+      p.setAttribute('stroke', color);
+      p.setAttribute('stroke-width', '1.8');
+      p.setAttribute('fill', 'none');
+      p.setAttribute('opacity', '0.65');
+      svg.appendChild(p);
+      // dot at "one" end
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', a.x); dot.setAttribute('cy', a.y);
+      dot.setAttribute('r', '3.5'); dot.setAttribute('fill', color); dot.setAttribute('opacity', '0.9');
+      svg.appendChild(dot);
+      // crow-feet at "many" end
+      const angle = Math.atan2(b.y - cpBy, b.x - cpBx);
+      [[-5, 0], [5, 0], [0, 0]].forEach(function(off) {
+        const nx = -Math.sin(angle) * off[0];
+        const ny =  Math.cos(angle) * off[0];
+        const back = 11;
+        const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        ln.setAttribute('x1', b.x + nx - Math.cos(angle) * back);
+        ln.setAttribute('y1', b.y + ny - Math.sin(angle) * back);
+        ln.setAttribute('x2', b.x + nx); ln.setAttribute('y2', b.y + ny);
+        ln.setAttribute('stroke', color); ln.setAttribute('stroke-width', '1.8'); ln.setAttribute('opacity', '0.9');
+        svg.appendChild(ln);
+      });
+      return { cpBx: cpBx, cpBy: cpBy };
+    }
+
+    function label(a, b, cpBx, cpBy, text, color) {
+      const lx = (a.x + b.x) / 2, ly = (a.y + b.y) / 2 - 9;
+      const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      bg.setAttribute('x', lx - 14); bg.setAttribute('y', ly - 10);
+      bg.setAttribute('width', 28);  bg.setAttribute('height', 14);
+      bg.setAttribute('rx', 4); bg.setAttribute('fill', '#ffffff'); bg.setAttribute('opacity', '0.92');
+      bg.setAttribute('stroke', color); bg.setAttribute('stroke-width', '0.8'); bg.setAttribute('stroke-opacity', '0.4');
+      svg.appendChild(bg);
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', lx); t.setAttribute('y', ly);
+      t.setAttribute('text-anchor', 'middle'); t.setAttribute('font-size', '9.5');
+      t.setAttribute('fill', color); t.setAttribute('font-family', 'Poppins, Arial');
+      t.setAttribute('font-weight', '700');
+      t.textContent = text;
+      svg.appendChild(t);
+    }
+
+    function conn(a, b, color, lbl) {
+      const res = addPath(a, b, color);
+      if (lbl) label(a, b, res.cpBx, res.cpBy, lbl, color);
+    }
+
+    const qmp = document.getElementById('t-qmp');
+    const qml = document.getElementById('t-qml');
+    const qmq = document.getElementById('t-qmq');
+    const qmo = document.getElementById('t-qmo');
+    const qmm = document.getElementById('t-qmm');
+    const qmk = document.getElementById('t-qmk');
+    const qma = document.getElementById('t-qma');
+
+    const blue   = '#1890d7';
+    const teal   = '#5d7a8a';
+    const orange = '#d97730';
+
+    // Quotes → Quote Lines
+    conn(pt(qmp, 'top'),   pt(qml, 'bottom'), blue,   '1:N');
+    // Quotes → Quantities
+    conn(pt(qmp, 'right'), pt(qmq, 'left'),   teal,   '1:N');
+    // Quotes → Operations
+    conn(pt(qmp, 'right'), pt(qmo, 'left'),   teal,   '1:N');
+    // Quotes → Memos
+    conn(pt(qmp, 'left'),  pt(qmk, 'right'),  teal,   '1:N');
+    // Quotes → Materials
+    conn(pt(qmp, 'left'),  pt(qmm, 'right'),  teal,   '1:N');
+    // Quotes → Assemblies
+    conn(pt(qmp, 'left'),  pt(qma, 'right'),  teal,   '1:N');
+    // Quote Lines → Operations
+    conn(pt(qml, 'right'), pt(qmo, 'top'),    orange, '1:N');
+    // Quote Lines → Materials
+    conn(pt(qml, 'left'),  pt(qmm, 'top'),    orange, '1:N');
+    // Quote Lines → Assemblies
+    conn(pt(qml, 'left'),  pt(qma, 'right'),  orange, '1:N');
+
+  }, 180);
+});
+</script>
+</body>
+</html>

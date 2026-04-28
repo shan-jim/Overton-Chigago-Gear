@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProfitKey · Work Order &amp; Labor ERD — Overton Chicago Gear</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── DESIGN TOKENS ── */
+:root {
+  --bg:          #f4f6f8;
+  --surface:     #ffffff;
+  --border:      #dde3ea;
+  --text-1:      #1e2a38;
+  --text-2:      #64748b;
+  --ocg-dark:    #313131;
+  --ocg-blue:    #1890d7;
+  --ocg-teal:    #899fac;
+  --th-master:   #313131;
+  --th-trans:    #1890d7;
+  --th-lookup:   #4a6278;
+  --th-finance:  #2d5a4f;
+  --th-config:   #3d4f62;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  color: var(--text-1);
+  min-height: 100vh;
+}
+
+/* ── PAGE HEADER ── */
+.page-header {
+  background: var(--ocg-dark);
+  color: #fff;
+  padding: 22px 40px 18px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border-bottom: 3px solid var(--ocg-blue);
+}
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255,255,255,.18);
+  flex-shrink: 0;
+}
+.header-logo svg {
+  width: 34px;
+  height: 34px;
+  fill: var(--ocg-blue);
+  flex-shrink: 0;
+}
+.logo-wordmark {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #c8d6e0;
+  line-height: 1.15;
+}
+.logo-wordmark span {
+  display: block;
+  font-size: 9.5px;
+  font-weight: 400;
+  color: rgba(255,255,255,.38);
+  letter-spacing: .4px;
+  text-transform: none;
+  margin-top: 2px;
+}
+.header-titles { flex: 1; padding-left: 4px; }
+.header-titles h1 { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: .3px; }
+.header-titles p  { font-size: 12px; color: var(--ocg-teal); margin-top: 3px; font-weight: 400; }
+.header-badges {
+  display: flex; gap: 7px; flex-wrap: wrap;
+  justify-content: flex-end; align-items: center;
+}
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: .3px; white-space: nowrap;
+}
+.badge-blue  { background: rgba(24,144,215,.14); color: #56b4e8; border: 1px solid rgba(24,144,215,.28); }
+.badge-teal  { background: rgba(137,159,172,.14); color: #adc4d3; border: 1px solid rgba(137,159,172,.28); }
+.badge-green { background: rgba(45,90,79,.28);  color: #6ec8b4; border: 1px solid rgba(45,90,79,.48); }
+.badge-amber { background: rgba(180,120,0,.2);  color: #f5c842; border: 1px solid rgba(180,120,0,.3); }
+
+/* ── CONTENT WRAP ── */
+.content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 32px 52px;
+}
+
+/* ── STATS BAR ── */
+.stats {
+  display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 28px;
+}
+.stat-card {
+  flex: 1; min-width: 130px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 16px 18px; text-align: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.stat-num { font-size: 26px; font-weight: 700; color: var(--ocg-blue); letter-spacing: -.5px; }
+.stat-lbl { font-size: 10.5px; color: var(--text-2); margin-top: 4px; text-transform: uppercase; letter-spacing: .7px; font-weight: 500; }
+
+/* ── DIAGRAM CANVAS ── */
+#canvas-wrap {
+  position: relative;
+  width: 100%;
+  height: 780px;
+  background: var(--surface);
+  background-image: radial-gradient(circle, var(--border) 1px, transparent 1px);
+  background-size: 24px 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 2px 12px rgba(0,0,0,.05);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+#erd-svg {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; overflow: visible;
+}
+
+/* ── TABLE CARDS ── */
+.tbl {
+  position: absolute;
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: 8px; overflow: hidden; width: 260px;
+  box-shadow: 0 2px 8px rgba(24,144,215,.06);
+  transition: box-shadow .2s, border-color .2s, transform .15s;
+}
+.tbl:hover {
+  box-shadow: 0 4px 22px rgba(24,144,215,.2);
+  border-color: var(--ocg-blue); z-index: 10; transform: translateY(-2px);
+}
+.tbl-head {
+  padding: 10px 14px; display: flex; align-items: center; gap: 8px; color: #fff;
+}
+.th-master  { background: var(--th-master); }
+.th-trans   { background: var(--th-trans); }
+.th-lookup  { background: var(--th-lookup); }
+.th-finance { background: var(--th-finance); }
+.th-config  { background: var(--th-config); }
+.tbl-name  { flex: 1; font-size: 13px; font-weight: 700; letter-spacing: .3px; }
+.tbl-prefix {
+  font-size: 10px; font-weight: 600;
+  padding: 2px 7px; border-radius: 20px;
+  background: rgba(255,255,255,.16); color: rgba(255,255,255,.88);
+  border: 1px solid rgba(255,255,255,.22); letter-spacing: .3px;
+}
+.tbl-desc {
+  font-size: 10.5px; color: var(--text-2); background: #fafbfc;
+  padding: 7px 14px; line-height: 1.45; border-bottom: 1px solid var(--border);
+  font-style: italic;
+}
+.tbl-fields { padding: 4px 0 6px; }
+.field {
+  display: flex; align-items: center; padding: 4px 14px; gap: 8px;
+  font-size: 11.5px; color: var(--text-1);
+  border-bottom: 1px solid #f1f4f7; transition: background .1s;
+}
+.field:last-child { border-bottom: none; }
+.field:hover { background: #f0f7fd; }
+.field-tag {
+  font-size: 9px; font-weight: 700; padding: 1.5px 5px; border-radius: 3px;
+  letter-spacing: .3px; min-width: 22px; text-align: center; flex-shrink: 0;
+}
+.pk { background: #e8f4fd; color: var(--ocg-blue); border: 1px solid #90caf9; }
+.fk { background: #edf2f5; color: #5d7a8a;          border: 1px solid #b0c4d0; }
+.field-name {
+  flex: 1; font-weight: 500;
+  font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 11px;
+}
+.field-type { font-size: 10px; color: var(--text-2); font-family: 'JetBrains Mono', 'Consolas', monospace; }
+
+/* ── LEGEND ── */
+.legend {
+  display: flex; flex-wrap: wrap; gap: 20px; align-items: center;
+  padding: 12px 20px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; font-size: 11.5px; color: var(--text-2); margin-bottom: 28px;
+}
+.legend-title { font-weight: 700; color: var(--text-1); margin-right: 4px; }
+.leg-item { display: flex; align-items: center; gap: 8px; }
+.leg-line { width: 28px; height: 2px; border-radius: 2px; }
+
+/* ── HOW IT WORKS ── */
+.how-it-works {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 4px solid var(--ocg-blue); border-radius: 0 8px 8px 0;
+  padding: 20px 24px; margin-bottom: 28px; font-size: 13px; line-height: 1.65;
+}
+.how-it-works h3 {
+  font-size: 14px; font-weight: 700; color: var(--ocg-blue);
+  margin-bottom: 10px; letter-spacing: .2px;
+}
+.how-it-works p { color: var(--text-1); margin-bottom: 8px; }
+.how-it-works p:last-of-type { margin-bottom: 0; }
+.how-it-works code {
+  display: block; background: #f4f6f8; border: 1px solid var(--border);
+  border-radius: 5px; padding: 10px 14px;
+  font-family: 'JetBrains Mono', 'Consolas', monospace; font-size: 12px;
+  color: var(--ocg-dark); margin-top: 10px; white-space: pre-wrap;
+}
+.how-it-works em { color: var(--ocg-blue); font-style: normal; font-weight: 600; }
+
+/* ── FOOTER ── */
+.page-footer {
+  border-top: 1px solid var(--border); padding-top: 16px;
+  font-size: 11px; color: var(--text-2);
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 8px;
+}
+
+/* ── PRINT ── */
+@media print {
+  .page-header { padding: 14px 24px; }
+  #erd-svg { display: none !important; }
+  .tbl {
+    position: relative !important; left: auto !important; top: auto !important;
+    width: 240px; break-inside: avoid;
+    box-shadow: 0 0 0 1px var(--border) !important; transform: none !important;
+  }
+  #canvas-wrap {
+    display: flex !important; flex-wrap: wrap !important;
+    gap: 12px !important; height: auto !important;
+    padding: 16px !important; border: none !important; box-shadow: none !important;
+  }
+  body { background: white; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="header-logo">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.05-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.56-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.13.22-.07.47.12.61l2.03 1.58c-.04.3-.07.63-.07.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+    </svg>
+    <div class="logo-wordmark">
+      Overton Chicago Gear
+      <span>Precision Gear Manufacturer · Est. 1888</span>
+    </div>
+  </div>
+  <div class="header-titles">
+    <h1>ProfitKey &middot; Work Order &amp; Labor</h1>
+    <p>Entity Relationship Diagram &mdash; Work Order Master &amp; Labor Ticket Transactions</p>
+  </div>
+  <div class="header-badges">
+    <span class="badge badge-blue">Work Orders</span>
+    <span class="badge badge-green">Labor Tickets</span>
+    <span class="badge badge-teal">4 Core Tables</span>
+  </div>
+</header>
+
+<!-- ── MAIN CONTENT ── -->
+<div class="content">
+
+  <!-- Stats Bar -->
+  <div class="stats">
+    <div class="stat-card"><div class="stat-num">4</div><div class="stat-lbl">Core Tables</div></div>
+    <div class="stat-card"><div class="stat-num">203.93</div><div class="stat-lbl">Hrs (Example Order)</div></div>
+    <div class="stat-card"><div class="stat-num">3</div><div class="stat-lbl">Labor Types</div></div>
+    <div class="stat-card"><div class="stat-num">1:N</div><div class="stat-lbl">WO → Tickets</div></div>
+    <div class="stat-card"><div class="stat-num">ODBC</div><div class="stat-lbl">Connection Method</div></div>
+  </div>
+
+  <!-- Diagram Canvas -->
+  <div id="canvas-wrap">
+    <svg id="erd-svg"></svg>
+
+    <!-- EMPLOYEE_MASTER · LEFT TOP -->
+    <div class="tbl" id="t-emp" style="left:20px; top:30px;">
+      <div class="tbl-head th-lookup">
+        <span class="tbl-name">EMPLOYEE_MASTER</span>
+      </div>
+      <div class="tbl-desc">Employee reference data including labor rate used for cost calculations.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag pk">PK</span><span class="field-name">employee_id</span><span class="field-type">VARCHAR(15)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">employee_name</span><span class="field-type">VARCHAR(100)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">base_labor_rate</span><span class="field-type">MONEY</span></div>
+      </div>
+    </div>
+
+    <!-- WORK_ORDER_MASTER · CENTER TOP -->
+    <div class="tbl" id="t-wom" style="left:370px; top:30px;">
+      <div class="tbl-head th-master">
+        <span class="tbl-name">WORK_ORDER_MASTER</span>
+      </div>
+      <div class="tbl-desc">The primary work order envelope — tracks order number, status, and quantity.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag pk">PK</span><span class="field-name">order_no</span><span class="field-type">VARCHAR(15)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">status</span><span class="field-type">VARCHAR(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">quantity</span><span class="field-type">DECIMAL(10,6)</span></div>
+      </div>
+    </div>
+
+    <!-- JOB_HOURS_SUMMARY · RIGHT TOP -->
+    <div class="tbl" id="t-jhs" style="left:730px; top:30px;">
+      <div class="tbl-head th-config">
+        <span class="tbl-name">JOB_HOURS_SUMMARY</span>
+      </div>
+      <div class="tbl-desc">Pre-aggregated hour totals per work order — the "to-date" summary view shown on the ProfitKey report.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag pk">PK</span><span class="field-name">hours_record_id</span><span class="field-type">INT</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">order_no</span><span class="field-type">VARCHAR(15)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">hours_type</span><span class="field-type">VARCHAR(20)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">to_date_actual_hrs</span><span class="field-type">DECIMAL(10,2)</span></div>
+      </div>
+    </div>
+
+    <!-- LABOR_TICKETS · CENTER BOTTOM (highlighted — the grain-level table) -->
+    <div class="tbl" id="t-lt" style="left:370px; top:330px;">
+      <div class="tbl-head th-trans">
+        <span class="tbl-name">LABOR_TICKETS</span>
+      </div>
+      <div class="tbl-desc">Every clock-in / clock-out event. The atomic source of truth for actual labor hours — enables drill-down by employee, work center, or date.</div>
+      <div class="tbl-fields">
+        <div class="field"><span class="field-tag pk">PK</span><span class="field-name">ticket_id</span><span class="field-type">INT</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">order_no</span><span class="field-type">VARCHAR(15)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">employee_id</span><span class="field-type">VARCHAR(15)</span></div>
+        <div class="field"><span class="field-tag fk">FK</span><span class="field-name">work_center_id</span><span class="field-type">VARCHAR(15)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">operation_seq</span><span class="field-type">INT</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">transaction_date</span><span class="field-type">DATE</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">time_in</span><span class="field-type">DATETIME</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">time_out</span><span class="field-type">DATETIME</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">labor_type</span><span class="field-type">VARCHAR(10)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">actual_hours</span><span class="field-type">DECIMAL(10,4)</span></div>
+        <div class="field"><span class="field-tag">&nbsp;</span><span class="field-name">good_qty_produced</span><span class="field-type">DECIMAL(10,2)</span></div>
+      </div>
+    </div>
+
+  </div><!-- /canvas-wrap -->
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-title">KEY</span>
+    <div class="leg-item"><span class="field-tag pk" style="font-size:10px;padding:2px 6px;">PK</span> Primary Key</div>
+    <div class="leg-item"><span class="field-tag fk" style="font-size:10px;padding:2px 6px;">FK</span> Foreign Key</div>
+    <div style="flex:1"></div>
+    <div class="leg-item"><div class="leg-line" style="background:var(--ocg-blue)"></div> Work Order → Labor Tickets (1:N)</div>
+    <div class="leg-item"><div class="leg-line" style="background:#5d7a8a"></div> Work Order → Hours Summary (1:N)</div>
+    <div class="leg-item"><div class="leg-line" style="background:#d97730"></div> Employee → Labor Tickets (1:N)</div>
+  </div>
+
+  <!-- How It Works -->
+  <div class="how-it-works">
+    <h3>How the Data Powers Quoting</h3>
+    <p>ProfitKey stores every clock-in and clock-out as a discrete row in <em>LABOR_TICKETS</em> — the summary hours shown on the report are calculated from this raw transaction history. An ODBC connection pulls that atomic detail directly from the ProfitKey SQL Server, read-only, without touching shop floor operations. That extract lands in a separate analytical database where the quoting team can slice actual hours by work center, employee, or operation type — turning real production history into defensible quote estimates.</p>
+  </div>
+
+  <!-- Footer -->
+  <div class="page-footer">
+    <span>Source: ProfitKey ERP &nbsp;&middot;&nbsp; ODBC Connection &nbsp;&middot;&nbsp; Work Order &amp; Labor Module</span>
+    <span>Key fields confirmed: order_no, employee_id, work_center_id, actual_hours, labor_type, transaction_date</span>
+  </div>
+
+</div><!-- /content -->
+
+<script>
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    const svg  = document.getElementById('erd-svg');
+    const wrap = document.getElementById('canvas-wrap');
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    const wr = wrap.getBoundingClientRect();
+
+    function pt(el, side) {
+      const r = el.getBoundingClientRect();
+      const x0 = r.left - wr.left, y0 = r.top - wr.top;
+      if (side === 'top')    return { x: x0 + r.width / 2, y: y0 };
+      if (side === 'bottom') return { x: x0 + r.width / 2, y: y0 + r.height };
+      if (side === 'left')   return { x: x0,                y: y0 + r.height / 2 };
+      if (side === 'right')  return { x: x0 + r.width,      y: y0 + r.height / 2 };
+    }
+
+    function addPath(a, b, color) {
+      const dx = Math.abs(b.x - a.x) * 0.5;
+      const dy = Math.abs(b.y - a.y) * 0.4;
+      let cpAx = a.x, cpAy = a.y, cpBx = b.x, cpBy = b.y;
+      if (Math.abs(a.x - b.x) >= Math.abs(a.y - b.y)) {
+        cpAx = a.x + (b.x > a.x ? dx : -dx);
+        cpBx = b.x - (b.x > a.x ? dx : -dx);
+      } else {
+        cpAy = a.y + (b.y > a.y ? dy : -dy);
+        cpBy = b.y - (b.y > a.y ? dy : -dy);
+      }
+      const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      p.setAttribute('d', `M${a.x},${a.y} C${cpAx},${cpAy} ${cpBx},${cpBy} ${b.x},${b.y}`);
+      p.setAttribute('stroke', color); p.setAttribute('stroke-width', '1.8');
+      p.setAttribute('fill', 'none'); p.setAttribute('opacity', '0.65');
+      svg.appendChild(p);
+      const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      dot.setAttribute('cx', a.x); dot.setAttribute('cy', a.y);
+      dot.setAttribute('r', '3.5'); dot.setAttribute('fill', color); dot.setAttribute('opacity', '0.9');
+      svg.appendChild(dot);
+      const angle = Math.atan2(b.y - cpBy, b.x - cpBx);
+      [[-5, 0], [5, 0], [0, 0]].forEach(function(off) {
+        const nx = -Math.sin(angle) * off[0];
+        const ny =  Math.cos(angle) * off[0];
+        const back = 11;
+        const ln = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        ln.setAttribute('x1', b.x + nx - Math.cos(angle) * back);
+        ln.setAttribute('y1', b.y + ny - Math.sin(angle) * back);
+        ln.setAttribute('x2', b.x + nx); ln.setAttribute('y2', b.y + ny);
+        ln.setAttribute('stroke', color); ln.setAttribute('stroke-width', '1.8'); ln.setAttribute('opacity', '0.9');
+        svg.appendChild(ln);
+      });
+      return { cpBx: cpBx, cpBy: cpBy };
+    }
+
+    function label(a, b, text, color) {
+      const lx = (a.x + b.x) / 2, ly = (a.y + b.y) / 2 - 9;
+      const bg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      bg.setAttribute('x', lx - 14); bg.setAttribute('y', ly - 10);
+      bg.setAttribute('width', 28);  bg.setAttribute('height', 14);
+      bg.setAttribute('rx', 4); bg.setAttribute('fill', '#ffffff'); bg.setAttribute('opacity', '0.92');
+      bg.setAttribute('stroke', color); bg.setAttribute('stroke-width', '0.8'); bg.setAttribute('stroke-opacity', '0.4');
+      svg.appendChild(bg);
+      const t = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      t.setAttribute('x', lx); t.setAttribute('y', ly);
+      t.setAttribute('text-anchor', 'middle'); t.setAttribute('font-size', '9.5');
+      t.setAttribute('fill', color); t.setAttribute('font-family', 'Poppins, Arial'); t.setAttribute('font-weight', '700');
+      t.textContent = text; svg.appendChild(t);
+    }
+
+    function conn(a, b, color, lbl) {
+      addPath(a, b, color);
+      if (lbl) label(a, b, lbl, color);
+    }
+
+    const emp = document.getElementById('t-emp');
+    const wom = document.getElementById('t-wom');
+    const jhs = document.getElementById('t-jhs');
+    const lt  = document.getElementById('t-lt');
+
+    const blue   = '#1890d7';
+    const teal   = '#5d7a8a';
+    const orange = '#d97730';
+
+    // Work Order → Labor Tickets
+    conn(pt(wom, 'bottom'), pt(lt, 'top'),    blue,   '1:N');
+    // Work Order → Job Hours Summary
+    conn(pt(wom, 'right'),  pt(jhs, 'left'),  teal,   '1:N');
+    // Employee → Labor Tickets
+    conn(pt(emp, 'bottom'), pt(lt, 'left'),   orange, '1:N');
+
+  }, 180);
+});
+</script>
+</body>
+</html>
